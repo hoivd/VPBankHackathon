@@ -1,10 +1,11 @@
 import json
-from typing import List, Dict
+from typing import List, Dict, Union
 from logger import _setup_logger
 import pandas as pd
 import config
 from dotenv import load_dotenv
 import os
+
 
 logger = _setup_logger(__name__, config.LOG_LEVEL)
 
@@ -94,3 +95,25 @@ class Utils:
         
         logger.debug(f"[load_api_key_from_env] ✅ Đã load key '{key_name}' từ môi trường")
         return api_key
+    
+    @staticmethod
+    def save_json(data: Union[Dict, List], file_path: str, ensure_ascii: bool = False, indent: int = 2) -> None:
+        """
+        Ghi dữ liệu (dict hoặc list) vào file JSON.
+
+        Args:
+            data (Union[Dict, List]): Dữ liệu cần ghi.
+            file_path (str): Đường dẫn tới file JSON đầu ra.
+            ensure_ascii (bool): Nếu True, các ký tự không ASCII sẽ được escape. Mặc định là False để giữ tiếng Việt.
+            indent (int): Số khoảng trắng thụt dòng cho JSON đẹp.
+
+        Raises:
+            Exception: Nếu ghi file thất bại.
+        """
+        try:
+            with open(file_path, 'w', encoding='utf-8') as f:
+                json.dump(data, f, ensure_ascii=ensure_ascii, indent=indent)
+            logger.debug(f"[save_json] ✅ Đã ghi JSON vào '{file_path}'")
+        except Exception as e:
+            logger.debug(f"[save_json] ❌ Lỗi khi ghi JSON: {e}")
+            raise Exception(e)

@@ -1,10 +1,10 @@
 import logging
-from article_risk_processor import ArticleRiskProcessor
-from mongo_pusher import MongoPusher
+from blacklist_builder.article_risk_processor import ArticleRiskProcessor
+from mongodb.mongo_pusher import MongoPusher
 from logger import _setup_logger
 import config
 from utils import Utils
-from article_extractor import ArticlePersonExtractor
+from blacklist_builder.article_extractor import ArticlePersonExtractor
 import time
 
 logger = _setup_logger(__name__, config.LOG_LEVEL)

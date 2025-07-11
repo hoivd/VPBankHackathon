@@ -6,9 +6,9 @@ from pymongo import MongoClient
 from bson import ObjectId
 from logger import _setup_logger
 import config
-from mongo_pusher import MongoPusher
+from mongodb.mongo_pusher import MongoPusher
 from utils import Utils
-from article_extractor import ArticlePersonExtractor
+from blacklist_builder.article_extractor import ArticlePersonExtractor
 
 logger = _setup_logger(__name__, config.LOG_LEVEL)
 
