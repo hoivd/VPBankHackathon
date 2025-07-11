@@ -1,0 +1,1117 @@
+🧭 BƯỚC 1: TRÍCH XUẤT THÔNG TIN CÁ NHÂN/TỔ CHỨC
+
+
+
+                
+
+
+
+                Hãy đọc kỹ bài báo dưới đây và xác định tất cả các cá nhân và tổ chức được đề cập trong nội dung.
+
+
+
+                
+
+
+
+                Đối với mỗi cá nhân/tổ chức được nêu trong bài, hãy trích xuất đầy đủ các thông tin sau (nếu có):
+
+
+
+                
+
+
+
+                - ID định danh duy nhất cho người/tổ chức xuất hiện trong bài báo
+
+
+
+                - Họ và tên đầy đủ (với cá nhân) / Tên đầy đủ (với tổ chức)  
+
+
+
+                - Năm sinh hoặc tuổi (chỉ với cá nhân)  
+
+
+
+                - Giới tính (chỉ với cá nhân)  
+
+
+
+                - Nghề nghiệp hoặc chức vụ  
+
+
+
+                - Cơ quan hoặc tổ chức liên quan  
+
+
+
+                - Vai trò trong sự việc (ví dụ: bị cáo, người tố cáo, người đại diện, bị hại, nhân chứng, ...)  
+
+
+
+                - Quê quán hoặc nơi cư trú (chỉ với cá nhân)  
+
+
+
+                - Mối quan hệ cá nhân với các nhân vật khác trong bài báo (nếu có)
+
+
+
+                
+
+
+
+                📌 Đầu ra yêu cầu: Trả về dưới dạng danh sách JSON, trong đó mỗi phần tử là một đối tượng chứa thông tin của một cá nhân hoặc tổ chức. Các key trong JSON phải viết bằng **tiếng Anh** theo mẫu sau:
+
+
+
+                
+
+
+
+                [
+
+
+
+                {{
+
+
+
+                    "personal_id": "...." 
+
+
+
+                    "full_name": "...",
+
+
+
+                    "birth_year_or_age": "...",
+
+
+
+                    "gender": "...",
+
+
+
+                    "occupation_or_position": "...",
+
+
+
+                    "organization": "...",
+
+
+
+                    "role_in_event": "...",
+
+        
+
+                    "hometown_or_residence": "...",
+
+
+
+                    "personal_relationships": "..."
+
+       
+
+                }},
+
+
+
+                ...
+
+
+
+                ]
+
+
+
+                
+
+
+
+                🧭 BƯỚC 2: PHÂN TÍCH ĐẶC TRƯNG RỦI RO THEO TỪNG CÁ NHÂN/TỔ CHỨC
+
+
+
+                
+
+
+
+                ✅ 1. news_sentiment_type (Bản chất của tin tức tổng thể)  
+
+
+
+                → Chỉ định cho toàn bài: "Negative", "Neutral", hoặc "Positive".
+
+
+
+                ✅ 2. recency (Thời gian xuất hiện bài báo so với thời gian hiện tại là 10 năm)
+
+
+
+                -> Chỉ định cho toàn bài: "recent", "old"
+
+
+
+                ✅ 3. source_credibility (Độ tin cậy của bài báo)
+
+
+
+                -> Chỉ định cho toàn bài: "High", "Medium" hoặc "Low"
+
+        
+
+                
+
+
+
+                Dựa trên danh sách cá nhân/tổ chức được trích xuất ở Bước 1, hãy đánh giá **từng người/tổ chức** theo các đặc trưng rủi ro sau:
+
+
+
+                
+
+
+
+                ✅ 4. Đặc trưng rủi ro theo từng cá nhân/tổ chức (mỗi người/tổ chức là một phần tử trong danh sách):
+
+
+
+                    list_entities (key)
+
+
+
+                [
+
+
+
+                {{
+
+
+
+                    "entity_id": "..." ← Lưu ý personal_id phải trùng với personal_id của cá nhân/tổ chức ở bước 1 nếu hai đối tượng này trùng nhau
+
+
+
+                    "entity_name": "...",  ← tên cá nhân/tổ chức khớp với Bước 1
+
+        
+
+                    "is_individual": true/false,  ← Xác định xem đối tượng là cá nhân (true) hay tổ chức (false)
+
+
+
+                    "violation_type": "...",        ← Rửa tiền / Tài trợ khủng bố / Lừa đảo / Chiếm đoạt tài sản / Tham nhũng / Hối lộ / Vi phạm dân sự / hành chính / tranh chấp nhỏ / Đưa vào danh sách trừng phạt / Cấm vận kinh tế tài chính / Trừng phạt ngành lĩnh vực / Hạn chế truy cập vào hệ thống tài chính Hoa Kỳ / Trừng phạt thứ cấp / Không có hành vi phạm được đề cập
+
+
+
+                    "customer_role": "...",    ← Chủ mưu / Cầm đầu / Tổ chức thực hiện hành vi vi phạm / Tham gia / Đồng phạm / Giúp sức hoặc thực hiện một phần / Bên liên quan bị động / Bị nhắc tên nhưng không trực tiếp / Không có liên quan rõ ràng trong bài báo
+
+        
+
+                    "legal_status": "...",        ← Đã kết án / Đang trong quá trình điều tra / truy tố / chưa có phán quyết / Tin chưa rõ ràng / Được minh oan
+
+        
+
+                    "source_level": "..."                  ← Tuổi Trẻ / Dân Trí / Thanh Niên / VNExpress / Cổng thông tin Chính phủ / OFAC/ Other
+
+
+
+                }},
+
+
+
+                ...
+
+
+
+                ]
+
+
+
+                
+
+
+
+                📌 Lưu ý: Mỗi cá nhân/tổ chức trong danh sách phải được đánh giá độc lập, không gộp chung. Nếu không đủ thông tin để xác định, hãy để null.
+
+
+
+                LƯU Ý: Chỉ trả về **hai danh sách JSON như trên**, không thêm giải thích, tiêu đề, mô tả hay bất kỳ nội dung nào khác.
+
+
+
+                📰 Nội dung bài báo cần phân tích:
+
+
+
+                \"\"\"
+
+
+
+                {"🧭 BƯỚC 1: TRÍCH XUẤT THÔNG TIN CÁ NHÂN/TỔ CHỨC
+
+
+
+                
+
+
+
+                Hãy đọc kỹ bài báo dưới đây và xác định tất cả các cá nhân và tổ chức được đề cập trong nội dung.
+
+
+
+                
+
+
+
+                Đối với mỗi cá nhân/tổ chức được nêu trong bài, hãy trích xuất đầy đủ các thông tin sau (nếu có):
+
+
+
+                
+
+
+
+                - ID định danh duy nhất cho người/tổ chức xuất hiện trong bài báo
+
+
+
+                - Họ và tên đầy đủ (với cá nhân) / Tên đầy đủ (với tổ chức)  
+
+
+
+                - Năm sinh hoặc tuổi (chỉ với cá nhân)  
+
+
+
+                - Giới tính (chỉ với cá nhân)  
+
+
+
+                - Nghề nghiệp hoặc chức vụ  
+
+
+
+                - Cơ quan hoặc tổ chức liên quan  
+
+
+
+                - Vai trò trong sự việc (ví dụ: bị cáo, người tố cáo, người đại diện, bị hại, nhân chứng, ...)  
+
+
+
+                - Quê quán hoặc nơi cư trú (chỉ với cá nhân)  
+
+
+
+                - Mối quan hệ cá nhân với các nhân vật khác trong bài báo (nếu có)
+
+
+
+                
+
+
+
+                📌 Đầu ra yêu cầu: Trả về dưới dạng danh sách JSON, trong đó mỗi phần tử là một đối tượng chứa thông tin của một cá nhân hoặc tổ chức. Các key trong JSON phải viết bằng **tiếng Anh** theo mẫu sau:
+
+
+
+                
+
+
+
+                [
+
+
+
+                {{
+
+
+
+                    "personal_id": "...." 
+
+
+
+                    "full_name": "...",
+
+
+
+                    "birth_year_or_age": "...",
+
+
+
+                    "gender": "...",
+
+
+
+                    "occupation_or_position": "...",
+
+
+
+                    "organization": "...",
+
+
+
+                    "role_in_event": "...",
+
+        
+
+                    "hometown_or_residence": "...",
+
+
+
+                    "personal_relationships": "..."
+
+       
+
+                }},
+
+
+
+                ...
+
+
+
+                ]
+
+
+
+                
+
+
+
+                🧭 BƯỚC 2: PHÂN TÍCH ĐẶC TRƯNG RỦI RO THEO TỪNG CÁ NHÂN/TỔ CHỨC
+
+
+
+                
+
+
+
+                ✅ 1. news_sentiment_type (Bản chất của tin tức tổng thể)  
+
+
+
+                → Chỉ định cho toàn bài: "Negative", "Neutral", hoặc "Positive".
+
+
+
+                ✅ 2. recency (Thời gian xuất hiện bài báo so với thời gian hiện tại là 10 năm)
+
+
+
+                -> Chỉ định cho toàn bài: "recent", "old"
+
+
+
+                ✅ 3. source_credibility (Độ tin cậy của bài báo)
+
+
+
+                -> Chỉ định cho toàn bài: "High", "Medium" hoặc "Low"
+
+        
+
+                
+
+
+
+                Dựa trên danh sách cá nhân/tổ chức được trích xuất ở Bước 1, hãy đánh giá **từng người/tổ chức** theo các đặc trưng rủi ro sau:
+
+
+
+                
+
+
+
+                ✅ 4. Đặc trưng rủi ro theo từng cá nhân/tổ chức (mỗi người/tổ chức là một phần tử trong danh sách):
+
+
+
+                    list_entities (key)
+
+
+
+                [
+
+
+
+                {{
+
+
+
+                    "entity_id": "..." ← Lưu ý personal_id phải trùng với personal_id của cá nhân/tổ chức ở bước 1 nếu hai đối tượng này trùng nhau
+
+
+
+                    "entity_name": "...",  ← tên cá nhân/tổ chức khớp với Bước 1
+
+        
+
+                    "is_individual": true/false,  ← Xác định xem đối tượng là cá nhân (true) hay tổ chức (false)
+
+
+
+                    "violation_type": "...",        ← Rửa tiền / Tài trợ khủng bố / Lừa đảo / Chiếm đoạt tài sản / Tham nhũng / Hối lộ / Vi phạm dân sự / hành chính / tranh chấp nhỏ / Đưa vào danh sách trừng phạt / Cấm vận kinh tế tài chính / Trừng phạt ngành lĩnh vực / Hạn chế truy cập vào hệ thống tài chính Hoa Kỳ / Trừng phạt thứ cấp / Không có hành vi phạm được đề cập
+
+
+
+                    "customer_role": "...",    ← Chủ mưu / Cầm đầu / Tổ chức thực hiện hành vi vi phạm / Tham gia / Đồng phạm / Giúp sức hoặc thực hiện một phần / Bên liên quan bị động / Bị nhắc tên nhưng không trực tiếp / Không có liên quan rõ ràng trong bài báo
+
+        
+
+                    "legal_status": "...",        ← Đã kết án / Đang trong quá trình điều tra / truy tố / chưa có phán quyết / Tin chưa rõ ràng / Được minh oan
+
+        
+
+                    "source_level": "..."                  ← Tuổi Trẻ / Dân Trí / Thanh Niên / VNExpress / Cổng thông tin Chính phủ / OFAC/ Other
+
+
+
+                }},
+
+
+
+                ...
+
+
+
+                ]
+
+
+
+                
+
+
+
+                📌 Lưu ý: Mỗi cá nhân/tổ chức trong danh sách phải được đánh giá độc lập, không gộp chung. Nếu không đủ thông tin để xác định, hãy để null.
+
+
+
+                LƯU Ý: Chỉ trả về **hai danh sách JSON như trên**, không thêm giải thích, tiêu đề, mô tả hay bất kỳ nội dung nào khác.
+
+
+
+                📰 Nội dung bài báo cần phân tích:
+
+
+
+                \"\"\"
+
+
+
+                {"Những nghệ sĩ Việt lao đao vì dính vào ma túy
+
+Hương Hồ Thứ hai, 24/04/2023 - 08:00
+
+(Dân trí) - Trước diễn viên Lệ Hằng, nhiều nghệ sĩ Việt đã phải trả giá đắt khi dính vào ma túy.
+
+Ngày 23/4, Công an quận Đống Đa, TP Hà Nội vừa khởi tố bị can đối với Bùi Thị Lệ Hằng (diễn viên Lệ Hằng) về tội Mua bán trái phép chất ma túy.
+
+
+
+Theo cơ quan chức năng, tối 10/3, Đội Cảnh sát điều tra tội phạm về ma túy Công an quận Đống Đa làm nhiệm vụ tuần tra đã phát hiện một đối tượng nghi vấn trước số nhà 104 Khâm Thiên. Kiểm tra người này, cảnh sát xác định Bùi Thị Lệ Hằng đang mua bán trái phép ma túy, thu giữ tang vật gần 0,7 gram ma túy tổng hợp.
+
+
+
+Tại trụ sở điều tra, Hằng khai nhận đã mua số ma túy trên với giá 500.000 đồng để bán lại kiếm lời.
+
+
+
+Diễn viên Lệ Hằng (Ảnh: T.L).
+
+
+
+Lệ Hằng (SN 1975, quê gốc Tuyên Quang) là một trong những diễn viên nổi tiếng một thời khi đóng vai Hoài "Thát chơ" trong phim Xin hãy tin em của đạo diễn Đỗ Thanh Hải.
+
+
+
+Sau đó, Lệ Hằng cũng để lại ít nhiều dấu ấn qua các vai: Bảo trong Những ngọn nến trong đêm , Thanh sói trong Cổ cồn trắng , Ban trong Chuyện phố phường , Túy trong Phi đội chuồn chuồn …
+
+
+
+Năm 2012, nữ diễn viên tuyên bố giải nghệ và mất tích từ đó cho đến nay.
+
+
+
+Trước cựu diễn viên Lệ Hằng, nhiều sao Việt lao đao vì dính vào ma túy.
+
+
+
+Nữ diễn viên để lại ấn tượng với vai Hoài "Thát chơ" trong phim "Xin hãy tin em" (Ảnh: VTV).
+
+
+
+Diễn viên Hữu Tín
+
+Ngày 17/6, Cơ quan Cảnh sát điều tra Công an quận 8 (TPHCM) đã hoàn tất các thủ tục khởi tố vụ án, khởi tố bị can, bắt tạm giam Trần Hữu Tín (diễn viên hài Hữu Tín, 35 tuổi, ngụ quận 11) và Nguyễn Hoàng Phi (32 tuổi, ngụ tỉnh Hậu Giang) để điều tra về hành vi tàng trữ trái phép chất ma túy và tổ chức sử dụng trái phép chất ma túy.
+
+
+
+Theo dự kiến, ngày 28/4, TAND quận 8 sẽ mở phiên tòa xét xử bị cáo Trần Hữu Tín vì tội danh trên.
+
+
+
+Hữu Tín (SN 1987, ngụ tại TPHCM) là một trong những diễn viên hài trưởng thành từ sân khấu kịch của bà bầu Hồng Vân. Hữu Tín còn là trưởng nhóm X-Pro, nhóm hài từng ghi dấu ấn tại chương trình Cười xuyên Việt - Tiếu lâm hội 2016 với tác phẩm hài Bến Thượng Hải…
+
+
+
+Sau đó, Hữu Tín tham gia nhiều gameshow và gây được ấn tượng tại chương trình Ơn giời cậu đây rồi, Nhanh như chớp...
+
+
+
+Từng được xem là nghệ sĩ triển vọng, nhiều khán giả yêu mến, nhưng khi dính vào ma túy, nam diễn viên bị công chúng lên án và tẩy chay mạnh mẽ.
+
+
+
+Diễn viên Hữu Tín bị bắt quả tang khi đang sử dụng ma túy (Ảnh: A.X).
+
+
+
+Diễn viên Hiệp "Gà"
+
+Hiệp "Gà" (tên thật Dương Đức Hiệp, SN 1977, quê Hưng Yên) là một trong những diễn viên hài nổi tiếng miền Bắc, anh từng để lại nhiều dấu ấn trong các chương trình: Táo quân, Gặp nhau cuối tuần, Gala cười…
+
+
+
+Tuy nhiên, giữa lúc sự nghiệp thăng hoa, thì năm 2007, nam diễn viên bị bắt vì tội tàng trữ ma túy. Sự nghiệp của Hiệp "Gà" cũng tuột dốc không phanh.
+
+
+
+Sau 2 năm ngồi tù, nam diễn viên hài trở lại nghiệp diễn thông qua một vai nhỏ trong Táo quân 2009 .
+
+
+
+Trong một chương trình trên kênh VTV9 năm 2017, Hiệp Gà trải lòng việc bị bắt vì tàng trữ ma túy xảy ra sau khi anh nghe lời khuyên của một người bạn rằng chất cấm này có tác dụng giảm đau nhanh nếu gặp chấn thương khi đá bóng.
+
+
+
+Năm 2020, anh xuất hiện trong phim điện ảnh Tiền nhiều để làm gì nhưng không mấy thành công.
+
+
+
+Diễn viên Hiệp "Gà" (Ảnh: Facebook nhân vật).
+
+
+
+Sau thời gian dài ít xuất hiện, Hiệp Gà dần trở lại với khán giả khi đi diễn tại các sân khấu ngoài trời, tỉnh, sự kiện,... Dịp Tết 2023, anh đảm nhận vai đại gia Dửng trong phim hài Đại gia Dửng Mỡ .
+
+
+
+Nam nghệ sĩ từng chia sẻ, dù chuyện quá khứ không như ý muốn nhưng được Tổ nghiệp thương nên vẫn được bầu show, nhà sản xuất yêu thích vì thoải mái, dễ chịu, hay giảm cát-xê.
+
+
+
+Ở tuổi 42, Hiệp "Gà" đã trải qua 3 cuộc hôn nhân và hiện làm bố đơn thân. Trên trang cá nhân, anh vẫn thường xuyên chia sẻ hình ảnh về cuộc sống đời thường.
+
+
+
+Ca sĩ Châu Việt Cường
+
+Châu Việt Cường là một trong những nghệ sĩ đã phải trả giá đắt vì nghiện ngập. Năm 2018, anh cùng nhóm bạn sử dụng ma túy dẫn đến bị ảo giác và đã dùng tỏi nhét vào miệng một cô gái khiến cô này tử vong.
+
+
+
+Sự việc đã làm rúng động dư luận bởi thời điểm đó, Châu Việt Cường cũng là cái tên được nhiều người biết tới. Nam ca sĩ đã phải lãnh án 13 năm tù (sau được giảm 2 năm)."}
+
+
+
+                \"\"\"
+
+
+
+                Lưu ý tuân thủ theo format sau: 
+
+                [
+
+                    [
+
+                      dict_person_1,
+
+                      dict_person_2,
+
+                      ...
+
+                    ],
+
+                    dict_risk_info
+
+                ]
+
+
+
+        Mẫu đầu ra mẫu:
+
+        [
+
+            [
+
+                {{
+
+                "personal_id": "P001",
+
+                "full_name": "Trương Mỹ Lan",
+
+                "birth_year_or_age": null,
+
+                "gender": "Female",
+
+                "occupation_or_position": "Chủ tịch hội đồng quản trị",
+
+                "organization": "Tập đoàn Vạn Thịnh Phát",
+
+                "role_in_event": "Bị cáo chính trong vụ án Vạn Thịnh Phát",
+
+                "hometown_or_residence": null,
+
+                "personal_relationships": "Bị cáo chính trong vụ án Vạn Thịnh Phát; Cổ đông lớn, người nắm giữ gần tuyệt đối cổ phần Ngân hàng SCB; Người ra chỉ thị cho các bị cáo Đinh Văn Thành, Bùi Anh Dũng, Võ Tấn Hoàng Văn, Tạ Chiêu Trung, Trương Khánh Hoàng, Trần Thị Mỹ Dung"
+
+                }},
+
+                {{
+
+                "personal_id": "P002",
+
+                "full_name": "Huỳnh Thanh Duyên",
+
+                "birth_year_or_age": null,
+
+                "gender": "Female",
+
+                "occupation_or_position": "Thẩm phán chủ tọa",
+
+                "organization": "Tòa án nhân dân cấp cao tại TP.HCM",
+
+                "role_in_event": "Chủ tọa phiên tòa phúc thẩm vụ Vạn Thịnh Phát giai đoạn 1",
+
+                "hometown_or_residence": null,
+
+                "personal_relationships": "Chủ tọa phiên tòa phúc thẩm vụ Vạn Thịnh Phát giai đoạn 1"
+
+                }},
+
+                {{
+
+                "personal_id": "P003",
+
+                "full_name": "Phạm Công Mười",
+
+                "birth_year_or_age": null,
+
+                "gender": "Male",
+
+                "occupation_or_position": "Thẩm phán",
+
+                "organization": "Tòa án nhân dân cấp cao tại TP.HCM",
+
+                "role_in_event": "Thẩm phán trong hội đồng xét xử phúc thẩm vụ Vạn Thịnh Phát giai đoạn 1",
+
+                "hometown_or_residence": null,
+
+                "personal_relationships": "Thẩm phán trong hội đồng xét xử phúc thẩm vụ Vạn Thịnh Phát giai đoạn 1"
+
+                }},
+
+                {{
+
+                "personal_id": "O001",
+
+                "full_name": "Tập đoàn Vạn Thịnh Phát",
+
+                "birth_year_or_age": null,
+
+                "gender": null,
+
+                "occupation_or_position": null,
+
+                "organization": null,
+
+                "role_in_event": "Liên quan đến vụ án Trương Mỹ Lan",
+
+                "hometown_or_residence": null,
+
+                "personal_relationships": "Có Trương Mỹ Lan là chủ tịch hội đồng quản trị"
+
+                }},
+
+                {{
+
+                "personal_id": "O002",
+
+                "full_name": "Ngân hàng SCB",
+
+                "birth_year_or_age": null,
+
+                "gender": null,
+
+                "occupation_or_position": null,
+
+                "organization": null,
+
+                "role_in_event": "Liên quan đến vụ án Trương Mỹ Lan",
+
+                "hometown_or_residence": null,
+
+                "personal_relationships": "Có Trương Mỹ Lan là cổ đông lớn"
+
+                }}
+
+            ],
+
+            {{
+
+            "news_sentiment_type": "Negative",
+
+                "recency": "recent",
+
+                "source_credibility": "High",
+
+                "list_entities": [
+
+                {{
+
+                    "entity_id": "P001",
+
+                    "entity_name": "Trương Mỹ Lan",
+
+                    "is_individual": true,
+
+                    "violation_type": "Lừa đảo",
+
+                    "customer_role": "Chủ mưu",
+
+                    "legal_status": "Đã kết án",
+
+                    "source_level": "Other"
+
+                }},
+
+                {{
+
+                    "entity_id": "P002",
+
+                    "entity_name": "Huỳnh Thanh Duyên",
+
+                    "is_individual": true,
+
+                    "violation_type": "Không có hành vi phạm được đề cập",
+
+                    "customer_role": "Không có liên quan rõ ràng trong bài báo",
+
+                    "legal_status": "Tin chưa rõ ràng",
+
+                    "source_level": "Other"
+
+                }},
+
+                {{
+
+                    "entity_id": "P003",
+
+                    "entity_name": "Phạm Công Mười",
+
+                    "is_individual": true,
+
+                    "violation_type": "Không có hành vi phạm được đề cập",
+
+                    "customer_role": "Không có liên quan rõ ràng trong bài báo",
+
+                    "legal_status": "Tin chưa rõ ràng",
+
+                    "source_level": "Other"
+
+                }},
+
+                {{
+
+                    "entity_id": "O001",
+
+                    "entity_name": "Tập đoàn Vạn Thịnh Phát",
+
+                    "is_individual": false,
+
+                    "violation_type": "Lừa đảo",
+
+                    "customer_role": "Tham gia",
+
+                    "legal_status": "Đang trong quá trình điều tra",
+
+                    "source_level": "Other"
+
+                }},
+
+                {{
+
+                    "entity_id": "O002",
+
+                    "entity_name": "Ngân hàng SCB",
+
+                    "is_individual": false,
+
+                    "violation_type": "Lừa đảo",
+
+                    "customer_role": "Tham gia",
+
+                    "legal_status": "Đang trong quá trình điều tra",
+
+                    "source_level": "Other"
+
+                }}
+
+                ]
+
+            }}
+
+        ]"}
+
+
+
+                \"\"\"
+
+
+
+                Lưu ý tuân thủ theo format sau: 
+
+                [
+
+                    [
+
+                      dict_person_1,
+
+                      dict_person_2,
+
+                      ...
+
+                    ],
+
+                    dict_risk_info
+
+                ]
+
+
+
+        Mẫu đầu ra mẫu:
+
+        [
+
+            [
+
+                {{
+
+                "personal_id": "P001",
+
+                "full_name": "Trương Mỹ Lan",
+
+                "birth_year_or_age": null,
+
+                "gender": "Female",
+
+                "occupation_or_position": "Chủ tịch hội đồng quản trị",
+
+                "organization": "Tập đoàn Vạn Thịnh Phát",
+
+                "role_in_event": "Bị cáo chính trong vụ án Vạn Thịnh Phát",
+
+                "hometown_or_residence": null,
+
+                "personal_relationships": "Bị cáo chính trong vụ án Vạn Thịnh Phát; Cổ đông lớn, người nắm giữ gần tuyệt đối cổ phần Ngân hàng SCB; Người ra chỉ thị cho các bị cáo Đinh Văn Thành, Bùi Anh Dũng, Võ Tấn Hoàng Văn, Tạ Chiêu Trung, Trương Khánh Hoàng, Trần Thị Mỹ Dung"
+
+                }},
+
+                {{
+
+                "personal_id": "P002",
+
+                "full_name": "Huỳnh Thanh Duyên",
+
+                "birth_year_or_age": null,
+
+                "gender": "Female",
+
+                "occupation_or_position": "Thẩm phán chủ tọa",
+
+                "organization": "Tòa án nhân dân cấp cao tại TP.HCM",
+
+                "role_in_event": "Chủ tọa phiên tòa phúc thẩm vụ Vạn Thịnh Phát giai đoạn 1",
+
+                "hometown_or_residence": null,
+
+                "personal_relationships": "Chủ tọa phiên tòa phúc thẩm vụ Vạn Thịnh Phát giai đoạn 1"
+
+                }},
+
+                {{
+
+                "personal_id": "P003",
+
+                "full_name": "Phạm Công Mười",
+
+                "birth_year_or_age": null,
+
+                "gender": "Male",
+
+                "occupation_or_position": "Thẩm phán",
+
+                "organization": "Tòa án nhân dân cấp cao tại TP.HCM",
+
+                "role_in_event": "Thẩm phán trong hội đồng xét xử phúc thẩm vụ Vạn Thịnh Phát giai đoạn 1",
+
+                "hometown_or_residence": null,
+
+                "personal_relationships": "Thẩm phán trong hội đồng xét xử phúc thẩm vụ Vạn Thịnh Phát giai đoạn 1"
+
+                }},
+
+                {{
+
+                "personal_id": "O001",
+
+                "full_name": "Tập đoàn Vạn Thịnh Phát",
+
+                "birth_year_or_age": null,
+
+                "gender": null,
+
+                "occupation_or_position": null,
+
+                "organization": null,
+
+                "role_in_event": "Liên quan đến vụ án Trương Mỹ Lan",
+
+                "hometown_or_residence": null,
+
+                "personal_relationships": "Có Trương Mỹ Lan là chủ tịch hội đồng quản trị"
+
+                }},
+
+                {{
+
+                "personal_id": "O002",
+
+                "full_name": "Ngân hàng SCB",
+
+                "birth_year_or_age": null,
+
+                "gender": null,
+
+                "occupation_or_position": null,
+
+                "organization": null,
+
+                "role_in_event": "Liên quan đến vụ án Trương Mỹ Lan",
+
+                "hometown_or_residence": null,
+
+                "personal_relationships": "Có Trương Mỹ Lan là cổ đông lớn"
+
+                }}
+
+            ],
+
+            {{
+
+            "news_sentiment_type": "Negative",
+
+                "recency": "recent",
+
+                "source_credibility": "High",
+
+                "list_entities": [
+
+                {{
+
+                    "entity_id": "P001",
+
+                    "entity_name": "Trương Mỹ Lan",
+
+                    "is_individual": true,
+
+                    "violation_type": "Lừa đảo",
+
+                    "customer_role": "Chủ mưu",
+
+                    "legal_status": "Đã kết án",
+
+                    "source_level": "Other"
+
+                }},
+
+                {{
+
+                    "entity_id": "P002",
+
+                    "entity_name": "Huỳnh Thanh Duyên",
+
+                    "is_individual": true,
+
+                    "violation_type": "Không có hành vi phạm được đề cập",
+
+                    "customer_role": "Không có liên quan rõ ràng trong bài báo",
+
+                    "legal_status": "Tin chưa rõ ràng",
+
+                    "source_level": "Other"
+
+                }},
+
+                {{
+
+                    "entity_id": "P003",
+
+                    "entity_name": "Phạm Công Mười",
+
+                    "is_individual": true,
+
+                    "violation_type": "Không có hành vi phạm được đề cập",
+
+                    "customer_role": "Không có liên quan rõ ràng trong bài báo",
+
+                    "legal_status": "Tin chưa rõ ràng",
+
+                    "source_level": "Other"
+
+                }},
+
+                {{
+
+                    "entity_id": "O001",
+
+                    "entity_name": "Tập đoàn Vạn Thịnh Phát",
+
+                    "is_individual": false,
+
+                    "violation_type": "Lừa đảo",
+
+                    "customer_role": "Tham gia",
+
+                    "legal_status": "Đang trong quá trình điều tra",
+
+                    "source_level": "Other"
+
+                }},
+
+                {{
+
+                    "entity_id": "O002",
+
+                    "entity_name": "Ngân hàng SCB",
+
+                    "is_individual": false,
+
+                    "violation_type": "Lừa đảo",
+
+                    "customer_role": "Tham gia",
+
+                    "legal_status": "Đang trong quá trình điều tra",
+
+                    "source_level": "Other"
+
+                }}
+
+                ]
+
+            }}
+
+        ]
