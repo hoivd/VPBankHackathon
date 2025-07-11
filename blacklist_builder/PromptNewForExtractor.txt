@@ -1,0 +1,257 @@
+prompt = f"""
+        🧭 BƯỚC 1: TRÍCH XUẤT THÔNG TIN CÁ NHÂN/TỔ CHỨC
+
+                
+
+                Hãy đọc kỹ bài báo dưới đây và xác định tất cả các cá nhân và tổ chức được đề cập trong nội dung.
+
+                
+
+                Đối với mỗi cá nhân/tổ chức được nêu trong bài, hãy trích xuất đầy đủ các thông tin sau (nếu có):
+
+                
+
+                - ID định danh duy nhất cho người/tổ chức xuất hiện trong bài báo
+
+                - Họ và tên đầy đủ (với cá nhân) / Tên đầy đủ (với tổ chức)  
+
+                - Năm sinh hoặc tuổi (chỉ với cá nhân)  
+
+                - Giới tính (chỉ với cá nhân)  
+
+                - Nghề nghiệp hoặc chức vụ  
+
+                - Cơ quan hoặc tổ chức liên quan  
+
+                - Vai trò trong sự việc (ví dụ: bị cáo, người tố cáo, người đại diện, bị hại, nhân chứng, ...)  
+
+                - Quê quán hoặc nơi cư trú (chỉ với cá nhân)  
+
+                - Mối quan hệ cá nhân với các nhân vật khác trong bài báo (nếu có)
+
+                
+
+                📌 Đầu ra yêu cầu: Trả về dưới dạng danh sách JSON, trong đó mỗi phần tử là một đối tượng chứa thông tin của một cá nhân hoặc tổ chức. Các key trong JSON phải viết bằng **tiếng Anh** theo mẫu sau:
+
+                
+
+                [
+
+                {{
+
+                    "personal_id": "...." 
+
+                    "full_name": "...",
+
+                    "birth_year_or_age": "...",
+
+                    "gender": "...",
+
+                    "occupation_or_position": "...",
+
+                    "organization": "...",
+
+                    "role_in_event": "...",
+        
+                    "hometown_or_residence": "...",
+
+                    "personal_relationships": "..."
+       
+                }},
+
+                ...
+
+                ]
+
+                
+
+                🧭 BƯỚC 2: PHÂN TÍCH ĐẶC TRƯNG RỦI RO THEO TỪNG CÁ NHÂN/TỔ CHỨC
+
+                
+
+                ✅ 1. news_sentiment_type (Bản chất của tin tức tổng thể)  
+
+                → Chỉ định cho toàn bài: "Negative", "Neutral", hoặc "Positive".
+
+                ✅ 2. recency (Thời gian xuất hiện bài báo so với thời gian hiện tại là 10 năm)
+
+                -> Chỉ định cho toàn bài: "recent", "old"
+
+                ✅ 3. source_credibility (Độ tin cậy của bài báo)
+
+                -> Chỉ định cho toàn bài: "High", "Medium" hoặc "Low"
+        
+                
+
+                Dựa trên danh sách cá nhân/tổ chức được trích xuất ở Bước 1, hãy đánh giá **từng người/tổ chức** theo các đặc trưng rủi ro sau:
+
+                
+
+                ✅ 4. Đặc trưng rủi ro theo từng cá nhân/tổ chức (mỗi người/tổ chức là một phần tử trong danh sách):
+
+                    list_entities (key)
+
+                [
+
+                {{
+
+                    "entity_id": "..." ← Lưu ý personal_id phải trùng với personal_id của cá nhân/tổ chức ở bước 1 nếu hai đối tượng này trùng nhau
+
+                    "entity_name": "...",  ← tên cá nhân/tổ chức khớp với Bước 1
+        
+                    "is_individual": true/false,  ← Xác định xem đối tượng là cá nhân (true) hay tổ chức (false)
+
+                    "violation_type": "...",        ← Rửa tiền / Tài trợ khủng bố / Lừa đảo / Chiếm đoạt tài sản / Tham nhũng / Hối lộ / Vi phạm dân sự / hành chính / tranh chấp nhỏ / Đưa vào danh sách trừng phạt / Cấm vận kinh tế tài chính / Trừng phạt ngành lĩnh vực / Hạn chế truy cập vào hệ thống tài chính Hoa Kỳ / Trừng phạt thứ cấp / Không có hành vi phạm được đề cập
+
+                    "customer_role": "...",    ← Chủ mưu / Cầm đầu / Tổ chức thực hiện hành vi vi phạm / Tham gia / Đồng phạm / Giúp sức hoặc thực hiện một phần / Bên liên quan bị động / Bị nhắc tên nhưng không trực tiếp / Không có liên quan rõ ràng trong bài báo
+        
+                    "legal_status": "...",        ← Đã kết án / Đang trong quá trình điều tra / truy tố / chưa có phán quyết / Tin chưa rõ ràng / Được minh oan
+        
+                    "source_level": "..."                  ← Tuổi Trẻ / Dân Trí / Thanh Niên / VNExpress / Cổng thông tin Chính phủ / OFAC/ Other
+
+                }},
+
+                ...
+
+                ]
+
+                
+
+                📌 Lưu ý: Mỗi cá nhân/tổ chức trong danh sách phải được đánh giá độc lập, không gộp chung. Nếu không đủ thông tin để xác định, hãy để null.
+
+                LƯU Ý: Chỉ trả về **hai danh sách JSON như trên**, không thêm giải thích, tiêu đề, mô tả hay bất kỳ nội dung nào khác.
+
+                📰 Nội dung bài báo cần phân tích:
+
+                \"\"\"
+
+                {article_text}
+
+                \"\"\"
+
+                Lưu ý tuân thủ theo format sau: 
+                [
+                    [
+                      dict_person_1,
+                      dict_person_2,
+                      ...
+                    ],
+                    dict_risk_info
+                ]
+
+        Mẫu đầu ra mẫu:
+        [
+            [
+                {{
+                "personal_id": "P001",
+                "full_name": "Trương Mỹ Lan",
+                "birth_year_or_age": null,
+                "gender": "Female",
+                "occupation_or_position": "Chủ tịch hội đồng quản trị",
+                "organization": "Tập đoàn Vạn Thịnh Phát",
+                "role_in_event": "Bị cáo chính trong vụ án Vạn Thịnh Phát",
+                "hometown_or_residence": null,
+                "personal_relationships": "Bị cáo chính trong vụ án Vạn Thịnh Phát; Cổ đông lớn, người nắm giữ gần tuyệt đối cổ phần Ngân hàng SCB; Người ra chỉ thị cho các bị cáo Đinh Văn Thành, Bùi Anh Dũng, Võ Tấn Hoàng Văn, Tạ Chiêu Trung, Trương Khánh Hoàng, Trần Thị Mỹ Dung"
+                }},
+                {{
+                "personal_id": "P002",
+                "full_name": "Huỳnh Thanh Duyên",
+                "birth_year_or_age": null,
+                "gender": "Female",
+                "occupation_or_position": "Thẩm phán chủ tọa",
+                "organization": "Tòa án nhân dân cấp cao tại TP.HCM",
+                "role_in_event": "Chủ tọa phiên tòa phúc thẩm vụ Vạn Thịnh Phát giai đoạn 1",
+                "hometown_or_residence": null,
+                "personal_relationships": "Chủ tọa phiên tòa phúc thẩm vụ Vạn Thịnh Phát giai đoạn 1"
+                }},
+                {{
+                "personal_id": "P003",
+                "full_name": "Phạm Công Mười",
+                "birth_year_or_age": null,
+                "gender": "Male",
+                "occupation_or_position": "Thẩm phán",
+                "organization": "Tòa án nhân dân cấp cao tại TP.HCM",
+                "role_in_event": "Thẩm phán trong hội đồng xét xử phúc thẩm vụ Vạn Thịnh Phát giai đoạn 1",
+                "hometown_or_residence": null,
+                "personal_relationships": "Thẩm phán trong hội đồng xét xử phúc thẩm vụ Vạn Thịnh Phát giai đoạn 1"
+                }},
+                {{
+                "personal_id": "O001",
+                "full_name": "Tập đoàn Vạn Thịnh Phát",
+                "birth_year_or_age": null,
+                "gender": null,
+                "occupation_or_position": null,
+                "organization": null,
+                "role_in_event": "Liên quan đến vụ án Trương Mỹ Lan",
+                "hometown_or_residence": null,
+                "personal_relationships": "Có Trương Mỹ Lan là chủ tịch hội đồng quản trị"
+                }},
+                {{
+                "personal_id": "O002",
+                "full_name": "Ngân hàng SCB",
+                "birth_year_or_age": null,
+                "gender": null,
+                "occupation_or_position": null,
+                "organization": null,
+                "role_in_event": "Liên quan đến vụ án Trương Mỹ Lan",
+                "hometown_or_residence": null,
+                "personal_relationships": "Có Trương Mỹ Lan là cổ đông lớn"
+                }}
+            ],
+            {{
+            "news_sentiment_type": "Negative",
+                "recency": "recent",
+                "source_credibility": "High",
+                "list_entities": [
+                {{
+                    "entity_id": "P001",
+                    "entity_name": "Trương Mỹ Lan",
+                    "is_individual": true,
+                    "violation_type": "Lừa đảo",
+                    "customer_role": "Chủ mưu",
+                    "legal_status": "Đã kết án",
+                    "source_level": "Other"
+                }},
+                {{
+                    "entity_id": "P002",
+                    "entity_name": "Huỳnh Thanh Duyên",
+                    "is_individual": true,
+                    "violation_type": "Không có hành vi phạm được đề cập",
+                    "customer_role": "Không có liên quan rõ ràng trong bài báo",
+                    "legal_status": "Tin chưa rõ ràng",
+                    "source_level": "Other"
+                }},
+                {{
+                    "entity_id": "P003",
+                    "entity_name": "Phạm Công Mười",
+                    "is_individual": true,
+                    "violation_type": "Không có hành vi phạm được đề cập",
+                    "customer_role": "Không có liên quan rõ ràng trong bài báo",
+                    "legal_status": "Tin chưa rõ ràng",
+                    "source_level": "Other"
+                }},
+                {{
+                    "entity_id": "O001",
+                    "entity_name": "Tập đoàn Vạn Thịnh Phát",
+                    "is_individual": false,
+                    "violation_type": "Lừa đảo",
+                    "customer_role": "Tham gia",
+                    "legal_status": "Đang trong quá trình điều tra",
+                    "source_level": "Other"
+                }},
+                {{
+                    "entity_id": "O002",
+                    "entity_name": "Ngân hàng SCB",
+                    "is_individual": false,
+                    "violation_type": "Lừa đảo",
+                    "customer_role": "Tham gia",
+                    "legal_status": "Đang trong quá trình điều tra",
+                    "source_level": "Other"
+                }}
+                ]
+            }}
+        ]
+        """        # Trả về prompt đã tạo
+        return prompt
+Use code with caution.
+Python
