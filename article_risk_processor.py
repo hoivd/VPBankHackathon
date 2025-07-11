@@ -19,10 +19,11 @@ class ArticleRiskProcessor:
 
     def extract_json_blocks(self, raw_text: str):
         json_blocks = re.findall(r"```json\s*\n(.*?)```", raw_text, re.DOTALL)
-        if len(json_blocks) >= 2:
+        if len(json_blocks) >= 1:
             try:
-                personal_info_json = json.loads(json_blocks[0])
-                risk_info_json = json.loads(json_blocks[1])
+                resp = json.loads(json_blocks[0])
+                personal_info_json = resp[0]
+                risk_info_json = resp[1]
             except json.JSONDecodeError as e:
                 raise ValueError(f"JSON decode error: {e}")
         else:
