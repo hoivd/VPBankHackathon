@@ -30,12 +30,13 @@ class ArticleRiskProcessor:
             raise ValueError("Không tìm thấy đủ hai khối JSON.")
         return personal_info_json, risk_info_json
 
-    def assign_unix_ids(self, risk_json: dict, personal_json: list[dict]):
+    def assign_unix_ids(self, risk_json: dict, personal_json: list[dict], article_text: str):
         unix_id = int(time.time() * 1000)
         customer2media = risk_json.get("list_customer", [])
         customer2media_copy = copy.deepcopy(customer2media)
         adverse_media = {k: v for k, v in risk_json.items() if k != "list_customer"}
         adverse_media["unix_id"] = f"media_{unix_id}"
+        adverse_media["context"] = article_text
 
         personal_id_to_per_unix = {}
         for item in customer2media_copy:
@@ -65,7 +66,7 @@ class ArticleRiskProcessor:
         logger.info("📦 Đang xử lý kết quả trích xuất...")
 
         personal_json, risk_json = self.extract_json_blocks(raw_response)
-        adverse_media, customer2media, updated_personal = self.assign_unix_ids(risk_json, personal_json)
+        adverse_media, customer2media, updated_personal = self.assign_unix_ids(risk_json, personal_json, article_text)
 
         logger.info("📝 Đang lưu vào MongoDB...")
         self.mongo_pusher.insert(col_person, updated_personal)

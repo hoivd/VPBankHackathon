@@ -75,7 +75,7 @@ if __name__ == "__main__":
     mongo_pusher = MongoPusher(mongo_uri=mongo_uri, db_name=db_name)
     processor = ArticleRiskProcessor(gemini_extractor=extractor, mongo_pusher=mongo_pusher)
 
-    context_file = 'data/contents_old.json'
+    context_file = 'data/case1.json'
     json = Utils.load_json(context_file)
     logger.info(f"Đã load {len(json)} bài báo từ file {context_file}")
 
