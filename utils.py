@@ -6,7 +6,7 @@ import config
 from dotenv import load_dotenv
 import os
 from S3.s3_fetcher import S3DataFetcher
-
+import time
 
 logger = _setup_logger(__name__, config.LOG_LEVEL)
 
@@ -166,3 +166,34 @@ class Utils:
         """
         fetcher = S3DataFetcher(region_name=region_name)
         return fetcher.read_file(bucket, key, file_type="text")
+
+    @staticmethod
+    def load_text(file_path: str, encoding: str = "utf-8") -> str:
+        """
+        Đọc file văn bản thuần (.txt) từ local và trả về nội dung dạng chuỗi.
+
+        Args:
+            file_path (str): Đường dẫn tới file .txt
+            encoding (str): Mã hóa (mặc định: "utf-8")
+
+        Returns:
+            str: Nội dung văn bản
+
+        Raises:
+            Exception: Nếu đọc file thất bại
+        """
+        try:
+            with open(file_path, 'r', encoding=encoding) as f:
+                content = f.read()
+                logger.debug(f"[load_text] ✅ Đã load file văn bản: {file_path}")
+                return content
+        except Exception as e:
+            logger.debug(f"[load_text] ❌ Lỗi khi đọc file văn bản: {e}")
+            raise Exception(e)
+
+    @staticmethod
+    def get_current_unix_time() -> str:
+        """
+        Lấy timestamp hiện tại theo định dạng YYYY-MM-DD_HH-MM-SS.
+        """
+        return int(time.time() * 1000)

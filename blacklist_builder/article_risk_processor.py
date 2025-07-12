@@ -23,17 +23,30 @@ class ArticleRiskProcessor:
         self.dynamo_pusher = dynamo_pusher
 
     def extract_json_blocks(self, raw_text: str):
-        json_blocks = re.findall(r"```json\s*\n(.*?)```", raw_text, re.DOTALL)
-        if len(json_blocks) >= 1:
+        # json_blocks = re.findall(r"```json\s*\n(.*?)```", raw_text, re.DOTALL)
+        # if len(json_blocks) >= 1:
+        #     try:
+        #         resp = json.loads(json_blocks[0])
+        #         personal_info_json = resp[0]
+        #         risk_info_json = resp[1]
+        #     except json.JSONDecodeError as e:
+        #         raise ValueError(f"JSON decode error: {e}")
+        # else:
+        #     raise ValueError("Không tìm thấy đủ hai khối JSON.")
+        # return personal_info_json, risk_info_json
+
+        json_blocks = json.loads(raw_text)
+        if len(json_blocks) < 3:
             try:
-                resp = json.loads(json_blocks[0])
+                resp = json.loads(json_blocks)
                 personal_info_json = resp[0]
-                risk_info_json = resp[1]
+                org_info_json = resp[1]
+                risk_info_json = resp[2]
             except json.JSONDecodeError as e:
                 raise ValueError(f"JSON decode error: {e}")
         else:
-            raise ValueError("Không tìm thấy đủ hai khối JSON.")
-        return personal_info_json, risk_info_json
+            raise ValueError("Không tìm thấy đủ ba khối.")
+        return personal_info_json, org_info_json, risk_info_json
 
     def assign_unix_ids(
         self,

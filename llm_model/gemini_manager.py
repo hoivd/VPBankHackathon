@@ -12,7 +12,7 @@ class GeminiModelManager(LlmModelManager):
     def get_model(self, model_name: str = None):
         return self.models.get(model=model_name or self.default_model_name)
 
-    def generate(self, prompt: str, model_name: str = None, thinking_budget: int = 0) -> str:
+    def generate(self, prompt: str, model_name: str = None, enable_thinking: bool = False, thinking_budget: int = 0) -> str:
         model = self.get_model(model_name)
         response = self.models.generate_content(
             model=model_name or self.default_model_name,
@@ -21,7 +21,7 @@ class GeminiModelManager(LlmModelManager):
             thinking_config=types.ThinkingConfig(thinking_budget=thinking_budget)  # 0 for no thinking, -1 for dynamic thinking
             )
         )
-        return response.text
+        return response.text, ""
 
 if __name__ == "__main__":
 

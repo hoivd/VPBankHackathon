@@ -3,6 +3,9 @@ import boto3
 import copy
 from botocore.exceptions import ClientError
 import config
+from logger import _setup_logger
+
+logger = _setup_logger(__name__, config.LOG_LEVEL)
 
 class DynamoPusher:
     def __init__(self, region_name: str):
@@ -36,13 +39,13 @@ class DynamoPusher:
         if partition_key not in item:
             generated_key = f"{partition_key}_{int(time.time() * 1000)}"
             item[partition_key] = generated_key
-            print(f"⚠️ Tự động thêm partition key '{partition_key}': {generated_key}")
+            logger.info(f"⚠️ Tự động thêm partition key '{partition_key}': {generated_key}")
 
         try:
             table.put_item(Item=item)
-            print(f"✅ Inserted item with {partition_key}: {item.get(partition_key)}")
+            logger.info(f"✅ Inserted item with {partition_key}: {item.get(partition_key)}")
         except ClientError as e:
-            print(f"❌ Error inserting item: {e.response['Error']['Message']}")
+            logger.info(f"❌ Error inserting item: {e.response['Error']['Message']}")
 
     def insert_many_dicts(self, table, data_list: list[dict], partition_key: str):
         for item in data_list:

@@ -10,239 +10,26 @@ logger = _setup_logger(__name__, config.LOG_LEVEL)
 
 
 class ArticlePersonExtractor:
-    def __init__(self, model_manager: LlmModelManager, custom_prompt_template: str = None):
+    def __init__(self, model_manager: LlmModelManager, prompt_template: str):
         # Thiết lập API key và mô hình
         self.model_manager = model_manager
-        self.custom_prompt_template = custom_prompt_template
+
+        self.extractor_prompt_template = prompt_template
 
     def _create_prompt(self, article_text: str) -> str:
-        # Nếu có prompt tùy chỉnh, sử dụng nó với placeholder {article_text}
-        if self.custom_prompt_template:
-            return self.custom_prompt_template.format(article_text=article_text)
-        # Ngược lại dùng prompt mặc định
-
-        prompt = f"""
-        🧭 BƯỚC 1: TRÍCH XUẤT THÔNG TIN CÁ NHÂN
-
-                Hãy đọc kỹ bài báo dưới đây và xác định tất cả các cá nhân được đề cập trong nội dung.
-
-                
-
-                Đối với mỗi cá nhân được nêu trong bài, hãy trích xuất đầy đủ các thông tin sau (nếu có):
-
-                
-
-                - ID định danh duy nhất cho người xuất hiện trong bài báo
-
-                - Họ và tên đầy đủ  
-
-                - Năm sinh hoặc tuổi  
-
-                - Giới tính  
-
-                - Nghề nghiệp hoặc chức vụ  
-
-                - Cơ quan hoặc tổ chức liên quan  
-
-                - Vai trò trong sự việc (ví dụ: bị cáo, người tố cáo, người đại diện, bị hại, nhân chứng, ...)  
-
-                - Quê quán hoặc nơi cư trú  
-
-                - Mối quan hệ cá nhân với các nhân vật khác trong bài báo (nếu có)
-
-                
-
-                📌 Đầu ra yêu cầu: Trả về dưới dạng danh sách JSON, trong đó mỗi phần tử là một đối tượng chứa thông tin của một cá nhân. Các key trong JSON phải viết bằng **tiếng Anh** theo mẫu sau:
-
-                
-
-                [
-
-                {{
-
-                    "personal_id": "...." 
-
-                    "full_name": "...",
-
-                    "birth_year_or_age": "...",
-
-                    "gender": "...",
-
-                    "occupation_or_position": "...",
-
-                    "organization": "...",
-
-                    "hometown_or_residence": "...",
-
-                    "personal_relationships": "..."
-
-                }},
-
-                ...
-
-                ]
-
-                
-
-                🧭 BƯỚC 2: PHÂN TÍCH ĐẶC TRƯNG RỦI RO THEO TỪNG CÁ NHÂN
-
-                
-
-                ✅ 1. news_sentiment_type (Bản chất của tin tức tổng thể)  
-
-                → Chỉ định cho toàn bài: "Negative", "Neutral", hoặc "Positive".
-
-                ✅ 2. recency (Thời gian xuất hiện bài báo so với thời gian hiện tại là 10 năm)
-
-                -> Chỉ định cho toàn bài: "recent", "old"
-
-                ✅ 3. source_credibility (Độ tin cậy của bài báo)
-
-                -> Chỉ định cho toàn bài: "High", "Medium" hoặc "Low"
-
-                
-
-                Dựa trên danh sách cá nhân được trích xuất ở Bước 1, hãy đánh giá **từng người** theo các đặc trưng rủi ro sau:
-
-                
-
-                ✅ 4. Đặc trưng rủi ro theo từng cá nhân (mỗi người là một phần tử trong danh sách):
-
-                    list_customer (key)
-
-                [
-
-                {{
-
-                    "personal_id": "..." ← Lưu ý personal_id phải trùng với personal_id của cá nhân ở bước 1 nếu hai cá nhân này trùng nhau
-
-                    "full_name": "...",  ← tên cá nhân khớp với Bước 1
-
-                    "role_in_case": "...",
-
-                    "customer_role_in_news": "...",       ← Subject / Related Party / Commentator
-
-                    "frequency": "..."                  ← once / repeated
-
-                    "event_severity_level": "...",        ← Very High / High / Medium / Low
-
-                    "event_status_outcome": "...",        ← Convicted / Fined / Investigated / Cleared / Unresolved
-        "high_risk_industry_link": false      ← true / false
-
-                }},
-
-                ...
-
-                ]
-
-                
-
-                📌 Lưu ý: Mỗi cá nhân trong danh sách phải được đánh giá độc lập, không gộp chung. Nếu không đủ thông tin để xác định, hãy để null.
-
-                LƯU Ý: Chỉ trả về **hai danh sách JSON như trên**, không thêm giải thích, tiêu đề, mô tả hay bất kỳ nội dung nào khác.
-
-                📰 Nội dung bài báo cần phân tích:
-
-                \"\"\"
-
-                {article_text}
-
-                \"\"\"
-
-                Lưu ý tuân thủ theo format sau: 
-                [
-                    [
-                      dict_person_1,
-                      dict_person_2,
-                      ...
-                    ],
-                    dict_risk_info
-                ]
-
-        Mẫu đầu ra mẫu:
-        [
-            [
-                {{
-                "personal_id": "P001",
-                "full_name": "Trương Mỹ Lan",
-                "birth_year_or_age": null,
-                "gender": "Female",
-                "occupation_or_position": "Chủ tịch hội đồng quản trị",
-                "organization": "Tập đoàn Vạn Thịnh Phát",
-                "hometown_or_residence": null,
-                "personal_relationships": "Bị cáo chính trong vụ án Vạn Thịnh Phát; Cổ đông lớn, người nắm giữ gần tuyệt đối cổ phần Ngân hàng SCB; Người ra chỉ thị cho các bị cáo Đinh Văn Thành, Bùi Anh Dũng, Võ Tấn Hoàng Văn, Tạ Chiêu Trung, Trương Khánh Hoàng, Trần Thị Mỹ Dung"
-                }},
-                {{
-                "personal_id": "P002",
-                "full_name": "Huỳnh Thanh Duyên",
-                "birth_year_or_age": null,
-                "gender": "Female",
-                "occupation_or_position": "Thẩm phán chủ tọa",
-                "organization": "Tòa án nhân dân cấp cao tại TP.HCM",
-                "hometown_or_residence": null,
-                "personal_relationships": "Chủ tọa phiên tòa phúc thẩm vụ Vạn Thịnh Phát giai đoạn 1"
-                }},
-                {{
-                "personal_id": "P003",
-                "full_name": "Phạm Công Mười",
-                "birth_year_or_age": null,
-                "gender": "Male",
-                "occupation_or_position": "Thẩm phán",
-                "organization": "Tòa án nhân dân cấp cao tại TP.HCM",
-                "hometown_or_residence": null,
-                "personal_relationships": "Thẩm phán trong hội đồng xét xử phúc thẩm vụ Vạn Thịnh Phát giai đoạn 1"
-                }}
-            ],
-            {{
-            "news_sentiment_type": "Negative",
-                "recency": "recent",
-                "source_credibility": "High",
-                "list_customer": [
-                {{
-                    "personal_id": "P001",
-                    "full_name": "Trương Mỹ Lan",
-                    "role_in_case": "Bị cáo",
-                    "customer_role_in_news": "Subject",
-                    "frequency": "repeated",
-                    "event_severity_level": "Very High",
-                    "event_status_outcome": "Convicted",
-                    "high_risk_industry_link": true
-                }},
-                {{
-                    "personal_id": "P002",
-                    "full_name": "Huỳnh Thanh Duyên",
-                    "role_in_case": "Thẩm phán chủ tọa",
-                    "customer_role_in_news": "Related Party",
-                    "frequency": "once",
-                    "event_severity_level": "Low",
-                    "event_status_outcome": "Unresolved",
-                    "high_risk_industry_link": false
-                }},
-                {{
-                    "personal_id": "P003",
-                    "full_name": "Phạm Công Mười",
-                    "role_in_case": "Thẩm phán",
-                    "customer_role_in_news": "Related Party",
-                    "frequency": "once",
-                    "event_severity_level": "Low",
-                    "event_status_outcome": "Unresolved",
-                    "high_risk_industry_link": false
-                }}
-                ]
-            }}
-        ]
-        """        # Trả về prompt đã tạo
+        prompt = self.extractor_prompt_template.format(article_text=article_text)
+        logger.debug(f"[create_prompt] Đã tạo prompt: {prompt}...")
         return prompt
 
     def extract_from_article(self, article_text: str) -> str:
         prompt = self._create_prompt(article_text)
         logger.debug("[extract_from_article] Prompt đã được tạo.")
         start = time.time()
-        response = self.model_manager.generate(prompt=prompt)
+        answer, thinking = self.model_manager.generate(prompt=prompt, enable_thinking=False)
         end = time.time()
         logger.info(f"[extract_from_article] Thời gian gọi mô hình: {end - start:.2f} giây")
         logger.debug("[extract_from_article] Phản hồi đã nhận từ mô hình Gemini.")
-        return response
+        return (answer, thinking)
 
     def extract_from_articles(self, article_list: list[str]) -> list[str | None]:
         results = []
@@ -272,7 +59,7 @@ if __name__ == "__main__":
     AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
     AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
     REGION = config.AWS_REGION
-    MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0"
+    MODEL_ID = "anthropic.claude-3-5-sonnet-20240620-v1:0"
 
     # Khởi tạo manager
     bedrock_manager = BedrockModelManager(
@@ -282,10 +69,15 @@ if __name__ == "__main__":
         default_model_id=MODEL_ID
     )
 
-    extractor = ArticlePersonExtractor(model_manager=bedrock_manager, custom_prompt_template=None)
+    extractor_prompt_file = config.PROMPT_EXTRACTOR_FILE
+    extractor_prompt = Utils.load_text(extractor_prompt_file)
+    logger.info(f"Đã tải prompt từ {extractor_prompt_file}")
+
+    extractor = ArticlePersonExtractor(model_manager=bedrock_manager, prompt_template=extractor_prompt)
     logger.info("Đã khởi tạo ArticlePersonExtractor")
 
     content_33 = json[0]
     logger.info(f"Đang xử lý bài báo thứ 33: {content_33}")
-    results = extractor.extract_from_article(content_33)
-    logger.info(f"Kết quả: {results}")
+
+    answer, thinking = extractor.extract_from_article(content_33)
+    logger.info(f"Kết quả: {answer}")
