@@ -4,7 +4,7 @@ Sử dụng cả hai thông tin bài báo và thông tin khách hàng để so s
 
 Dữ liệu đầu vào:
 
-1. Nội dung bài báo cũ và custom info tương ứng (media_id: P001)
+1. Nội dung bài báo cũ và custom info tương ứng
 
 Nội dung bài báo:
 
@@ -158,7 +158,7 @@ custom_info:
 
 
 
-2. Nội dung bài báo mới và custom info tương ứng (media_id: P002)
+2. Nội dung bài báo mới và custom info tương ứng
 
 Nội dung bài báo:
 
