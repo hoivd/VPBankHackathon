@@ -212,7 +212,7 @@ custom_info:
 
 
 
-Kết quả mong muốn:
+Kết quả mong muốn (chỉ trả về list json, không hiện ra thêm bất kỳ lời giải thích hoặc bổ sung):
 
 Một mảng JSON chứa các đối tượng, mỗi đối tượng có các trường: personal_id (từ dữ liệu mới), per_unix_id (từ dữ liệu cũ) và các trường thông tin cá nhân được tổng hợp từ cả hai nguồn (full_name, birth_year_or_age, gender, occupation_or_position, organization, hometown_or_residence, personal_relationships).
 
