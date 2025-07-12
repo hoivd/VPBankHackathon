@@ -18,7 +18,7 @@ async def main():
         "command": "npx",
         "args": ["-y", "mongodb-mcp-server"],
         "env": {
-            "MDB_MCP_CONNECTION_STRING": "mongodb+srv://hoivd:vinhhoi@cluster0.amxct9l.mongodb.net/"
+            "MDB_MCP_CONNECTION_STRING": os.getenv("MDB_MCP_CONNECTION_STRING")
         }
         },
         "dynamodb": {
