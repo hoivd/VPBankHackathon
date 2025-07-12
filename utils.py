@@ -5,6 +5,7 @@ import pandas as pd
 import config
 from dotenv import load_dotenv
 import os
+from S3.s3_fetcher import S3DataFetcher
 
 
 logger = _setup_logger(__name__, config.LOG_LEVEL)
@@ -117,3 +118,51 @@ class Utils:
         except Exception as e:
             logger.debug(f"[save_json] ❌ Lỗi khi ghi JSON: {e}")
             raise Exception(e)
+
+    @staticmethod
+    def fetch_json_from_s3(bucket: str, key: str, region_name: str = "ap-southeast-1") -> Union[Dict, List]:
+        """
+        Tải và parse file JSON từ S3.
+
+        Args:
+            bucket (str): Tên bucket S3
+            key (str): Đường dẫn tới file JSON
+            region_name (str): Vùng AWS (default: ap-southeast-1)
+
+        Returns:
+            dict hoặc list: Nội dung JSON
+        """
+        fetcher = S3DataFetcher(region_name=region_name)
+        return fetcher.read_file(bucket, key, file_type="json")
+
+    @staticmethod
+    def fetch_csv_from_s3(bucket: str, key: str, region_name: str = "ap-southeast-1") -> pd.DataFrame:
+        """
+        Tải file CSV từ S3 và trả về dưới dạng DataFrame.
+
+        Args:
+            bucket (str): Tên bucket S3
+            key (str): Đường dẫn tới file CSV
+            region_name (str): Vùng AWS (default: ap-southeast-1)
+
+        Returns:
+            pd.DataFrame: Dữ liệu CSV
+        """
+        fetcher = S3DataFetcher(region_name=region_name)
+        return fetcher.read_file(bucket, key, file_type="csv")
+
+    @staticmethod
+    def fetch_text_from_s3(bucket: str, key: str, region_name: str = "ap-southeast-1") -> str:
+        """
+        Tải file văn bản thường từ S3.
+
+        Args:
+            bucket (str): Tên bucket S3
+            key (str): Đường dẫn tới file văn bản
+            region_name (str): Vùng AWS (default: ap-southeast-1)
+
+        Returns:
+            str: Nội dung file dạng text
+        """
+        fetcher = S3DataFetcher(region_name=region_name)
+        return fetcher.read_file(bucket, key, file_type="text")

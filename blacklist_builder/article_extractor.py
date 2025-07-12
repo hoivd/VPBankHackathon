@@ -1,19 +1,18 @@
-from google import genai
-from google.genai import types
 from utils import Utils
 from logger import _setup_logger
 import config
 import time
+from llm_model.model_manager import LlmModelManager
+from llm_model.gemini_manager import GeminiModelManager
+from llm_model.bedrock_manager import BedrockModelManager
 
 logger = _setup_logger(__name__, config.LOG_LEVEL)
 
 
 class ArticlePersonExtractor:
-    def __init__(self, api_key: str, model_name: str = "gemini-2.5-flash", custom_prompt_template: str = None):
+    def __init__(self, model_manager: LlmModelManager, custom_prompt_template: str = None):
         # Thiết lập API key và mô hình
-        self.client = genai.Client(api_key=api_key)
-        self.model = self.client.models
-        self.model_name = model_name
+        self.model_manager = model_manager
         self.custom_prompt_template = custom_prompt_template
 
     def _create_prompt(self, article_text: str) -> str:
@@ -24,8 +23,6 @@ class ArticlePersonExtractor:
 
         prompt = f"""
         🧭 BƯỚC 1: TRÍCH XUẤT THÔNG TIN CÁ NHÂN
-
-                
 
                 Hãy đọc kỹ bài báo dưới đây và xác định tất cả các cá nhân được đề cập trong nội dung.
 
@@ -241,21 +238,11 @@ class ArticlePersonExtractor:
         prompt = self._create_prompt(article_text)
         logger.debug("[extract_from_article] Prompt đã được tạo.")
         start = time.time()
-        response = self.model.generate_content(
-            model=self.model_name,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-            thinking_config=types.ThinkingConfig(thinking_budget=0)
-            # Turn off thinking:
-            # thinking_config=types.ThinkingConfig(thinking_budget=0)
-            # Turn on dynamic thinking:
-            # thinking_config=types.ThinkingConfig(thinking_budget=-1)
-            ),
-        )
+        response = self.model_manager.generate(prompt=prompt)
         end = time.time()
         logger.info(f"[extract_from_article] Thời gian gọi mô hình: {end - start:.2f} giây")
         logger.debug("[extract_from_article] Phản hồi đã nhận từ mô hình Gemini.")
-        return response.text
+        return response
 
     def extract_from_articles(self, article_list: list[str]) -> list[str | None]:
         results = []
@@ -271,16 +258,34 @@ class ArticlePersonExtractor:
     
 if __name__ == "__main__":
     context_file = 'data/contents_old.json'
-    json = Utils.load_json(context_file)
+    bucket_name = "team253"
+    key = "adverse_media_data/case1.json"
+
+    json = Utils.fetch_json_from_s3(bucket_name, key)
     logger.info(f"Đã load {len(json)} bài báo từ file {context_file}")
 
     api_key = Utils.load_api_key_from_env("GEMINI_API_KEY")
     logger.info(f"Đã tải API key từ biến môi trường {api_key}")
 
-    extractor = ArticlePersonExtractor(api_key=api_key, custom_prompt_template=None)
+    gemini_manager = GeminiModelManager(api_key=api_key, default_model_name="gemini-2.5-flash")
+    
+    AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
+    AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
+    REGION = config.AWS_REGION
+    MODEL_ID = "anthropic.claude-3-haiku-20240307-v1:0"
+
+    # Khởi tạo manager
+    bedrock_manager = BedrockModelManager(
+        aws_access_key_id=AWS_ACCESS_KEY,
+        aws_secret_access_key=AWS_SECRET_KEY,
+        region_name=REGION,
+        default_model_id=MODEL_ID
+    )
+
+    extractor = ArticlePersonExtractor(model_manager=bedrock_manager, custom_prompt_template=None)
     logger.info("Đã khởi tạo ArticlePersonExtractor")
 
-    content_33 = json[33]
+    content_33 = json[0]
     logger.info(f"Đang xử lý bài báo thứ 33: {content_33}")
     results = extractor.extract_from_article(content_33)
     logger.info(f"Kết quả: {results}")
