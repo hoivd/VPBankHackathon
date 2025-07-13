@@ -1,33 +1,40 @@
-📦 Project Title
+# 📦 INTELLIGENT RISK ANALYZER FOR AML CASE REVIEW
 
-Mô tả ngắn gọn về dự án. Ví dụ:
-Pipeline xử lý dữ liệu, phân tích thông tin nguy cơ từ bài báo, sử dụng Python, MongoDB, AWS Bedrock.
+B1: Xây dựng Blacklist
+B2: Xây dựng Agent Matching Blacklist
+B3: Huấn luyện mô hình chấm điểm risk aml
+B4: Inference
 
-📁 Cấu trúc thư mục
+---
 
+## 📁 Cấu trúc thư mục
+
+```bash
 .
 ├── requirements.txt
 ├── README.md
-├── main.py
 ├── config.py
 ├── utils/
 ├── dynamodb/
 ├── mongodb/
 ├── llm_model/
 ├── blacklist_builder/
+    ├── builder
+```
 
-🛠️ Yêu cầu hệ thống
+---
 
-Python 3.10 hoặc mới hơn
+## 🛠️ Yêu cầu hệ thống
 
-pip
+* Python 3.13 hoặc mới hơn
+* pip
+* `virtualenv` (tùy chọn nhưng khuyên dùng)
 
-virtualenv (tùy chọn nhưng khuyên dùng)
+---
 
-AWS credentials (nếu dùng Bedrock hoặc DynamoDB)
+## 🧪 Thiết lập môi trường ảo
 
-🧪 Thiết lập môi trường ảo
-
+```bash
 # Tạo môi trường ảo
 python -m venv venv
 
@@ -36,44 +43,47 @@ python -m venv venv
 venv\Scripts\activate
 # macOS/Linux:
 source venv/bin/activate
+```
 
-📥 Cài đặt thư viện
+---
 
+## 📥 Cài đặt thư viện
+
+```bash
 pip install -r requirements.txt
+```
 
-Nếu chưa có file requirements.txt, có thể tạo bằng:
 
-pip freeze > requirements.txt
+## ⚙️ Thiết lập biến môi trường (tuỳ chọn)
 
-⚙️ Thiết lập biến môi trường (tuỳ chọn)
+Tạo file `.env` hoặc xuất thủ công:
 
-Tạo file .env hoặc xuất thủ công:
+```bash
+AWS_ACCESS_KEY_ID=your_key
+AWS_SECRET_ACCESS_KEY=your_secret
+```
 
-export AWS_ACCESS_KEY_ID=your_key
-export AWS_SECRET_ACCESS_KEY=your_secret
-export AWS_REGION=ap-southeast-1
+---
 
-🚀 Chạy dự án
+## 🚀 Chạy tạo blacklist
 
-python main.py
+```bash
+python -m blacklist_builder.multiarticle_risk_processor
+```
 
 Hoặc chạy module cụ thể:
 
+```bash
 python -m llm_model.bedrock_manager
+```
 
-🧪 Test nhanh chức năng
+---
 
-Tạo file test:
 
-from llm_model.bedrock_manager import BedrockModelManager
+## 📌 Ghi chú
 
-bm = BedrockModelManager()
-result = bm.generate("Xin chào!")
-print(result)
+* Đảm bảo thiết lập env AWS credential trước khi gọi Bedrock/DynamoDB
 
-📌 Ghi chú
+---
 
-Đảm bảo thiết lập AWS credentials trước khi gọi Bedrock/DynamoDB
-
-Nếu gặp lỗi JSON, kiểm tra encoding hoặc trường thiếu trong dữ liệu
 
