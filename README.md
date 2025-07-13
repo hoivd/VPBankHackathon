@@ -1,5 +1,5 @@
 # 📦 INTELLIGENT RISK ANALYZER FOR AML CASE REVIEW
-
+```bash
 B1: Xây dựng Blacklist
 B2: Xây dựng Agent Matching Blacklist
 B3: Huấn luyện mô hình chấm điểm risk aml
