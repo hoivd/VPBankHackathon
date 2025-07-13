@@ -1,0 +1,57 @@
+[
+    {
+      "org_id": "org_id_1752384078640468",
+      "organization": null,
+      "created_at": 1752384078640466.0,
+      "full_name": "Ủy ban Pháp luật và Tư pháp của Quốc hội",
+      "occupation_or_position": "Cơ quan quản lý pháp luật",
+      "hometown_or_residence": null,
+      "gender": null,
+      "personal_relationships": null,
+      "birth_year_or_age": null
+    },
+    {
+      "org_id": "org_id_1752384078640473",
+      "organization": null,
+      "created_at": 1752384078640466.0,
+      "full_name": "Tòa án nhân dân cấp cao tại TP.HCM",
+      "occupation_or_position": "Cơ quan xét xử",
+      "hometown_or_residence": null,
+      "gender": null,
+      "personal_relationships": null,
+      "birth_year_or_age": null
+    },
+    {
+      "org_id": "org_id_1752384078640476",
+      "organization": null,
+      "created_at": 1752384078640466.0,
+      "full_name": "TAND tối cao",
+      "occupation_or_position": "Cơ quan tư pháp tối cao",
+      "hometown_or_residence": null,
+      "gender": null,
+      "personal_relationships": null,
+      "birth_year_or_age": null
+    },
+    {
+      "org_id": "org_id_1752384078640471",
+      "organization": null,
+      "created_at": 1752384078640466.0,
+      "full_name": "Tập đoàn Vạn Thịnh Phát",
+      "occupation_or_position": null,
+      "hometown_or_residence": null,
+      "gender": null,
+      "personal_relationships": "Có Trương Mỹ Lan là Chủ tịch",
+      "birth_year_or_age": null
+    },
+    {
+      "org_id": "org_id_1752384078640474",
+      "organization": null,
+      "created_at": 1752384078640466.0,
+      "full_name": "Quốc hội",
+      "occupation_or_position": "Cơ quan lập pháp",
+      "hometown_or_residence": null,
+      "gender": null,
+      "personal_relationships": null,
+      "birth_year_or_age": null
+    }
+  ]

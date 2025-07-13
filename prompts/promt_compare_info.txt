@@ -55,7 +55,7 @@ Mẫu đầu ra mẫu:
 ```json
 [
     [
-        {
+        {{
             "personal_id": "2",
             "per_id": "user_1752230968010",
             "full_name": "Trương Mỹ Lan",
@@ -65,10 +65,10 @@ Mẫu đầu ra mẫu:
             "organization": "Tập đoàn Vạn Thịnh Phát",
             "hometown_or_residence": "TP Hồ Chí Minh",
             "personal_relationships": null
-        }
+        }}
     ],
     [
-        {
+        {{
             "organizer_id": "O001",
             "org_id": "org_id_1752384078640471",
             "full_name": "Tập đoàn Vạn Thịnh Phát",
@@ -78,6 +78,6 @@ Mẫu đầu ra mẫu:
             "organization": null,
             "hometown_or_residence": null,
             "personal_relationships": "Có Trương Mỹ Lan là Chủ tịch"
-        }
+        }}
     ]
 ]

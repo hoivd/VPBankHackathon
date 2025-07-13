@@ -1,25 +1,46 @@
 import logging
 from blacklist_builder.article_risk_processor import ArticleRiskProcessor
-from mongodb.mongo_pusher import MongoPusher
 from logger import _setup_logger
 import config
 from utils import Utils
 from blacklist_builder.article_extractor import ArticlePersonExtractor
 import time
+from llm_model.bedrock_manager import BedrockModelManager
+from dynamodb.dynamo_table_checker import DynamoDBTableChecker
+from dynamodb.base_dynamo import BaseDynamoDB
+from dynamodb.media_service import MediaService
+from dynamodb.dynamo_query import DynamoQuery
+from dynamodb.table_personal2media import TablePersonal2Media
+from dynamodb.table_personal_info import TablePersonalInfo
+from dynamodb.table_org2media import TableOrg2Media
+from dynamodb.table_org_info import TableOrganizationInfo
+from blacklist_builder.article_risk_matching_extractor import ArticleRiskMatchingExtractor
+
 
 logger = _setup_logger(__name__, config.LOG_LEVEL)
 
 class ArticleBatchRunner:
-    def __init__(self, article_risk_processor, mongo_pusher):
+    def __init__(self, new_article_processor, rebuild_article_processor, base_dynamo):
         """
         Args:
             article_risk_processor (ArticleRiskProcessor): bộ xử lý từng bài báo
-            mongo_pusher (MongoPusher): đối tượng thao tác với MongoDB
         """
-        self.processor = article_risk_processor
-        self.mongo_pusher = mongo_pusher
+        self.new_processor = new_article_processor
+        self.rebuild_processor = rebuild_article_processor
+        self.base_dynamo = base_dynamo
+        self.dynamo_checker = DynamoDBTableChecker(dynamodb=self.base_dynamo.dynamodb)
 
-    def run_from_list(self, article_list: list[str], col_person: str, col_c2m: str, col_media: str):
+    def is_per_and_org_empty(self) -> bool:
+        person_empty = self.dynamo_checker.is_table_empty("personal_info")
+        org_empty = self.dynamo_checker.is_table_empty("organization_info")
+        if person_empty == False or org_empty == False:
+            logger.info("✅ Bảng 'personal_info' và 'organization_info' đều có dữ liệu.")
+            return False
+        elif person_empty == True and org_empty == True:
+            logger.info("✅ Bảng 'personal_info' và 'organization_info' đều trống.")
+            return True
+
+    def run_from_list(self, article_list: list[str], table_config: dict):
         logger.info(f"[ArticleBatchRunner] Bắt đầu xử lý {len(article_list)} bài báo...")
         success = 0
         failure = 0
@@ -28,12 +49,21 @@ class ArticleBatchRunner:
             logger.info(f"[Batch] 🔎 Bài báo {idx + 1}/{len(article_list)}")
             try:
                 start = time.time()
-                self.processor.process_article(
-                    article_text=article,
-                    col_person=col_person,
-                    col_c2m=col_c2m,
-                    col_media=col_media
-                )
+                if self.is_per_and_org_empty():
+                    logger.info("Bảng 'personal_info' hoặc 'organization_info' chưa có dữ liệu, Tiến hành trích xuất xử lý bài báo mới.")
+                    logger.info("Tiến hành trích xuất thông tin và insert vào DynamoDB...")
+                    self.new_processor.process_article(
+                        article_text=article,
+                        table_config=table_config
+                    )
+                else:
+                    logger.info("Bảng 'personal_info' hoặc 'organization_info' đã có dữ liệu, Tiến hành so sánh ghép nối với bài báo cũ.")
+                    self.rebuild_processor.process_article(
+                        article_text=article,
+                        table_config=table_config
+                    )
+                    
+                    logger.info("Tiến hành so sánh với bài báo cũ và cập nhật vào DynamoDB...")
                 success += 1
                 end = time.time()
                 logger.info(f"[Batch] ✅ Bài báo {idx + 1} xử lý thành công! Thời gian: {end - start:.2f} giây")
@@ -45,53 +75,85 @@ class ArticleBatchRunner:
 
         logger.info(f"[ArticleBatchRunner] ✅ Hoàn tất: {success} thành công, {failure} lỗi.")
 
-    def run_from_jsonl(self, file_path: str, text_key: str, col_person: str, col_c2m: str, col_media: str):
+    def run_from_jsonl(self, file_path: str, text_key: str, table_config: dict):
         """
         Đọc nhiều bài báo từ file .jsonl, mỗi dòng chứa bài báo dạng dict (có key chứa nội dung)
 
         Args:
             file_path (str): đường dẫn file .jsonl
             text_key (str): tên key chứa bài báo trong mỗi dòng json
+            table_config (dict): thông tin cấu hình bảng DynamoDB
         """
         from utils import Utils
         data = Utils.load_jsonl(file_path)
         articles = [item[text_key] for item in data if text_key in item]
-        self.run_from_list(articles, col_person, col_c2m, col_media)
+        self.run_from_list(articles, table_config=table_config)
 
 if __name__ == "__main__":
-    # 1. Tạo các đối tượng
-    mongo_uri = Utils.load_api_key_from_env("MONGO_URI")
-    gemini_api = Utils.load_api_key_from_env("GEMINI_API_KEY")
-    logger.info(f'''Đã tải API key từ biến môi trường: 
-                    - Gemini API: {gemini_api}
-                    - Mongo URI: {mongo_uri}''')
+    AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
+    AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
+    REGION_MODEL = config.AWS_VIRGINA_REGION
+    REGION = config.AWS_REGION
 
-    db_name = 'blacklist'
-    customer_collection = 'customer_info'
-    cust2media_collection = 'customer2media'
-    media_collection = 'adverse_media'
+    base_dynamo = BaseDynamoDB(
+        region_name=REGION,
+        access_key=AWS_ACCESS_KEY,
+        secret_key=AWS_SECRET_KEY
+    )
+    
+    MODEL_ID = "arn:aws:bedrock:us-east-1:048013208071:inference-profile/us.deepseek.r1-v1:0"
 
-    extractor = ArticlePersonExtractor(api_key=gemini_api)
-    mongo_pusher = MongoPusher(mongo_uri=mongo_uri, db_name=db_name)
-    processor = ArticleRiskProcessor(gemini_extractor=extractor, mongo_pusher=mongo_pusher)
+    # Khởi tạo manager
+    bedrock_manager = BedrockModelManager(
+        aws_access_key_id=AWS_ACCESS_KEY,
+        aws_secret_access_key=AWS_SECRET_KEY,
+        region_name=REGION_MODEL,
+        default_model_id=MODEL_ID
+    )
 
-    context_file = 'data/case1.json'
-    json = Utils.load_json(context_file)
-    logger.info(f"Đã load {len(json)} bài báo từ file {context_file}")
+    extractor_prompt_file = config.PROMPT_EXTRACTOR_FILE
+    extractor_prompt = Utils.load_text(extractor_prompt_file)
+    logger.info(f"Đã tải prompt từ {extractor_prompt_file}")
 
-    # 2. Tạo batch runner
-    batch_runner = ArticleBatchRunner(article_risk_processor=processor, mongo_pusher=mongo_pusher)
+    extractor = ArticlePersonExtractor(model_manager=bedrock_manager, prompt_template=extractor_prompt)
+    logger.info("Đã khởi tạo ArticlePersonExtractor")
+
+    new_processor = ArticleRiskProcessor(
+        info_extractor=extractor,
+        base_dynamo=base_dynamo.dynamodb
+    )
 
 
-    # 3. Chạy từ danh sách bài báo
-    batch_runner.run_from_list(article_list=json, 
-                            col_person=customer_collection, 
-                            col_c2m=cust2media_collection, 
-                            col_media=media_collection)
+    extractor_prompt_file = config.PROMPT_EXTRACTOR_FILE
+    extractor_prompt = Utils.load_text(extractor_prompt_file)
+    logger.info(f"Đã tải prompt từ {extractor_prompt_file}")
 
-    # # 4. Hoặc chạy từ file .jsonl
-    # batch_runner.run_from_jsonl(file_path="data/articles.jsonl", 
-    #                             text_key="content", 
-    #                             col_person="personal_info", 
-    #                             col_c2m="customer2media", 
-    #                             col_media="adverse_media")
+    extractor = ArticlePersonExtractor(model_manager=bedrock_manager, prompt_template=extractor_prompt)
+    logger.info("Đã khởi tạo ArticlePersonExtractor")
+
+    compare_prompt_file = config.PROMPT_COMPARE_INFO_FILE
+    compare_prompt = Utils.load_text(compare_prompt_file)
+    logger.info(f"Đã tải prompt từ {compare_prompt_file}")
+
+    rebuild_processor = ArticleRiskMatchingExtractor(
+        info_extractor=extractor,
+        base_dynamo=base_dynamo.dynamodb,
+        llm_manager=bedrock_manager,
+        compare_prompt_template=compare_prompt
+    )
+
+    table_config = config.TABLE_CONFIG
+
+    batch_runner = ArticleBatchRunner(new_article_processor=new_processor, rebuild_article_processor=rebuild_processor, base_dynamo=base_dynamo)
+
+    context_file = 'data/contents_old.json'
+    bucket_name = "team253"
+    key = "adverse_media_data/case1.json"
+
+    contents = Utils.fetch_json_from_s3(bucket_name, key)
+    logger.info(f"Đã load {len(contents)} bài báo từ file {context_file}")
+
+    batch_runner.run_from_list(
+        article_list=contents,
+        table_config=table_config
+    )

@@ -25,7 +25,7 @@ class ArticlePersonExtractor:
         prompt = self._create_prompt(article_text)
         logger.debug("[extract_from_article] Prompt đã được tạo.")
         start = time.time()
-        answer, thinking = self.model_manager.generate(prompt=prompt, enable_thinking=False)
+        answer, thinking = self.model_manager.generate_deepseek(prompt=prompt)
         end = time.time()
         logger.info(f"[extract_from_article] Thời gian gọi mô hình: {end - start:.2f} giây")
         logger.debug("[extract_from_article] Phản hồi đã nhận từ mô hình Gemini.")
@@ -58,8 +58,8 @@ if __name__ == "__main__":
     
     AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
     AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
-    REGION = config.AWS_REGION
-    MODEL_ID = "anthropic.claude-3-5-sonnet-20240620-v1:0"
+    REGION = 'ap-southeast-1'
+    MODEL_ID = "arn:aws:bedrock:ap-southeast-1:048013208071:inference-profile/apac.anthropic.claude-3-7-sonnet-20250219-v1:0"
 
     # Khởi tạo manager
     bedrock_manager = BedrockModelManager(
@@ -81,3 +81,5 @@ if __name__ == "__main__":
 
     answer, thinking = extractor.extract_from_article(content_33)
     logger.info(f"Kết quả: {answer}")
+
+    

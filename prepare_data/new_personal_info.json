@@ -1,0 +1,142 @@
+[
+    {
+      "personal_id": "P001",
+      "full_name": "Trương Mỹ Lan",
+      "birth_year_or_age": null,
+      "gender": "Female",
+      "occupation_or_position": "Chủ tịch hội đồng quản trị",
+      "organization": "Tập đoàn Vạn Thịnh Phát",
+      "hometown_or_residence": null,
+      "personal_relationships": "Bị cáo chính; Cổ đông lớn Ngân hàng SCB; Chỉ đạo các bị cáo Đinh Văn Thành, Bùi Anh Dũng, Võ Tấn Hoàng Văn, Tạ Chiêu Trung, Trương Khánh Hoàng, Trần Thị Mỹ Dung"
+    },
+    {
+      "personal_id": "P002",
+      "full_name": "Đinh Văn Thành",
+      "birth_year_or_age": null,
+      "gender": "Male",
+      "occupation_or_position": null,
+      "organization": null,
+      "hometown_or_residence": null,
+      "personal_relationships": "Đồng phạm của Trương Mỹ Lan"
+    },
+    {
+      "personal_id": "P003",
+      "full_name": "Bùi Anh Dũng",
+      "birth_year_or_age": null,
+      "gender": "Male",
+      "occupation_or_position": null,
+      "organization": null,
+      "hometown_or_residence": null,
+      "personal_relationships": "Đồng phạm của Trương Mỹ Lan"
+    },
+    {
+      "personal_id": "P004",
+      "full_name": "Võ Tấn Hoàng Văn",
+      "birth_year_or_age": null,
+      "gender": "Male",
+      "occupation_or_position": null,
+      "organization": null,
+      "hometown_or_residence": null,
+      "personal_relationships": "Đồng phạm của Trương Mỹ Lan"
+    },
+    {
+      "personal_id": "P005",
+      "full_name": "Tạ Chiêu Trung",
+      "birth_year_or_age": null,
+      "gender": "Male",
+      "occupation_or_position": null,
+      "organization": null,
+      "hometown_or_residence": null,
+      "personal_relationships": "Đồng phạm của Trương Mỹ Lan"
+    },
+    {
+      "personal_id": "P006",
+      "full_name": "Trương Khánh Hoàng",
+      "birth_year_or_age": null,
+      "gender": "Male",
+      "occupation_or_position": null,
+      "organization": null,
+      "hometown_or_residence": null,
+      "personal_relationships": "Đồng phạm của Trương Mỹ Lan"
+    },
+    {
+      "personal_id": "P007",
+      "full_name": "Trần Thị Mỹ Dung",
+      "birth_year_or_age": null,
+      "gender": "Female",
+      "occupation_or_position": null,
+      "organization": null,
+      "hometown_or_residence": null,
+      "personal_relationships": "Đồng phạm của Trương Mỹ Lan"
+    },
+    {
+      "personal_id": "P008",
+      "full_name": "Huỳnh Thanh Duyên",
+      "birth_year_or_age": null,
+      "gender": "Female",
+      "occupation_or_position": "Thẩm phán chủ tọa",
+      "organization": "Tòa án nhân dân cấp cao tại TP.HCM",
+      "hometown_or_residence": null,
+      "personal_relationships": "Chủ tọa phiên tòa phúc thẩm"
+    },
+    {
+      "personal_id": "P009",
+      "full_name": "Phạm Công Mười",
+      "birth_year_or_age": null,
+      "gender": "Male",
+      "occupation_or_position": "Thẩm phán",
+      "organization": "Tòa án nhân dân cấp cao tại TP.HCM",
+      "hometown_or_residence": null,
+      "personal_relationships": "Thành viên hội đồng xét xử"
+    },
+    {
+      "personal_id": "P010",
+      "full_name": "Lê Thành Long",
+      "birth_year_or_age": null,
+      "gender": "Male",
+      "occupation_or_position": "Thẩm phán",
+      "organization": "Tòa án nhân dân cấp cao tại TP.HCM",
+      "hometown_or_residence": null,
+      "personal_relationships": "Thành viên hội đồng xét xử"
+    },
+    {
+      "personal_id": "P011",
+      "full_name": "Võ Phong Lưu",
+      "birth_year_or_age": null,
+      "gender": "Male",
+      "occupation_or_position": "Kiểm sát viên",
+      "organization": "Viện Kiểm sát nhân dân cấp cao tại TP.HCM",
+      "hometown_or_residence": null,
+      "personal_relationships": "Tham gia phiên tòa"
+    },
+    {
+      "personal_id": "P012",
+      "full_name": "Đặng Quốc Việt",
+      "birth_year_or_age": null,
+      "gender": "Male",
+      "occupation_or_position": "Kiểm sát viên",
+      "organization": "Viện Kiểm sát nhân dân cấp cao tại TP.HCM",
+      "hometown_or_residence": null,
+      "personal_relationships": "Tham gia phiên tòa"
+    },
+    {
+      "personal_id": "P013",
+      "full_name": "Đỗ Phước Trung",
+      "birth_year_or_age": null,
+      "gender": "Male",
+      "occupation_or_position": "Kiểm sát viên",
+      "organization": "Viện Kiểm sát nhân dân cấp cao tại TP.HCM",
+      "hometown_or_residence": null,
+      "personal_relationships": "Tham gia phiên tòa"
+    },
+    {
+      "personal_id": "P014",
+      "full_name": "Nguyễn Sơn Hoa",
+      "birth_year_or_age": null,
+      "gender": "Male",
+      "occupation_or_position": null,
+      "organization": "Công ty CP Quốc Cường Gia Lai",
+      "hometown_or_residence": null,
+      "personal_relationships": "Người có quyền lợi, nghĩa vụ liên quan"
+    }
+  ]

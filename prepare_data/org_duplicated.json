@@ -1,0 +1,24 @@
+[
+    {
+        "organizer_id": "O001",
+        "org_id": "org_id_1752384078640471",
+        "full_name": "Tập đoàn Vạn Thịnh Phát",
+        "birth_year_or_age": null,
+        "gender": null,
+        "occupation_or_position": null,
+        "organization": null,
+        "hometown_or_residence": null,
+        "personal_relationships": "Có Trương Mỹ Lan là Chủ tịch"
+    },
+    {
+        "organizer_id": "O006",
+        "org_id": "org_id_1752384078640473",
+        "full_name": "Tòa án nhân dân cấp cao tại TP.HCM",
+        "birth_year_or_age": null,
+        "gender": null,
+        "occupation_or_position": "Cơ quan xét xử",
+        "organization": null,
+        "hometown_or_residence": null,
+        "personal_relationships": null
+    }
+]

@@ -7,6 +7,8 @@ from dotenv import load_dotenv
 import os
 from S3.s3_fetcher import S3DataFetcher
 import time
+from decimal import Decimal
+from datetime import datetime, date
 
 logger = _setup_logger(__name__, config.LOG_LEVEL)
 
@@ -196,4 +198,49 @@ class Utils:
         """
         Lấy timestamp hiện tại theo định dạng YYYY-MM-DD_HH-MM-SS.
         """
-        return int(time.time() * 1000)
+        return int(time.time() * 1000000)
+    
+    @staticmethod
+    def print_available_def(c) -> None:
+        """
+        In ra danh sách các method (function) có thể gọi được từ class hoặc instance.
+        """
+        for attr in dir(c):
+            if callable(getattr(c, attr)) and not attr.startswith("__"):
+                print(f"Method: {attr}")
+
+
+    @staticmethod
+    def json_to_str(data: dict | list, indent: int = 2) -> str:
+        """
+        Chuyển đổi object JSON (dict hoặc list) thành chuỗi JSON string.
+        Tự động xử lý các kiểu không hỗ trợ như Decimal, datetime.
+        """
+        def default_serializer(obj):
+            if isinstance(obj, (datetime, date)):
+                return obj.isoformat()
+            if isinstance(obj, Decimal):
+                return float(obj)
+            return str(obj)
+
+        try:
+            return json.dumps(data, ensure_ascii=False, indent=indent, default=default_serializer)
+        except Exception as e:
+            return f"❌ Lỗi khi chuyển đổi JSON sang string: {e}"
+        
+    @staticmethod
+    def json_str_to_dict(json_string: str):
+        """
+        Làm sạch chuỗi JSON (loại bỏ markdown ```json) và parse thành dict/list.
+        """
+        try:
+            cleaned = json_string.strip()
+            # Loại bỏ markdown nếu có
+            if cleaned.startswith("```json"):
+                cleaned = cleaned.removeprefix("```json").strip()
+            if cleaned.endswith("```"):
+                cleaned = cleaned.removesuffix("```").strip()
+            return json.loads(cleaned)
+        except json.JSONDecodeError as e:
+            print(f"❌ Lỗi khi parse JSON: {e}")
+            return None

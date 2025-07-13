@@ -4,15 +4,14 @@ import copy
 from botocore.exceptions import ClientError
 import config
 from logger import _setup_logger
+from utils import Utils
+from dynamodb.base_dynamo import BaseDynamoDB
 
 logger = _setup_logger(__name__, config.LOG_LEVEL)
 
 class DynamoPusher:
-    def __init__(self, region_name: str):
-        """
-        :param region_name: Vùng AWS (ví dụ: 'ap-southeast-1')
-        """
-        self.dynamodb = boto3.resource("dynamodb", region_name=region_name)
+    def __init__(self, dynamodb):
+        self.dynamodb = dynamodb
 
     def insert(self, data, table_config: dict):
         """
@@ -65,12 +64,20 @@ if __name__ == "__main__":
         }
 
     # Cấu hình kết nối DynamoDB
+    AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
+    AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
     REGION = config.AWS_REGION
     TABLE_NAME = "personal_info"
     PARTITION_KEY = "per_id"
 
     # Khởi tạo và insert
-    pusher = DynamoPusher(region_name=REGION)
+    base_dynamo = BaseDynamoDB(
+        region_name=REGION,
+        access_key=AWS_ACCESS_KEY,
+        secret_key=AWS_SECRET_KEY
+    )
+    pusher = DynamoPusher(base_dynamo.dynamodb)
+    
     pusher.insert(
         data=sample_data,
         table_config={TABLE_NAME: PARTITION_KEY}

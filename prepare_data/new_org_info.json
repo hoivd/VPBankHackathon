@@ -1,0 +1,52 @@
+[
+    {
+      "organizer_id": "O001",
+      "full_name": "Tập đoàn Vạn Thịnh Phát",
+      "birth_year_or_age": null,
+      "gender": null,
+      "occupation_or_position": null,
+      "organization": null,
+      "hometown_or_residence": null,
+      "personal_relationships": "Có Trương Mỹ Lan là chủ tịch"
+    },
+    {
+      "organizer_id": "O002",
+      "full_name": "Ngân hàng SCB",
+      "birth_year_or_age": null,
+      "gender": null,
+      "occupation_or_position": null,
+      "organization": null,
+      "hometown_or_residence": null,
+      "personal_relationships": "Bị chiếm đoạt tiền bởi Trương Mỹ Lan và đồng phạm"
+    },
+    {
+      "organizer_id": "O003",
+      "full_name": "Công ty CP Quốc Cường Gia Lai",
+      "birth_year_or_age": null,
+      "gender": null,
+      "occupation_or_position": null,
+      "organization": null,
+      "hometown_or_residence": null,
+      "personal_relationships": "Bên có quyền lợi, nghĩa vụ liên quan"
+    },
+    {
+      "organizer_id": "O004",
+      "full_name": "Công ty CP T&H Hạ Long",
+      "birth_year_or_age": null,
+      "gender": null,
+      "occupation_or_position": null,
+      "organization": null,
+      "hometown_or_residence": null,
+      "personal_relationships": "Bên có quyền lợi, nghĩa vụ liên quan"
+    },
+    {
+      "organizer_id": "O005",
+      "full_name": "Công ty Âu Lạc Quảng Ninh",
+      "birth_year_or_age": null,
+      "gender": null,
+      "occupation_or_position": null,
+      "organization": null,
+      "hometown_or_residence": null,
+      "personal_relationships": "Bên có quyền lợi, nghĩa vụ liên quan"
+    }
+  ]
