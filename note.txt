@@ -1,0 +1,7 @@
+- able to run mcp on code : full workflow -> high accu
+-create sýtem prompt
+- build lang chain agent
+
+
+
+name  -> customer info ->  
