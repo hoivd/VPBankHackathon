@@ -1,0 +1,49 @@
+================================================================================
+🔄 COMPREHENSIVE DYNAMODB TO MONGODB MIGRATION REPORT
+================================================================================
+📅 Migration Date: 2025-07-13 13:31:10
+🌍 DynamoDB Region: ap-southeast-1
+🍃 MongoDB Database: vpbank_hackathon
+
+📊 MIGRATION RESULTS SUMMARY:
+----------------------------------------
+✅ Successful: 5/5
+
+📋 DETAILED MIGRATION RESULTS:
+----------------------------------------
+✅ adverse_media:
+   📥 Retrieved: 4 items
+   🔄 Converted: 4 items
+   📤 Inserted: 4 items
+
+✅ org2media:
+   📥 Retrieved: 25 items
+   🔄 Converted: 25 items
+   📤 Inserted: 25 items
+
+✅ organization_info:
+   📥 Retrieved: 25 items
+   🔄 Converted: 25 items
+   📤 Inserted: 25 items
+
+✅ personal2media:
+   📥 Retrieved: 37 items
+   🔄 Converted: 37 items
+   📤 Inserted: 37 items
+
+✅ personal_info:
+   📥 Retrieved: 37 items
+   🔄 Converted: 37 items
+   📤 Inserted: 37 items
+
+🔍 VERIFICATION RESULTS:
+----------------------------------------
+✅ adverse_media: DynamoDB=4, MongoDB=4
+✅ org2media: DynamoDB=25, MongoDB=25
+✅ organization_info: DynamoDB=25, MongoDB=25
+✅ personal2media: DynamoDB=37, MongoDB=37
+✅ personal_info: DynamoDB=37, MongoDB=37
+
+================================================================================
+Migration completed successfully!
+================================================================================

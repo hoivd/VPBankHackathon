@@ -1,0 +1,258 @@
+2025-07-13 13:06:21,723 - INFO - 🚀 Starting DynamoDB to MongoDB migration
+2025-07-13 13:06:21,723 - INFO - 📍 MongoDB URI: mongodb+srv://hoivd:vinhhoi@cluster0.amxct9l.mongodb.net/
+2025-07-13 13:06:21,723 - INFO - 🗄️ MongoDB Database: vpbank_hackathon
+2025-07-13 13:06:27,307 - INFO - 🔗 Connected to DynamoDB region: ap-southeast-1
+2025-07-13 13:06:27,307 - INFO - 🔗 Connected to MongoDB database: vpbank_hackathon
+2025-07-13 13:06:27,307 - INFO - 🔄 Migrating main tables (excluding demo tables)
+2025-07-13 13:06:27,307 - INFO - 🚀 Starting full migration from DynamoDB to MongoDB
+2025-07-13 13:06:27,307 - ERROR - ❌ Migration failed: Unable to locate credentials
+2025-07-13 13:08:11,052 - INFO - 🚀 Starting DynamoDB to MongoDB migration
+2025-07-13 13:08:11,052 - INFO - 📍 MongoDB URI: mongodb+srv://hoivd:vinhhoi@cluster0.amxct9l.mongodb.net/
+2025-07-13 13:08:11,052 - INFO - 🗄️ MongoDB Database: vpbank_hackathon
+2025-07-13 13:08:11,052 - DEBUG - [load_api_key_from_env] ✅ Đã load key 'AWS_ACCESS_KEY' từ môi trường
+2025-07-13 13:08:11,052 - DEBUG - [load_api_key_from_env] ✅ Đã load key 'AWS_SECRET_KEY' từ môi trường
+2025-07-13 13:08:15,840 - INFO - 🔗 Connected to DynamoDB region: ap-southeast-1
+2025-07-13 13:08:15,840 - INFO - 🔗 Connected to MongoDB database: vpbank_hackathon
+2025-07-13 13:08:15,840 - INFO - 🔄 Migrating main tables (excluding demo tables)
+2025-07-13 13:08:15,840 - INFO - 🚀 Starting full migration from DynamoDB to MongoDB
+2025-07-13 13:08:16,425 - INFO - 📋 Found 10 DynamoDB tables
+2025-07-13 13:08:16,425 - INFO - 📋 Excluding demo tables, migrating 5 main tables
+2025-07-13 13:08:16,425 - INFO - 🔄 Processing table: adverse_media
+2025-07-13 13:08:16,425 - INFO - 🔄 Starting migration: adverse_media -> adverse_media
+2025-07-13 13:08:17,029 - INFO - 📊 Retrieved 4 items from table: adverse_media
+2025-07-13 13:08:17,489 - INFO - 🗑️ Cleared existing data in collection: adverse_media
+2025-07-13 13:08:17,489 - ERROR - ❌ Error migrating table adverse_media: Invalid document {'content': '\nPhó chủ nhiệm Ủy ban Pháp luật và Tư pháp của Quốc hội Nguyễn Phương Thủy giải đáp câu hỏi bà Trương Mỹ Lan có được chuyển từ án tử hình xuống chung thân. Trưa 27-6, tổng thư ký Quốc hội tổ chức họp báo công bố kết quả kỳ họp thứ 9, Quốc hội khóa XV. Tại cuộc họp báo, một phóng viên nước ngoài đặt vấn đề Luật sửa đổi, bổ sung một số điều của Bộ luật Hình sự vừa được Quốc hội thông qua tại kỳ họp đã bỏ án tử hình với 8 tội danh. Trong đó về điều khoản chuyển tiếp, luật quy định hình phạt tử hình đã tuyên trước ngày 1-7-2025 đối với người phạm 8 tội danh nêu trên của Bộ luật Hình sự mà chưa thi hành án thì không thi hành và chánh án TAND tối cao quyết định chuyển hình phạt tử hình thành tù chung thân. Phóng viên hỏi trường hợp bà Trương Mỹ Lan (người bị tuyên án tử hình trong vụ án Vạn Thịnh Phát - giai đoạn 1) có được áp dụng quy định chuyển xuống hình phạt chung thân hay không? Trả lời vấn đề này, bà Nguyễn Phương Thủy - phó chủ nhiệm Ủy ban Pháp luật và Tư pháp của Quốc hội - cho biết khi trình dự án Luật sửa đổi, bổ sung một số điều của Bộ luật Hình sự tại kỳ họp, đại diện Chính phủ cũng đã có những phát biểu giải trình nói rõ quan điểm lý do vì sao bỏ án tử hình đối với 8 tội danh. Đối với những người phạm tội đã bị tuyên án tử hình trước ngày 1-7-2025 nhưng thuộc 8 tội danh được bỏ án tử, nếu đáp ứng đủ điều kiện sẽ được xem xét chuyển xuống hình phạt chung thân. Việc này thể hiện sự nhất quán trong nguyên tắc khoan hồng áp dụng luật có lợi cho người phạm tội, theo đó người phạm tội được hưởng các biện pháp xử lý nhẹ hơn khi luật mới thông qua có quy định mức án thấp hơn (so với bản án tuyên). Trước đó, Quốc hội đã thông qua Luật sửa đổi, bổ sung một số điều của Bộ luật Hình sự, trong đó có nội dung bỏ án tử hình với 8 tội danh gồm: - Hoạt động nhằm lật đổ chính quyền nhân dân (điều 109); - Phá hoại cơ sở vật chất - kỹ thuật của nước Cộng hòa xã hội chủ nghĩa Việt Nam (điều 114); - Sản xuất, buôn bán hàng giả là thuốc chữa bệnh, phòng bệnh (điều 194); - Vận chuyển trái phép chất ma túy (điều 250); - Phá hoại hòa bình, gây chiến tranh xâm lược (điều 421); - Gián điệp (điều 110); - Tham ô tài sản (điều 353); - Nhận hối lộ (điều 354). Mức án cao nhất với các tội danh này là chung thân. Đối với bà Trương Mỹ Lan (chủ tịch Tập đoàn Vạn Thịnh Phát), tháng 12-2024 Tòa án cấp phúc thẩm đã tuyên y án tử hình đối với bà Trương Mỹ Lan trong vụ án Vạn Thịnh Phát (giai đoạn 1). Cụ thể, Tòa án nhân dân cấp cao tại TP.HCM đã tuyên y án tử hình đối với bà Trương Mỹ Lan về tội tham ô tài sản, 16 năm tù về tội vi phạm quy định về cho vay trong hoạt động của các tổ chức tín dụng, 20 năm tù về tội đưa hối lộ. Tổng hợp hình phạt là tử hình. Đến tháng 4-2025, cấp phúc thẩm giảm cho bà Trương Mỹ Lan từ tù chung thân xuống 20 năm tù về tội "lừa đảo chiếm đoạt tài sản", y án 12 năm tù về tội "rửa tiền" và 8 năm tù về tội "vận chuyển trái phép tiền tệ qua biên giới", tổng cộng 30 năm tù\n', 'source_credibility': 'High', 'created_at': Decimal('1752384078640333'), 'media_id': 'media_id_1752384078640333', 'recency': 'recent', 'news_sentiment_type': 'Negative', '_migration_info': {'migrated_at': datetime.datetime(2025, 7, 13, 6, 8, 17, 29215), 'source': 'dynamodb', 'migrated_by': 'dynamo_to_mongo_migrator'}, '_id': ObjectId('68734d517d411e619d6ca500')} | cannot encode object: Decimal('1752384078640333'), of type: <class 'decimal.Decimal'>
+2025-07-13 13:08:18,502 - INFO - 🔄 Processing table: org2media
+2025-07-13 13:08:18,502 - INFO - 🔄 Starting migration: org2media -> org2media
+2025-07-13 13:08:18,574 - INFO - 📊 Retrieved 25 items from table: org2media
+2025-07-13 13:08:18,627 - INFO - 🗑️ Cleared existing data in collection: org2media
+2025-07-13 13:08:18,628 - ERROR - ❌ Error migrating table org2media: Invalid document {'org_id': 'org_id_1752383993651331', 'customer_role': 'Không có liên quan rõ ràng trong bài báo', 'o2m_id': 'o2m_id_1752383993652057', 'created_at': Decimal('1752383993652054'), 'violation_type': 'Không có hành vi phạm được đề cập', 'media_id': 'media_id_1752383993651068', 'entity_name': 'Ban Dân tộc TP Hồ Chí Minh', 'is_individual': False, 'source_level': 'Other', 'role_in_event': 'Cơ quan quản lý', 'legal_status': 'Tin chưa rõ ràng', '_migration_info': {'migrated_at': datetime.datetime(2025, 7, 13, 6, 8, 18, 575585), 'source': 'dynamodb', 'migrated_by': 'dynamo_to_mongo_migrator'}, '_id': ObjectId('68734d527d411e619d6ca504')} | cannot encode object: Decimal('1752383993652054'), of type: <class 'decimal.Decimal'>
+2025-07-13 13:08:19,630 - INFO - 🔄 Processing table: organization_info
+2025-07-13 13:08:19,630 - INFO - 🔄 Starting migration: organization_info -> organization_info
+2025-07-13 13:08:19,708 - INFO - 📊 Retrieved 25 items from table: organization_info
+2025-07-13 13:08:19,761 - INFO - 🗑️ Cleared existing data in collection: organization_info
+2025-07-13 13:08:19,761 - ERROR - ❌ Error migrating table organization_info: Invalid document {'org_id': 'org_id_1752383993651339', 'organization': None, 'created_at': Decimal('1752383993651329'), 'full_name': 'Tập đoàn Vạn Thịnh Phát', 'occupation_or_position': 'Tập đoàn kinh doanh', 'hometown_or_residence': None, 'gender': None, 'personal_relationships': 'Có Trương Mỹ Lan là Chủ tịch', 'birth_year_or_age': None, '_migration_info': {'migrated_at': datetime.datetime(2025, 7, 13, 6, 8, 19, 708654), 'source': 'dynamodb', 'migrated_by': 'dynamo_to_mongo_migrator'}, '_id': ObjectId('68734d537d411e619d6ca51d')} | cannot encode object: Decimal('1752383993651329'), of type: <class 'decimal.Decimal'>
+2025-07-13 13:08:20,768 - INFO - 🔄 Processing table: personal2media
+2025-07-13 13:08:20,768 - INFO - 🔄 Starting migration: personal2media -> personal2media
+2025-07-13 13:08:20,931 - INFO - 📊 Retrieved 37 items from table: personal2media
+2025-07-13 13:08:20,993 - INFO - 🗑️ Cleared existing data in collection: personal2media
+2025-07-13 13:08:20,993 - ERROR - ❌ Error migrating table personal2media: Invalid document {'customer_role': 'Không có liên quan rõ ràng trong bài báo', 'created_at': Decimal('1752383993651710'), 'violation_type': 'Không có hành vi phạm được đề cập', 'media_id': 'media_id_1752383993651068', 'entity_name': 'Giang Quốc Nghiệp', 'per_id': 'per_id_1752383993651217', 'p2m_id': 'p2m_id_1752383993651728', 'is_individual': True, 'source_level': 'Other', 'role_in_event': 'Nghệ sĩ, công dân tiêu biểu', 'legal_status': 'Tin chưa rõ ràng', '_migration_info': {'migrated_at': datetime.datetime(2025, 7, 13, 6, 8, 20, 931012), 'source': 'dynamodb', 'migrated_by': 'dynamo_to_mongo_migrator'}, '_id': ObjectId('68734d547d411e619d6ca536')} | cannot encode object: Decimal('1752383993651710'), of type: <class 'decimal.Decimal'>
+2025-07-13 13:08:22,003 - INFO - 🔄 Processing table: personal_info
+2025-07-13 13:08:22,003 - INFO - 🔄 Starting migration: personal_info -> personal_info
+2025-07-13 13:08:22,132 - INFO - 📊 Retrieved 37 items from table: personal_info
+2025-07-13 13:08:22,176 - INFO - 🗑️ Cleared existing data in collection: personal_info
+2025-07-13 13:08:22,176 - ERROR - ❌ Error migrating table personal_info: Invalid document {'organization': None, 'created_at': Decimal('1752384018355853'), 'per_id': 'per_id_1752384018355865', 'full_name': 'Võ Tấn Hoàng Văn', 'occupation_or_position': None, 'hometown_or_residence': None, 'gender': 'Male', 'personal_relationships': 'Bị cáo, thực hiện rút tiền SCB theo chỉ đạo của Trương Mỹ Lan', 'birth_year_or_age': None, '_migration_info': {'migrated_at': datetime.datetime(2025, 7, 13, 6, 8, 22, 132567), 'source': 'dynamodb', 'migrated_by': 'dynamo_to_mongo_migrator'}, '_id': ObjectId('68734d567d411e619d6ca55b')} | cannot encode object: Decimal('1752384018355853'), of type: <class 'decimal.Decimal'>
+2025-07-13 13:08:23,186 - INFO - 🎉 Migration complete! 0/5 tables migrated successfully
+2025-07-13 13:08:23,186 - INFO - 🔧 Creating indexes
+2025-07-13 13:08:23,186 - INFO - 🔧 Creating indexes in MongoDB collections
+2025-07-13 13:08:23,258 - INFO - 📊 Created index on adverse_media.media_id
+2025-07-13 13:08:23,338 - INFO - 📊 Created index on adverse_media.created_at
+2025-07-13 13:08:23,409 - INFO - 📊 Created index on adverse_media.news_sentiment_type
+2025-07-13 13:08:23,496 - INFO - 📊 Created index on personal_info.per_id
+2025-07-13 13:08:23,559 - INFO - 📊 Created index on personal_info.full_name
+2025-07-13 13:08:23,643 - INFO - 📊 Created index on personal_info.created_at
+2025-07-13 13:08:23,723 - INFO - 📊 Created index on organization_info.org_id
+2025-07-13 13:08:23,791 - INFO - 📊 Created index on organization_info.full_name
+2025-07-13 13:08:23,859 - INFO - 📊 Created index on organization_info.created_at
+2025-07-13 13:08:23,940 - INFO - 📊 Created index on personal2media.p2m_id
+2025-07-13 13:08:24,009 - INFO - 📊 Created index on personal2media.per_id
+2025-07-13 13:08:24,076 - INFO - 📊 Created index on personal2media.media_id
+2025-07-13 13:08:24,142 - INFO - 📊 Created index on personal2media.created_at
+2025-07-13 13:08:24,232 - INFO - 📊 Created index on org2media.o2m_id
+2025-07-13 13:08:24,292 - INFO - 📊 Created index on org2media.org_id
+2025-07-13 13:08:24,359 - INFO - 📊 Created index on org2media.media_id
+2025-07-13 13:08:24,440 - INFO - 📊 Created index on org2media.created_at
+2025-07-13 13:08:24,441 - INFO - ✅ All indexes created successfully
+2025-07-13 13:08:24,441 - INFO - 🔍 Verifying migration
+2025-07-13 13:08:24,441 - INFO - 🔍 Verifying migration...
+2025-07-13 13:08:24,492 - INFO - 📋 Found 10 DynamoDB tables
+2025-07-13 13:08:24,641 - INFO - ❌ adverse_media: DynamoDB=4, MongoDB=0
+2025-07-13 13:08:24,773 - INFO - ❌ org2media: DynamoDB=63, MongoDB=0
+2025-07-13 13:08:24,923 - INFO - ❌ organization_info: DynamoDB=79, MongoDB=0
+2025-07-13 13:08:25,058 - INFO - ❌ personal2media: DynamoDB=37, MongoDB=0
+2025-07-13 13:08:25,190 - INFO - ❌ personal_info: DynamoDB=37, MongoDB=0
+2025-07-13 13:08:25,258 - INFO - 🔌 Database connections closed
+2025-07-13 13:08:25,258 - INFO - ✅ Migration completed successfully!
+2025-07-13 13:14:39,330 - INFO - 🚀 Starting DynamoDB to MongoDB migration
+2025-07-13 13:14:39,331 - INFO - 📍 MongoDB URI: mongodb+srv://hoivd:vinhhoi@cluster0.amxct9l.mongodb.net/
+2025-07-13 13:14:39,331 - INFO - 🗄️ MongoDB Database: vpbank_hackathon
+2025-07-13 13:14:39,332 - DEBUG - [load_api_key_from_env] ✅ Đã load key 'AWS_ACCESS_KEY' từ môi trường
+2025-07-13 13:14:39,332 - DEBUG - [load_api_key_from_env] ✅ Đã load key 'AWS_SECRET_KEY' từ môi trường
+2025-07-13 13:14:44,207 - INFO - 🔗 Connected to DynamoDB region: ap-southeast-1
+2025-07-13 13:14:44,212 - INFO - 🔗 Connected to MongoDB database: vpbank_hackathon
+2025-07-13 13:14:44,829 - INFO - 📋 Found 10 DynamoDB tables
+2025-07-13 13:14:45,219 - INFO - 🔍 Found 0 new tables to migrate: []
+2025-07-13 13:14:45,219 - INFO - ✅ No new tables found
+2025-07-13 13:14:45,219 - INFO - 🔄 Running full migration check (will skip existing tables)
+2025-07-13 13:14:45,219 - INFO - 🚀 Starting full migration from DynamoDB to MongoDB
+2025-07-13 13:14:45,286 - INFO - 📋 Found 10 DynamoDB tables
+2025-07-13 13:14:45,286 - INFO - 📋 Excluding demo tables, migrating 5 main tables
+2025-07-13 13:14:45,341 - INFO - 📊 Found 5 existing collections
+2025-07-13 13:14:45,392 - INFO - ⏭️ Skipping adverse_media - collection already exists (use --force-refresh to override)
+2025-07-13 13:14:45,448 - INFO - ⏭️ Skipping org2media - collection already exists (use --force-refresh to override)
+2025-07-13 13:14:45,499 - INFO - ⏭️ Skipping organization_info - collection already exists (use --force-refresh to override)
+2025-07-13 13:14:45,557 - INFO - ⏭️ Skipping personal2media - collection already exists (use --force-refresh to override)
+2025-07-13 13:14:45,609 - INFO - ⏭️ Skipping personal_info - collection already exists (use --force-refresh to override)
+2025-07-13 13:14:45,609 - INFO - 🎉 Migration complete! 5/5 tables migrated successfully
+2025-07-13 13:14:45,609 - INFO - 🔧 Creating indexes
+2025-07-13 13:14:45,609 - INFO - 🔧 Creating indexes in MongoDB collections
+2025-07-13 13:14:45,674 - INFO - 📊 Created index on adverse_media.media_id
+2025-07-13 13:14:45,740 - INFO - 📊 Created index on adverse_media.created_at
+2025-07-13 13:14:45,808 - INFO - 📊 Created index on adverse_media.news_sentiment_type
+2025-07-13 13:14:45,906 - INFO - 📊 Created index on personal_info.per_id
+2025-07-13 13:14:45,978 - INFO - 📊 Created index on personal_info.full_name
+2025-07-13 13:14:46,040 - INFO - 📊 Created index on personal_info.created_at
+2025-07-13 13:14:46,108 - INFO - 📊 Created index on organization_info.org_id
+2025-07-13 13:14:46,173 - INFO - 📊 Created index on organization_info.full_name
+2025-07-13 13:14:46,238 - INFO - 📊 Created index on organization_info.created_at
+2025-07-13 13:14:46,307 - INFO - 📊 Created index on personal2media.p2m_id
+2025-07-13 13:14:46,369 - INFO - 📊 Created index on personal2media.per_id
+2025-07-13 13:14:46,429 - INFO - 📊 Created index on personal2media.media_id
+2025-07-13 13:14:46,497 - INFO - 📊 Created index on personal2media.created_at
+2025-07-13 13:14:46,559 - INFO - 📊 Created index on org2media.o2m_id
+2025-07-13 13:14:46,624 - INFO - 📊 Created index on org2media.org_id
+2025-07-13 13:14:46,705 - INFO - 📊 Created index on org2media.media_id
+2025-07-13 13:14:46,773 - INFO - 📊 Created index on org2media.created_at
+2025-07-13 13:14:46,779 - INFO - ✅ All indexes created successfully
+2025-07-13 13:14:46,779 - INFO - 🔍 Verifying migration
+2025-07-13 13:14:46,800 - INFO - 🔍 Verifying migration...
+2025-07-13 13:14:46,879 - INFO - 📋 Found 10 DynamoDB tables
+2025-07-13 13:14:47,487 - INFO - ❌ adverse_media: DynamoDB=4, MongoDB=0
+2025-07-13 13:14:47,609 - INFO - ❌ org2media: DynamoDB=63, MongoDB=0
+2025-07-13 13:14:47,728 - INFO - ❌ organization_info: DynamoDB=79, MongoDB=0
+2025-07-13 13:14:47,848 - INFO - ❌ personal2media: DynamoDB=37, MongoDB=0
+2025-07-13 13:14:47,961 - INFO - ❌ personal_info: DynamoDB=37, MongoDB=0
+2025-07-13 13:14:48,017 - INFO - 🔌 Database connections closed
+2025-07-13 13:14:48,017 - INFO - ✅ Migration completed successfully!
+2025-07-13 13:16:59,929 - INFO - 🚀 Starting DynamoDB to MongoDB migration
+2025-07-13 13:16:59,930 - INFO - 📍 MongoDB URI: mongodb+srv://hoivd:vinhhoi@cluster0.amxct9l.mongodb.net/
+2025-07-13 13:16:59,930 - INFO - 🗄️ MongoDB Database: vpbank_hackathon
+2025-07-13 13:16:59,930 - DEBUG - [load_api_key_from_env] ✅ Đã load key 'AWS_ACCESS_KEY' từ môi trường
+2025-07-13 13:16:59,931 - DEBUG - [load_api_key_from_env] ✅ Đã load key 'AWS_SECRET_KEY' từ môi trường
+2025-07-13 13:17:04,857 - INFO - 🔗 Connected to DynamoDB region: ap-southeast-1
+2025-07-13 13:17:04,857 - INFO - 🔗 Connected to MongoDB database: vpbank_hackathon
+2025-07-13 13:17:05,490 - INFO - 📋 Found 10 DynamoDB tables
+2025-07-13 13:17:05,857 - INFO - 🔍 Found 0 new tables to migrate: []
+2025-07-13 13:17:05,857 - INFO - ✅ No new tables found
+2025-07-13 13:17:05,858 - INFO - 🔄 Running full migration check (will skip existing tables)
+2025-07-13 13:17:05,858 - INFO - 🚀 Starting full migration from DynamoDB to MongoDB
+2025-07-13 13:17:05,922 - INFO - 📋 Found 10 DynamoDB tables
+2025-07-13 13:17:05,923 - INFO - 📋 Excluding demo tables, migrating 5 main tables
+2025-07-13 13:17:05,977 - INFO - 📊 Found 5 existing collections
+2025-07-13 13:17:06,031 - INFO - ⏭️ Skipping adverse_media - collection already exists (use --force-refresh to override)
+2025-07-13 13:17:06,081 - INFO - ⏭️ Skipping org2media - collection already exists (use --force-refresh to override)
+2025-07-13 13:17:06,137 - INFO - ⏭️ Skipping organization_info - collection already exists (use --force-refresh to override)
+2025-07-13 13:17:06,188 - INFO - ⏭️ Skipping personal2media - collection already exists (use --force-refresh to override)
+2025-07-13 13:17:06,239 - INFO - ⏭️ Skipping personal_info - collection already exists (use --force-refresh to override)
+2025-07-13 13:17:06,239 - INFO - 🎉 Migration complete! 5/5 tables migrated successfully
+2025-07-13 13:17:06,245 - INFO - 🔧 Creating indexes
+2025-07-13 13:17:06,245 - INFO - 🔧 Creating indexes in MongoDB collections
+2025-07-13 13:17:06,308 - INFO - 📊 Created index on adverse_media.media_id
+2025-07-13 13:17:06,378 - INFO - 📊 Created index on adverse_media.created_at
+2025-07-13 13:17:06,439 - INFO - 📊 Created index on adverse_media.news_sentiment_type
+2025-07-13 13:17:06,500 - INFO - 📊 Created index on personal_info.per_id
+2025-07-13 13:17:06,566 - INFO - 📊 Created index on personal_info.full_name
+2025-07-13 13:17:06,627 - INFO - 📊 Created index on personal_info.created_at
+2025-07-13 13:17:06,688 - INFO - 📊 Created index on organization_info.org_id
+2025-07-13 13:17:06,751 - INFO - 📊 Created index on organization_info.full_name
+2025-07-13 13:17:06,817 - INFO - 📊 Created index on organization_info.created_at
+2025-07-13 13:17:06,877 - INFO - 📊 Created index on personal2media.p2m_id
+2025-07-13 13:17:06,940 - INFO - 📊 Created index on personal2media.per_id
+2025-07-13 13:17:06,999 - INFO - 📊 Created index on personal2media.media_id
+2025-07-13 13:17:07,064 - INFO - 📊 Created index on personal2media.created_at
+2025-07-13 13:17:07,138 - INFO - 📊 Created index on org2media.o2m_id
+2025-07-13 13:17:07,197 - INFO - 📊 Created index on org2media.org_id
+2025-07-13 13:17:07,273 - INFO - 📊 Created index on org2media.media_id
+2025-07-13 13:17:07,337 - INFO - 📊 Created index on org2media.created_at
+2025-07-13 13:17:07,337 - INFO - ✅ All indexes created successfully
+2025-07-13 13:17:07,337 - INFO - 🔍 Verifying migration
+2025-07-13 13:17:07,337 - INFO - 🔍 Verifying migration...
+2025-07-13 13:17:07,399 - INFO - 📋 Found 10 DynamoDB tables
+2025-07-13 13:17:08,123 - INFO - ❌ adverse_media: DynamoDB=4, MongoDB=0
+2025-07-13 13:17:08,251 - INFO - ❌ org2media: DynamoDB=63, MongoDB=0
+2025-07-13 13:17:08,378 - INFO - ❌ organization_info: DynamoDB=79, MongoDB=0
+2025-07-13 13:17:08,512 - INFO - ❌ personal2media: DynamoDB=37, MongoDB=0
+2025-07-13 13:17:08,639 - INFO - ❌ personal_info: DynamoDB=37, MongoDB=0
+2025-07-13 13:17:08,697 - INFO - 🔌 Database connections closed
+2025-07-13 13:17:08,697 - INFO - ✅ Migration completed successfully!
+2025-07-13 13:25:12,459 - INFO - 🚀 Starting DynamoDB to MongoDB migration
+2025-07-13 13:25:12,459 - INFO - 📍 MongoDB URI: mongodb+srv://hoivd:vinhhoi@cluster0.amxct9l.mongodb.net/
+2025-07-13 13:25:12,459 - INFO - 🗄️ MongoDB Database: vpbank_hackathon
+2025-07-13 13:25:12,459 - DEBUG - [load_api_key_from_env] ✅ Đã load key 'AWS_ACCESS_KEY' từ môi trường
+2025-07-13 13:25:12,459 - DEBUG - [load_api_key_from_env] ✅ Đã load key 'AWS_SECRET_KEY' từ môi trường
+2025-07-13 13:25:13,310 - INFO - 🔗 Successfully connected to DynamoDB region: ap-southeast-1
+2025-07-13 13:25:18,533 - INFO - 🔗 Successfully connected to MongoDB database: vpbank_hackathon
+2025-07-13 13:25:18,600 - INFO - 📋 Found 10 DynamoDB tables
+2025-07-13 13:25:18,653 - INFO - 🔍 Found 0 new tables to migrate: []
+2025-07-13 13:25:18,653 - INFO - ✅ No new tables found
+2025-07-13 13:25:18,654 - INFO - 🔄 Running full migration check (will skip existing tables)
+2025-07-13 13:25:18,654 - INFO - 🚀 Starting comprehensive migration from DynamoDB to MongoDB
+2025-07-13 13:25:18,710 - INFO - 📋 Found 10 DynamoDB tables
+2025-07-13 13:25:18,710 - INFO - 📋 Excluding demo tables, migrating 5 main tables
+2025-07-13 13:25:18,768 - INFO - 📊 Found 5 existing collections
+2025-07-13 13:25:18,819 - INFO - ⏭️ Skipping adverse_media - collection already exists (use --force-refresh to override)
+2025-07-13 13:25:18,875 - INFO - ⏭️ Skipping org2media - collection already exists (use --force-refresh to override)
+2025-07-13 13:25:18,930 - INFO - ⏭️ Skipping organization_info - collection already exists (use --force-refresh to override)
+2025-07-13 13:25:18,983 - INFO - ⏭️ Skipping personal2media - collection already exists (use --force-refresh to override)
+2025-07-13 13:25:19,039 - INFO - ⏭️ Skipping personal_info - collection already exists (use --force-refresh to override)
+2025-07-13 13:25:19,042 - INFO - 🎉 Migration complete! 5/5 tables migrated successfully
+2025-07-13 13:25:19,050 - INFO - 🔧 Creating indexes
+2025-07-13 13:25:19,050 - INFO - 🔧 Creating indexes in MongoDB collections
+2025-07-13 13:25:19,110 - INFO - 📊 Created index on adverse_media.media_id
+2025-07-13 13:25:19,177 - INFO - 📊 Created index on adverse_media.created_at
+2025-07-13 13:25:19,239 - INFO - 📊 Created index on adverse_media.news_sentiment_type
+2025-07-13 13:25:19,299 - INFO - 📊 Created index on personal_info.per_id
+2025-07-13 13:25:19,361 - INFO - 📊 Created index on personal_info.full_name
+2025-07-13 13:25:19,425 - INFO - 📊 Created index on personal_info.created_at
+2025-07-13 13:25:19,497 - INFO - 📊 Created index on organization_info.org_id
+2025-07-13 13:25:19,561 - INFO - 📊 Created index on organization_info.full_name
+2025-07-13 13:25:19,625 - INFO - 📊 Created index on organization_info.created_at
+2025-07-13 13:25:19,704 - INFO - 📊 Created index on personal2media.p2m_id
+2025-07-13 13:25:19,769 - INFO - 📊 Created index on personal2media.per_id
+2025-07-13 13:25:19,844 - INFO - 📊 Created index on personal2media.media_id
+2025-07-13 13:25:19,911 - INFO - 📊 Created index on personal2media.created_at
+2025-07-13 13:25:19,970 - INFO - 📊 Created index on org2media.o2m_id
+2025-07-13 13:25:20,031 - INFO - 📊 Created index on org2media.org_id
+2025-07-13 13:25:20,097 - INFO - 📊 Created index on org2media.media_id
+2025-07-13 13:25:20,158 - INFO - 📊 Created index on org2media.created_at
+2025-07-13 13:25:20,159 - INFO - ✅ All indexes created successfully
+2025-07-13 13:25:20,160 - INFO - 🔍 Verifying migration
+2025-07-13 13:25:20,161 - INFO - 🔍 Verifying migration with accurate counts...
+2025-07-13 13:25:20,231 - INFO - 📋 Found 10 DynamoDB tables
+2025-07-13 13:25:20,232 - INFO - 📊 Verifying adverse_media...
+2025-07-13 13:25:20,238 - INFO - 📊 Scanning adverse_media - batch 1
+2025-07-13 13:25:21,533 - INFO - 📥 Retrieved 4 items in batch 1 (total: 4)
+2025-07-13 13:25:21,533 - INFO - ✅ Successfully retrieved 4 total items from table: adverse_media
+2025-07-13 13:25:21,535 - INFO - 📋 DynamoDB adverse_media: 4 items
+2025-07-13 13:25:21,589 - INFO - 🍃 MongoDB adverse_media: 0 documents
+2025-07-13 13:25:21,589 - INFO - ❌ adverse_media: DynamoDB=4, MongoDB=0
+2025-07-13 13:25:21,589 - INFO - 📊 Verifying org2media...
+2025-07-13 13:25:21,593 - INFO - 📊 Scanning org2media - batch 1
+2025-07-13 13:25:21,675 - INFO - 📥 Retrieved 25 items in batch 1 (total: 25)
+2025-07-13 13:25:21,701 - INFO - ✅ Successfully retrieved 25 total items from table: org2media
+2025-07-13 13:25:21,744 - INFO - 📋 DynamoDB org2media: 25 items
+2025-07-13 13:25:21,875 - INFO - 🍃 MongoDB org2media: 0 documents
+2025-07-13 13:25:21,878 - INFO - ❌ org2media: DynamoDB=25, MongoDB=0
+2025-07-13 13:25:21,879 - INFO - 📊 Verifying organization_info...
+2025-07-13 13:25:21,881 - INFO - 📊 Scanning organization_info - batch 1
+2025-07-13 13:25:21,961 - INFO - 📥 Retrieved 25 items in batch 1 (total: 25)
+2025-07-13 13:25:21,962 - INFO - ✅ Successfully retrieved 25 total items from table: organization_info
+2025-07-13 13:25:21,962 - INFO - 📋 DynamoDB organization_info: 25 items
+2025-07-13 13:25:22,024 - INFO - 🍃 MongoDB organization_info: 0 documents
+2025-07-13 13:25:22,026 - INFO - ❌ organization_info: DynamoDB=25, MongoDB=0
+2025-07-13 13:25:22,026 - INFO - 📊 Verifying personal2media...
+2025-07-13 13:25:22,029 - INFO - 📊 Scanning personal2media - batch 1
+2025-07-13 13:25:22,112 - INFO - 📥 Retrieved 37 items in batch 1 (total: 37)
+2025-07-13 13:25:22,113 - INFO - ✅ Successfully retrieved 37 total items from table: personal2media
+2025-07-13 13:25:22,113 - INFO - 📋 DynamoDB personal2media: 37 items
+2025-07-13 13:25:22,164 - INFO - 🍃 MongoDB personal2media: 0 documents
+2025-07-13 13:25:22,165 - INFO - ❌ personal2media: DynamoDB=37, MongoDB=0
+2025-07-13 13:25:22,165 - INFO - 📊 Verifying personal_info...
+2025-07-13 13:25:22,167 - INFO - 📊 Scanning personal_info - batch 1
+2025-07-13 13:25:22,246 - INFO - 📥 Retrieved 37 items in batch 1 (total: 37)
+2025-07-13 13:25:22,247 - INFO - ✅ Successfully retrieved 37 total items from table: personal_info
+2025-07-13 13:25:22,247 - INFO - 📋 DynamoDB personal_info: 37 items
+2025-07-13 13:25:22,307 - INFO - 🍃 MongoDB personal_info: 0 documents
+2025-07-13 13:25:22,309 - INFO - ❌ personal_info: DynamoDB=37, MongoDB=0
+2025-07-13 13:25:22,361 - INFO - 🔌 Database connections closed
+2025-07-13 13:25:22,361 - INFO - ✅ Migration completed successfully!
