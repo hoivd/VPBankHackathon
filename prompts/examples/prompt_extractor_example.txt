@@ -92,11 +92,9 @@ list_personal_risks (key)
 "entity_id": "..." ← Lưu ý personal_id phải trùng với personal_id của cá nhân ở bước 1
 "entity_name": "...", ← tên cá nhân khớp với Bước 1
 "is_individual": true, ← Luôn là true cho cá nhân
-"role_in_event": "...", ← vai trò trong sự việc (ví dụ: bị cáo, người tố cáo, người đại diện, bị hại, nhân chứng, ...)
-"violation_type": "...", ← Rửa tiền / Tài trợ khủng bố / Lừa đảo / Chiếm đoạt tài sản / Tham nhũng / Hối lộ / Vi phạm dân sự / hành chính / tranh chấp nhỏ / Đưa vào danh sách trừng phạt / Cấm vận kinh tế tài chính / Trừng phạt ngành lĩnh vực / Hạn chế truy cập vào hệ thống tài chính Hoa Kỳ / Trừng phạt thứ cấp / Không có hành vi phạm được đề cập
+"violation_type": "...", ← Rửa tiền / Tài trợ khủng bố / Lừa đảo / Chiếm đoạt tài sản / Tham nhũng / Hối lộ / Vi phạm dân sự / hành chính / tranh chấp nhỏ
 "customer_role": "...", ← Chủ mưu / Cầm đầu / Tổ chức thực hiện hành vi vi phạm / Tham gia / Đồng phạm / Giúp sức hoặc thực hiện một phần / Bên liên quan bị động / Bị nhắc tên nhưng không trực tiếp / Không có liên quan rõ ràng trong bài báo
 "legal_status": "...", ← Đã kết án / Đang trong quá trình điều tra / truy tố / chưa có phán quyết / Tin chưa rõ ràng / Được minh oan
-"source_level": "..." ← Tuổi Trẻ / Dân Trí / Thanh Niên / VNExpress / Cổng thông tin Chính phủ / OFAC/ Other
 },
 ...
 ]
@@ -110,11 +108,9 @@ list_organizer_risks (key)
 "entity_id": "..." ← Lưu ý organizer_id phải trùng với organizer_id của tổ chức ở bước 2
 "entity_name": "...", ← tên tổ chức khớp với Bước 2
 "is_individual": false, ← Luôn là false cho tổ chức
-"role_in_event": "...", ← vai trò trong sự việc (ví dụ: bị cáo, bên liên quan, bị hại, cơ quan quản lý, ...)
-"violation_type": "...", ← Rửa tiền / Tài trợ khủng bố / Lừa đảo / Chiếm đoạt tài sản / Tham nhũng / Hối lộ / Vi phạm dân sự / hành chính / tranh chấp nhỏ / Đưa vào danh sách trừng phạt / Cấm vận kinh tế tài chính / Trừng phạt ngành lĩnh vực / Hạn chế truy cập vào hệ thống tài chính Hoa Kỳ / Trừng phạt thứ cấp / Không có hành vi phạm được đề cập
+"violation_type": "...", ← Đưa vào danh sách trừng phạt / Cấm vận kinh tế tài chính / Trừng phạt ngành lĩnh vực / Hạn chế truy cập vào hệ thống tài chính Hoa Kỳ / Trừng phạt thứ cấp / Không có hành vi phạm được đề cập
 "customer_role": "...", ← Chủ mưu / Cầm đầu / Tổ chức thực hiện hành vi vi phạm / Tham gia / Đồng phạm / Giúp sức hoặc thực hiện một phần / Bên liên quan bị động / Bị nhắc tên nhưng không trực tiếp / Không có liên quan rõ ràng trong bài báo
 "legal_status": "...", ← Đã kết án / Đang trong quá trình điều tra / truy tố / chưa có phán quyết / Tin chưa rõ ràng / Được minh oan
-"source_level": "..." ← Tuổi Trẻ / Dân Trí / Thanh Niên / VNExpress / Cổng thông tin Chính phủ / OFAC/ Other
 },
 ...
 ]
@@ -213,31 +209,25 @@ Mẫu đầu ra mẫu:
 "entity_id": "P001",
 "entity_name": "Trương Mỹ Lan",
 "is_individual": true,
-"role_in_event": "Bị cáo chính trong vụ án Vạn Thịnh Phát",
 "violation_type": "Lừa đảo",
 "customer_role": "Chủ mưu",
 "legal_status": "Đã kết án",
-"source_level": "Other"
 },
 {
 "entity_id": "P002",
 "entity_name": "Huỳnh Thanh Duyên",
 "is_individual": true,
-"role_in_event": "Chủ tọa phiên tòa phúc thẩm vụ Vạn Thịnh Phát giai đoạn 1",
 "violation_type": "Không có hành vi phạm được đề cập",
 "customer_role": "Không có liên quan rõ ràng trong bài báo",
 "legal_status": "Tin chưa rõ ràng",
-"source_level": "Other"
 },
 {
 "entity_id": "P003",
 "entity_name": "Phạm Công Mười",
 "is_individual": true,
-"role_in_event": "Thẩm phán trong hội đồng xét xử phúc thẩm vụ Vạn Thịnh Phát giai đoạn 1",
 "violation_type": "Không có hành vi phạm được đề cập",
 "customer_role": "Không có liên quan rõ ràng trong bài báo",
 "legal_status": "Tin chưa rõ ràng",
-"source_level": "Other"
 }
 ],
 "list_organizer_risks": [
@@ -245,21 +235,17 @@ Mẫu đầu ra mẫu:
 "entity_id": "O001",
 "entity_name": "Tập đoàn Vạn Thịnh Phát",
 "is_individual": false,
-"role_in_event": "Liên quan đến vụ án Trương Mỹ Lan",
 "violation_type": "Lừa đảo",
 "customer_role": "Tham gia",
 "legal_status": "Đang trong quá trình điều tra",
-"source_level": "Other"
 },
 {
 "entity_id": "O002",
 "entity_name": "Ngân hàng SCB",
 "is_individual": false,
-"role_in_event": "Liên quan đến vụ án Trương Mỹ Lan",
 "violation_type": "Lừa đảo",
 "customer_role": "Tham gia",
 "legal_status": "Đang trong quá trình điều tra",
-"source_level": "Other"
 }
 ]
 }
