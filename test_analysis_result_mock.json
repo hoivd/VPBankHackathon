@@ -1,0 +1,238 @@
+{
+  "person_info": {
+    "per_id": "per_id_1752495885187574",
+    "full_name": "Trương Mỹ Lan",
+    "gender": "Female",
+    "occupation_or_position": "Chủ tịch hội đồng quản trị Tập đoàn Vạn Thịnh Phát",
+    "organization": "Tập đoàn Vạn Thịnh Phát",
+    "personal_relationships": "Cổ đông lớn Ngân hàng SCB; Chỉ đạo các bị cáo Đinh Văn Thành, Bùi Anh Dũng, Võ Tấn Hoàng Văn, Tạ Chiêu Trung, Trương Khánh Hoàng, Trần Thị Mỹ Dung"
+  },
+  "personal_risk_analysis": [
+    {
+      "violation_type_score": 4,
+      "customer_role_score": 3,
+      "legal_status_score": 3,
+      "source_level_score": 0,
+      "total_risk_score": 10,
+      "risk_level": "Rất Cao",
+      "characteristics": {
+        "violation_type": "Tham ô tài sản",
+        "customer_role": "Chủ mưu",
+        "legal_status": "Đã kết án",
+        "source_level": null,
+        "source_credibility": null
+      },
+      "entry_id": "p2m_id_1752495885188323",
+      "entry_type": "personal2media"
+    },
+    {
+      "violation_type_score": 4,
+      "customer_role_score": 3,
+      "legal_status_score": 3,
+      "source_level_score": 0,
+      "total_risk_score": 10,
+      "risk_level": "Rất Cao",
+      "characteristics": {
+        "violation_type": "Tham nhũng / Hối lộ / Vi phạm dân sự",
+        "customer_role": "Chủ mưu",
+        "legal_status": "Đã kết án",
+        "source_level": null,
+        "source_credibility": null
+      },
+      "entry_id": "p2m_id_1752495915837878",
+      "entry_type": "personal2media"
+    }
+  ],
+  "org_risk_analysis": [
+    {
+      "violation_type_score": 4,
+      "customer_role_score": 1,
+      "legal_status_score": 2,
+      "source_level_score": 0,
+      "total_risk_score": 7,
+      "risk_level": "Cao",
+      "characteristics": {
+        "violation_type": "Tham nhũng",
+        "customer_role": "Bên liên quan bị động",
+        "legal_status": "Đang trong quá trình điều tra",
+        "source_level": null,
+        "source_credibility": null
+      },
+      "entry_id": "o2m_id_1752495916265121",
+      "entry_type": "org2media",
+      "organization_name": "Ngân hàng SCB"
+    },
+    {
+      "violation_type_score": 4,
+      "customer_role_score": 3,
+      "legal_status_score": 2,
+      "source_level_score": 0,
+      "total_risk_score": 9,
+      "risk_level": "Cao",
+      "characteristics": {
+        "violation_type": "Tham ô tài sản",
+        "customer_role": "Tổ chức thực hiện hành vi vi phạm",
+        "legal_status": "Đang trong quá trình điều tra",
+        "source_level": null,
+        "source_credibility": null
+      },
+      "entry_id": "o2m_id_1752495885188504",
+      "entry_type": "org2media",
+      "organization_name": "Ngân hàng TMCP Sài Gòn (SCB)"
+    },
+    {
+      "violation_type_score": 4,
+      "customer_role_score": 3,
+      "legal_status_score": 2,
+      "source_level_score": 0,
+      "total_risk_score": 9,
+      "risk_level": "Cao",
+      "characteristics": {
+        "violation_type": "Tham ô tài sản",
+        "customer_role": "Tổ chức thực hiện hành vi vi phạm",
+        "legal_status": "Đang trong quá trình điều tra",
+        "source_level": null,
+        "source_credibility": null
+      },
+      "entry_id": "o2m_id_1752495885188498",
+      "entry_type": "org2media",
+      "organization_name": "Tập đoàn Vạn Thịnh Phát"
+    },
+    {
+      "violation_type_score": 4,
+      "customer_role_score": 3,
+      "legal_status_score": 2,
+      "source_level_score": 0,
+      "total_risk_score": 9,
+      "risk_level": "Cao",
+      "characteristics": {
+        "violation_type": "Tham nhũng",
+        "customer_role": "Tổ chức thực hiện hành vi vi phạm",
+        "legal_status": "Đang trong quá trình điều tra",
+        "source_level": null,
+        "source_credibility": null
+      },
+      "entry_id": "o2m_id_1752495915838036",
+      "entry_type": "org2media",
+      "organization_name": "Tập đoàn Vạn Thịnh Phát"
+    }
+  ],
+  "overall_risk_metrics": {
+    "max_risk_score": 10,
+    "average_risk_score": 9.0,
+    "overall_risk_level": "Rất Cao",
+    "total_entries_analyzed": 6,
+    "high_risk_entries": 6
+  },
+  "original_lookup_result": {
+    "person_info": {
+      "per_id": "per_id_1752495885187574",
+      "full_name": "Trương Mỹ Lan",
+      "gender": "Female",
+      "occupation_or_position": "Chủ tịch hội đồng quản trị Tập đoàn Vạn Thịnh Phát",
+      "organization": "Tập đoàn Vạn Thịnh Phát",
+      "personal_relationships": "Cổ đông lớn Ngân hàng SCB; Chỉ đạo các bị cáo Đinh Văn Thành, Bùi Anh Dũng, Võ Tấn Hoàng Văn, Tạ Chiêu Trung, Trương Khánh Hoàng, Trần Thị Mỹ Dung"
+    },
+    "personal2media_info": [
+      {
+        "legal_status": "Đã kết án",
+        "role_in_event": null,
+        "source_level": null,
+        "violation_type": "Tham ô tài sản",
+        "media_id": "media_id_1752495885187349",
+        "p2m_id": "p2m_id_1752495885188323",
+        "entity_name": "Trương Mỹ Lan",
+        "customer_role": "Chủ mưu"
+      },
+      {
+        "legal_status": "Đã kết án",
+        "role_in_event": null,
+        "source_level": null,
+        "violation_type": "Tham nhũng / Hối lộ / Vi phạm dân sự",
+        "media_id": "media_id_1752495904474264",
+        "p2m_id": "p2m_id_1752495915837878",
+        "entity_name": "Trương Mỹ Lan",
+        "customer_role": "Chủ mưu"
+      }
+    ],
+    "org2media_info": [
+      {
+        "legal_status": "Đang trong quá trình điều tra",
+        "media_id": "media_id_1752495904474264",
+        "o2m_id": "o2m_id_1752495916265121",
+        "org_id": "org_id_1752495916264723",
+        "role_in_event": null,
+        "source_level": null,
+        "violation_type": "Tham nhũng",
+        "entity_name": "Ngân hàng SCB",
+        "customer_role": "Bên liên quan bị động",
+        "organization_name": "Ngân hàng SCB",
+        "organization_type": null
+      },
+      {
+        "legal_status": "Đang trong quá trình điều tra",
+        "media_id": "media_id_1752495885187349",
+        "o2m_id": "o2m_id_1752495885188504",
+        "org_id": "org_id_1752495885187670",
+        "role_in_event": null,
+        "source_level": null,
+        "violation_type": "Tham ô tài sản",
+        "entity_name": "Ngân hàng TMCP Sài Gòn (SCB)",
+        "customer_role": "Tổ chức thực hiện hành vi vi phạm",
+        "organization_name": "Ngân hàng TMCP Sài Gòn (SCB)",
+        "organization_type": null
+      },
+      {
+        "legal_status": "Đang trong quá trình điều tra",
+        "media_id": "media_id_1752495885187349",
+        "o2m_id": "o2m_id_1752495885188498",
+        "org_id": "org_id_1752495885187666",
+        "role_in_event": null,
+        "source_level": null,
+        "violation_type": "Tham ô tài sản",
+        "entity_name": "Tập đoàn Vạn Thịnh Phát",
+        "customer_role": "Tổ chức thực hiện hành vi vi phạm",
+        "organization_name": "Tập đoàn Vạn Thịnh Phát",
+        "organization_type": null
+      },
+      {
+        "legal_status": "Đang trong quá trình điều tra",
+        "media_id": "media_id_1752495904474264",
+        "o2m_id": "o2m_id_1752495915838036",
+        "org_id": "org_id_1752495885187666",
+        "role_in_event": null,
+        "source_level": null,
+        "violation_type": "Tham nhũng",
+        "entity_name": "Tập đoàn Vạn Thịnh Phát",
+        "customer_role": "Tổ chức thực hiện hành vi vi phạm",
+        "organization_name": "Tập đoàn Vạn Thịnh Phát",
+        "organization_type": null
+      }
+    ],
+    "media_details": {
+      "media_id_1752495904474264": {
+        "media_id": "media_id_1752495904474264",
+        "news_sentiment_type": "Negative",
+        "recency": "recent",
+        "source_credibility": null,
+        "content_preview": "\n    Tòa án nhân dân cấp cao tại TP.HCM đã ban hành quyết định xét xử phúc thẩm bà Trương Mỹ Lan và các đồng phạm trong vụ Vạn Thịnh Phát giai đoạn 1 vào ngày 4-11. Sắp xử phúc thẩm Vạn Thịnh Phát gia..."
+      },
+      "media_id_1752495885187349": {
+        "media_id": "media_id_1752495885187349",
+        "news_sentiment_type": "Negative",
+        "recency": "recent",
+        "source_credibility": null,
+        "content_preview": "\n    Ngày 4-11, Tòa án nhân dân cấp cao tại TP.HCM mở phiên tòa xét xử phúc thẩm đối với bà Trương Mỹ Lan và 48 bị cáo trong vụ án xảy ra tại Tập đoàn Vạn Thịnh Phát, Ngân hàng TMCP Sài Gòn (SCB) - gi..."
+      }
+    },
+    "summary": {
+      "total_personal2media_entries": 2,
+      "total_org2media_entries": 4,
+      "total_media_articles": 2,
+      "unique_media_ids": [
+        "media_id_1752495904474264",
+        "media_id_1752495885187349"
+      ]
+    }
+  }
+}
