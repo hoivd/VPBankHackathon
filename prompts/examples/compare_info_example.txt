@@ -1,45 +1,222 @@
-
 Mục tiêu:
 
-Sử dụng thông tin từ các danh sách custom_info (cho cá nhân) và danh sách tổ chức từ dữ liệu cũ và dữ liệu mới để xác định các cá nhân và tổ chức trùng lặp.
+Sử dụng thông tin từ các danh sách `custom_info` (cho cá nhân) và danh sách tổ chức từ dữ liệu cũ và dữ liệu mới để xác định các cá nhân và tổ chức trùng lặp.
 
-Đối với mỗi cá nhân trùng lặp được tìm thấy, hãy trả về một đối tượng JSON chứa personal_id của họ từ dữ liệu mới, per_id của họ từ dữ liệu cũ, và một bản tổng hợp thông tin cá nhân của họ từ cả hai nguồn (kết hợp các trường thông tin một cách đầy đủ và chính xác nhất, ưu tiên thông tin chi tiết hơn nếu có sự khác biệt).
-Đối với mỗi tổ chức trùng lặp được tìm thấy, hãy trả về một đối tượng JSON chứa organizer_id của họ từ dữ liệu mới, org_id của họ từ dữ liệu cũ, và một bản tổng hợp thông tin của tổ chức từ cả hai nguồn (kết hợp các trường thông tin một cách đầy đủ và chính xác nhất, ưu tiên thông tin chi tiết hơn nếu có sự khác biệt).
-
+1.  **Đối với mỗi cá nhân trùng lặp** được tìm thấy, hãy trả về một đối tượng JSON chứa `personal_id` của họ từ dữ liệu mới, `per_id` của họ từ dữ liệu cũ, và một bản tổng hợp thông tin cá nhân của họ từ cả hai nguồn (kết hợp các trường thông tin một cách đầy đủ và chính xác nhất, ưu tiên thông tin chi tiết hơn nếu có sự khác biệt).
+2.  **Đối với mỗi tổ chức trùng lặp** được tìm thấy, hãy trả về một đối tượng JSON chứa `organizer_id` của họ từ dữ liệu mới, `org_id` của họ từ dữ liệu cũ, và một bản tổng hợp thông tin của tổ chức từ cả hai nguồn (kết hợp các trường thông tin một cách đầy đủ và chính xác nhất, ưu tiên thông tin chi tiết hơn nếu có sự khác biệt).
 
 Dữ liệu đầu vào:
 
-Nội dung bài báo cũ, custom info cá nhân cũ và organizer info cũ tương ứng
+1.  **Nội dung bài báo cũ, personal_info cá nhân cũ và organizer info cũ tương ứng**
 
-Nội dung bài báo:
+    Nội dung bài báo:
 
-Theo Ban Dân tộc TP Hồ Chí Minh, trước đây, dưới sự lãnh đạo trực tiếp của Thành ủy Sài Gòn - Gia Ðịnh, năm 1967, Ðảng ủy kiêm Ban Hoa vận T4 được thành lập; từ đó phát triển liên tục, tạo nên đội ngũ cán bộ, chiến sĩ, cơ sở cách mạng người Hoa ngày một đông đảo, rộng khắp. Nhiều cơ sở đã tự nguyện dùng nhà ở của mình làm nơi cất giấu vũ khí, nuôi giấu cán bộ, biên soạn tài liệu tiếng Hoa, vận động đồng bào dân tộc Hoa tham gia cách mạng. Việc sản xuất, kinh doanh vốn là chuyên môn của bà con, khi ấy vừa là kế sinh nhai, vừa là bình phong che mắt địch nhằm vận động tài chính, tiếp tế thuốc chữa bệnh, vận chuyển vũ khí cho Ban Hoa vận T4 cho đến khi miền nam được giải phóng. Chính vì vậy trong đại dịch Covid-19, người Hoa cùng các dân tộc khác, không đứng ngoài cuộc. Ðó là việc mới đây, hàng triệu người Việt chứng kiến hành động đầy cảm xúc của doanh nhân người Hoa Trương Mỹ Lan, Chủ tịch Tập đoàn Vạn Thịnh Phát đã cùng các công ty trực thuộc và đối tác, tài trợ 2.000 tỷ đồng ủng hộ cho kế hoạch mua vaccine phòng, chống Covid-19 của Việt Nam và TP Hồ Chí Minh. Trong số này, Công ty CP Bảo trợ Tập đoàn Vạn Thịnh Phát đứng đầu danh sách tài trợ với kinh phí 1.450 tỷ đồng. Ngoài ra, các công ty trực thuộc tập đoàn và đối tác đã tài trợ 550 tỷ đồng... Dù ít khi xuất hiện trên truyền thông nhưng hàng chục năm qua, bà Trương Mỹ Lan đã dành cho thành phố nơi mình sinh ra rất nhiều nguồn lực không thể kể hết. Chưa nói đến việc vào tháng 4/2020, Tập đoàn Vạn Thịnh Phát và các công ty trực thuộc đã đóng góp 100 tỷ đồng cho Ủy ban Mặt trận Tổ quốc Việt Nam TP Hồ Chí Minh nhằm ủng hộ cho công tác phòng, chống dịch Covid-19, cũng như đóng góp cho Ủy ban Trung ương Mặt trận Tổ quốc Việt Nam 2.000 máy thở. Tiến sĩ Trần Thị Anh Vũ, nguyên Phó Bí thư Thường trực Quận ủy quận 5, người có nhiều năm công tác, sinh sống cùng đồng bào Hoa, cho rằng, khu vực kinh tế tư nhân ở TP Hồ Chí Minh tăng nhanh về số lượng, vốn kinh doanh và có mặt khắp các lĩnh vực, thích nghi nhanh với các quy luật của thị trường, năng động, nhạy bén trong tiếp cận với công nghệ, kỹ thuật tiên tiến... là có sự góp mặt của một bộ phận đáng kể là doanh nhân, hộ kinh doanh cá thể người Hoa. Đối với một địa bàn có khoảng nửa triệu người Hoa như TP Hồ Chí Minh, bản sắc văn hóa của đồng bào Hoa cũng thấm đẫm và hòa chung dòng chảy văn hóa Việt. Nhiều nghệ thuật múa lân, lễ hội nguyên tiêu, hát bội… ăn sâu vào tâm trí người dân thành phố. Trong đó, nghệ sĩ người Hoa Trương Hán Minh là một họa sĩ vẽ tranh thủy mặc được nhiều người biết đến vì đã có nhiều đóng góp cho sự phát triển của hoạt động văn học nghệ thuật. Họa sĩ Trương Hán Minh cũng là một trong những người tiên phong và thành công khi dùng nghệ thuật vẽ tranh thủy mặc thể hiện và minh họa thơ Chủ tịch Hồ Chí Minh, gắn với đẩy mạnh “Học tập và làm theo tư tưởng, đạo đức, phong cách Hồ Chí Minh”. Thông qua hình thức vẽ tranh bán đấu giá, ông còn ủng hộ hoạt động từ thiện xã hội hàng chục tỷ đồng, và mới đây nhất là ủng hộ tiền bán tranh để phòng, chống Covid-19. Trên trường thể thao quốc tế, cặp đôi bạn diễn người Hoa (cũng là anh em ruột) Giang Quốc Cơ - Giang Quốc Nghiệp đều là những nghệ sĩ xiếc nổi tiếng của Việt Nam, được trao tặng danh hiệu Nghệ sĩ ưu tú khi tuổi đời còn rất trẻ. Hai chàng trai người Hoa này bắt đầu gây chú ý với tiết mục “Sức mạnh đôi tay” và đã mang về cho Việt Nam không dưới 10 huy chương vàng, huy chương bạc và nhiều giải thưởng uy tín khác; đồng thời trở thành Công dân trẻ tiêu biểu của TP Hồ Chí Minh. Cũng như nhiều văn nghệ sĩ và vận động viên khác ở TP Hồ Chí Minh đầy năng động, ngay trong tâm dịch Covid-19, họ cũng cùng gia đình đóng góp những ngày lương, tiền dành dụm… nhằm chung tay cùng nhân dân các dân tộc vượt qua đại dịch. Và đó còn là hành động đẹp tại Phòng trưng bày văn hóa người Hoa Sài Gòn - Chợ Lớn (67, đường An Dương Vương, quận 5). Ngoài tiếp nhận hàng trăm kỷ vật của người Hoa ở TP Hồ Chí Minh qua nhiều thời kỳ, những người lao động nơi đây còn cùng các cán bộ hưu trí, các đảng viên người Hoa đóng góp từng ngày lương, từng món tiền tiết kiệm để chung tay, đồng hành cùng TP Hồ Chí Minh phòng, chống dịch bệnh; đó là nữ đồng chí 50 tuổi Ðảng Lý Kim Mai (nguyên cán bộ Ban Hoa vận T4) dành dụm mấy tháng lương hưu, ngày ngày chăm lo thiếu nhi nghèo trong các khu hẻm bị phong tỏa; đó là “vua bánh” người Hoa Kao Siêu Lực (ABC Bakery) đang cùng nhóm doanh nghiệp người Hoa ngày ngày hỗ trợ nhanh 1.000 suất ăn nhẹ, nước uống cho các lực lượng tham gia phòng, chống dịch. Và không thể không nhắc đến các hội quán Tuệ Thành, Sùng Chính, Ôn Lăng, Nghĩa An, Nhị Phủ, Hải Nam, đang tích cực vận động để trợ giúp hàng chục tấn hàng hóa, thực phẩm cho người dân trong các khu vực bị phong tỏa, cách ly. Ðây chính là tấm lòng của bà con người Hoa thuộc các nhóm ngôn ngữ chính: Quảng Ðông, Triều Châu, Phúc Kiến, Hải Nam, Khách Gia (Hẹ) ở thành phố. Theo thống kê, toàn thành phố có 418.167 người Hoa với khoảng 85.000 hộ (tỷ lệ hơn 5,26% dân số), trong đó có 53,59% sống tập trung ở quận 5, quận 6 và quận 11. Cộng đồng này góp phần không nhỏ vào sự phát triển kinh tế - xã hội và cũng là cầu nối quan trọng cho quan hệ kinh tế, thương mại, đầu tư của Việt Nam với các quốc gia có đông người Hoa sinh sống trên thế giới. Và đây cũng là những người tiên phong cùng các dân tộc khác, chung tay xây dựng, bảo vệ và đóng góp thật sự ý nghĩa cho TP Hồ Chí Minh.
+    Bà Phương Hằng: 'Vô cùng ân hận vì không hiểu biết pháp luật'
+TP HCM Được hỏi về hành vi phạm tội của bản thân và đồng phạm, bà Phương Hằng nói "vô cùng ân hận vì không hiểu pháp luật, không biết đến Luật An ninh mạng".
+Sáng 4/4, bà Hằng 53 tuổi, Tổng giám đốc Công ty Cổ phần Đại Nam, mặc áo trắng, trang điểm đậm, tỏ ra khá thoải mái khi bị áp giải đến TAND Cấp cao. Khi vào phòng xử, bà cười thành tiếng và ôm lấy các bị cáo là cựu nhân viên thân tín của mình. Họ bị cảnh sát nhắc nhở giữ trật tự, nội quy phiên tòa.
+HĐXX cho biết, bà Hằng không có đơn kháng cáo nhưng tòa vẫn triệu tập để "hỏi khi cần thiết", nhằm xem xét toàn diện vụ án, làm rõ các kháng cáo của các đồng phạm và người liên quan.
+Bà Nguyễn Phương Hằng tại tòa hôm nay. Ảnh: Quỳnh Trần
+Các bị cáo và người liên quan tại tòa, sáng 4/4. Video: Quỳnh Trần
+Trong đó, ông Đặng Anh Quân (43 tuổi, cựu giảng viên Trường đại học Luật TP HCM) cho rằng bản án 2 năm 6 tháng tù tòa áp dụng đối với mình là quá nặng (tại phiên sơ thẩm bị cáo nói không phạm tội); các bị cáo Nguyễn Thị Mai Nhi, Huỳnh Công Tân, Lê Thị Thu Hà (nhân viên Công ty Cổ phần Đại Nam) xin hưởng án treo (án sơ thẩm tuyên 1 năm 6 tháng tù). Còn cựu nhà báo Hàn Ni , Đinh Thị Lan đề nghị tòa phúc thẩm xem xét lại tư cách tố tụng của mình trong vụ án. Tức, họ là bị hại chứ không phải người có quyền, nghĩa vụ liên quan.
+Đặng Anh Quân: 'Mục đích livestream là phản biện xã hội'
+Được gọi lên đầu tiên, bị cáo Quân cho biết giữ nguyên kháng cáo, đề nghị tòa phúc thẩm xem xét các chứng cứ, tài liệu; xin được giảm nhẹ hình phạt. Theo bị cáo, các tình tiết trong cáo trạng và bản án sơ thẩm khác với lời khai của mình và của bà Hằng. Ví dụ như, bản án cho rằng bị cáo "cùng quan điểm, cùng ý chí" với bà Hằng là không đúng. "Tôi chỉ cùng quan điểm việc phản biện xã hội, và mục đích livestream của tôi là phản biện xã hội", cựu giảng viên trường luật nói.
+Về kết luận giám định video, bị cho là "xúc phạm nghệ sĩ Hoài Linh", ông Quân giải thích: "Bị cáo chỉ phân tích bài báo, nhưng những clip đưa đi giám định bị xáo trộn trật tự, cắt ghép từ nhiều nguồn YouTube khác nhau. Bị cáo đã cung cấp các vi bằng chứng minh nhưng không được cấp sơ thẩm xem xét"...
+Cựu giảng viên luật Đặng Anh Quân với vẻ tiều tụy sau khoảng 2 năm bị bắt. Ảnh: Quỳnh Trần
+Trả lời thẩm vấn VKS sau đó, ông Quân cho biết đã xem các buổi livestream của bà Hằng về từ thiện, từ tháng 3 đến tháng 6, nhưng đến tháng 10 mới tham gia. Mục đích là muốn lên tiếng dưới góc độ pháp lý về các vấn đề bà Hằng nói. Để làm rõ hành vi đồng phạm của ông Quân, đại diện VKS đọc lại nội dung phát ngôn của bà Hằng trong một số buổi livestream, ông Quân thừa nhận là "xúc phạm người khác".
+"Tại sao bị cáo không giải thích cho bà Hằng đây là hành vi vi phạm pháp luật?", VKS hỏi. Ngập ngừng một lúc, cựu giảng viên trường luật trả lời: "Bản chất chị Hằng không phải như vậy. Bị cáo là nhà giáo, sẽ dùng biện pháp từ từ để khuyên nhủ". Tuy nhiên, ông Quân sau đó nói "ngay cả gia đình chị Hằng còn không cản được thì bị cáo cũng không cản nổi", và cho biết từng góp ý cho bà Hằng làm đơn tố cáo những người đã xúc phạm bà, thay vì nói trên livestream.
+HĐXX gọi bà Hằng , hỏi "có ý kiến về các hành vi trong vụ án hay không?". CEO Công ty Đại Nam không trả lời thẳng vào câu hỏi, nói: "Tôi hạnh phúc nhất lúc này là đứng trước tòa mà không chống án. Ở phiên sơ thẩm tôi không được nói...". Chủ tọa ngắt lời, nhắc lại câu hỏi, đề nghị bà Hằng trả lời thẳng vào vấn đề. Bà Hằng cho biết "không có vấn đề gì về lời khai của các bị cáo khác", sau đó nói bằng giọng đầy vẻ ấm ức: "Tôi có tội nhưng vẫn có công. Tòa án là nơi tất cả công dân đặt niềm tin vào, nhưng thẩm phán, luật sư, mọi người chỉ xoay quanh tội danh mà quên hết các công sức của tôi. Tôi đã hết lòng trong công tác từ thiện".
+Trả lời xét hỏi của các luật sư bào chữa cho các bị cáo sau đó, bà Hằng cho biết, xem YouTube biết "thầy Quân" bị tấn công, cảm thấy đồng cảm dù không quen biết trước đó. Việc mời Quân tham gia livestream là vì thấy ông "hiểu biết pháp luật"; nội dung nói trong các buổi trực tuyến không bàn bạc trước, chủ yếu là cùng sở thích ca hát, tâm sự... với nhau. Khi luật sư đặt vấn đề "liệu ông Quân có thể ngăn cản được các phát ngôn của bà không?", bà Hằng thẳng thừng: "Không ai có thể ngăn cản tôi".
+Về quá trình thực hiện hành vi phạm tội, bà Hằng nhắc lại quan điểm đã trình bày tại phiên sơ thẩm, cho rằng bản thân "đã trở thành tội phạm, dù trước đó là nạn nhân". "Tôi vô cùng ân hận vì không hiểu pháp luật, không biết đến Luật An ninh mạng. Nếu trước đó công an nhắc tôi về luật này thì tôi đã dừng lại...", bà Hằng nói.
+VKS đề nghị tòa bác toàn bộ kháng cáo
+Nêu quan điểm về vụ án, đại diện VKS xác định ông Quân có hành vi tương tác với bà Hằng trong các buổi livesteam, cổ vũ tinh thần, tiếp thêm ý trí cho bà này thực hiện hành vi phạm tội. Tại tòa phúc thẩm, bị cáo thừa nhận tham gia nhưng cho rằng "không chịu trách nhiệm đối với các phát ngôn vi phạm của bà Hằng" là không đúng. "Với học vị tiến sĩ luật, bị cáo biết bà Hằng vi phạm pháp luật nhưng không ngăn cản, không tỏ thái độ phản đối còn tương tác, giúp sức", đại diện VKS nêu quan điểm, cho rằng đủ căn cứ xác định bị cáo là đồng phạm của bà Hằng. Việc ông Quân không thừa nhận phạm tội là thể hiện "không ăn năn hối lỗi".
+Đối với kháng cáo của các bị cáo khác và người có quyền, nghĩa vụ liên quan, đại diện VKS cho rằng bản án sơ thẩm đã tuyên đúng. Từ đó, VKS đề nghị HĐXX bác toàn bộ kháng cáo. Chiều nay, các luật sư sẽ bào chữa cho thân chủ.
+Bà Phương Hằng khi gặp lại các bị cáo là cựu nhân viên. Ảnh: Quỳnh Trần
+Hồi tháng 9 năm ngoái, bà Hằng bị TAND TP HCM xử sơ thẩm, tuyên 3 năm tù về tội Lợi dụng các quyền tự do dân chủ xâm phạm lợi ích của nhà nước, quyền, lợi ích hợp pháp của tổ chức, cá nhân . Bà chấp nhận mức án, không kháng cáo và đã thi hành án.
+Bản án sơ thẩm xác định, từ tháng 3/2021 đến tháng 3/2022, bà Hằng và 4 đồng phạm đã thực hiện 57 buổi livestream tại nhà riêng trên đường Nguyễn Thông (quận 3, TP HCM) và Khu du lịch Đại Nam (Bình Dương) với nội dung xúc phạm nghiêm trọng danh dự, uy tín của ca sĩ Vy Oanh, Đàm Vĩnh Hưng, nghệ sĩ Hoài Linh, vợ chồng ca sĩ Thủy Tiên, nhà báo Hàn Ni, nhà báo Đức Hiển... Trong đó, bà Hằng đã mời tiến sĩ luật Đặng Anh Quân tham gia 11 buổi livestream với vai trò cố vấn pháp lý để tăng độ tin cậy cho những phát ngôn của mình. Theo tòa, bị cáo Hằng có vai trò chủ mưu, khởi xướng; Nhi, Tân, Hà là đồng phạm giúp sức. Hành vi của các bị cáo vi phạm Luật An ninh mạng và Nghị định 72/2013/NĐ-CP; gây ảnh hưởng xấu đến an ninh trật tự, an toàn xã hội. Ngoài mức án, các bị cáo phải liên đới bồi thường cho nhà báo Hàn Ni, bà Đinh Thị Lan 18 triệu đồng.
+Bà Đinh Thị Lan, người có quyền, nghĩa vụ liên quan. Ảnh: Quỳnh Trần
+Quốc Thắng - Quỳnh Trần
 
-personal_info:
+    personal_info:
 
-[ { "organization": "Tập đoàn Vạn Thịnh Phát", "created_at": 1752467650544721.0, "per_id": "per_id_1752467650544724", "full_name": "Trương Mỹ Lan", "occupation_or_position": "Chủ tịch Tập đoàn", "hometown_or_residence": "TP Hồ Chí Minh", "gender": "Female", "personal_relationships": "Lãnh đạo các công ty trực thuộc và đối tác", "birth_year_or_age": null }, { "organization": null, "created_at": 1752467650544721.0, "per_id": "per_id_1752467650544738", "full_name": "Giang Quốc Nghiệp", "occupation_or_position": "Nghệ sĩ xiếc", "hometown_or_residence": null, "gender": "Male", "personal_relationships": "Anh em ruột với Giang Quốc Cơ", "birth_year_or_age": null }, { "organization": null, "created_at": 1752467650544721.0, "per_id": "per_id_1752467650544734", "full_name": "Trương Hán Minh", "occupation_or_position": "Họa sĩ tranh thủy mặc", "hometown_or_residence": null, "gender": "Male", "personal_relationships": "Người ủng hộ từ thiện", "birth_year_or_age": null }, { "organization": null, "created_at": 1752467650544721.0, "per_id": "per_id_1752467650544736", "full_name": "Giang Quốc Cơ", "occupation_or_position": "Nghệ sĩ xiếc", "hometown_or_residence": null, "gender": "Male", "personal_relationships": "Anh em ruột với Giang Quốc Nghiệp", "birth_year_or_age": null }, { "organization": "Quận ủy quận 5", "created_at": 1752467650544721.0, "per_id": "per_id_1752467650544730", "full_name": "Trần Thị Anh Vũ", "occupation_or_position": "Tiến sĩ, nguyên Phó Bí thư Thường trực Quận ủy quận 5", "hometown_or_residence": null, "gender": "Female", "personal_relationships": "Người nghiên cứu về cộng đồng người Hoa", "birth_year_or_age": null }, { "organization": "ABC Bakery", "created_at": 1752467650544721.0, "per_id": "per_id_1752467650544741", "full_name": "Kao Siêu Lực", "occupation_or_position": "Chủ doanh nghiệp", "hometown_or_residence": null, "gender": "Male", "personal_relationships": "Người hỗ trợ phòng chống dịch", "birth_year_or_age": null } ]
+    [
+  {
+    "organization": null,
+    "created_at": 1752481098513267.0,
+    "per_id": "per_id_1752481098513277",
+    "full_name": "Hoài Linh",
+    "occupation_or_position": "Nghệ sĩ",
+    "hometown_or_residence": null,
+    "gender": "Male",
+    "personal_relationships": "Bị hại bởi Nguyễn Phương Hằng và đồng phạm",
+    "birth_year_or_age": null
+  },
+  {
+    "organization": "Trường Đại học Luật TP HCM",
+    "created_at": 1752481098513267.0,
+    "per_id": "per_id_1752481098513270",
+    "full_name": "Đặng Anh Quân",
+    "occupation_or_position": "Cựu giảng viên",
+    "hometown_or_residence": null,
+    "gender": "Male",
+    "personal_relationships": "Đồng phạm với Nguyễn Phương Hằng",
+    "birth_year_or_age": "43"
+  },
+  {
+    "organization": null,
+    "created_at": 1752481098513267.0,
+    "per_id": "per_id_1752481098513275",
+    "full_name": "Đinh Thị Lan",
+    "occupation_or_position": "Người có quyền, nghĩa vụ liên quan",
+    "hometown_or_residence": null,
+    "gender": "Female",
+    "personal_relationships": "Bị hại bởi Nguyễn Phương Hằng và đồng phạm",
+    "birth_year_or_age": null
+  },
+  {
+    "organization": null,
+    "created_at": 1752481098513267.0,
+    "per_id": "per_id_1752481098513279",
+    "full_name": "Đức Hiển",
+    "occupation_or_position": "Nhà báo",
+    "hometown_or_residence": null,
+    "gender": "Male",
+    "personal_relationships": "Bị hại bởi Nguyễn Phương Hằng và đồng phạm",
+    "birth_year_or_age": null
+  },
+  {
+    "organization": "Công ty Cổ phần Đại Nam",
+    "created_at": 1752481098513267.0,
+    "per_id": "per_id_1752481098513272",
+    "full_name": "Nguyễn Thị Mai Nhi",
+    "occupation_or_position": "Nhân viên",
+    "hometown_or_residence": null,
+    "gender": "Female",
+    "personal_relationships": "Đồng phạm với Nguyễn Phương Hằng",
+    "birth_year_or_age": null
+  },
+  {
+    "organization": null,
+    "created_at": 1752481098513267.0,
+    "per_id": "per_id_1752481098513275",
+    "full_name": "Đinh Thị Lan",
+    "occupation_or_position": "Người có quyền, nghĩa vụ liên quan",
+    "hometown_or_residence": null,
+    "gender": "Female",
+    "personal_relationships": "Bị hại bởi Nguyễn Phương Hằng và đồng phạm",
+    "birth_year_or_age": null
+  },
+  {
+    "organization": null,
+    "created_at": 1752481098513267.0,
+    "per_id": "per_id_1752481098513276",
+    "full_name": "Vy Oanh",
+    "occupation_or_position": "Ca sĩ",
+    "hometown_or_residence": null,
+    "gender": "Female",
+    "personal_relationships": "Bị hại bởi Nguyễn Phương Hằng và đồng phạm",
+    "birth_year_or_age": null
+  },
+  {
+    "organization": "Công ty Cổ phần Đại Nam",
+    "created_at": 1752481098513267.0,
+    "per_id": "per_id_1752481098513268",
+    "full_name": "Nguyễn Phương Hằng",
+    "occupation_or_position": "Tổng giám đốc",
+    "hometown_or_residence": null,
+    "gender": "Female",
+    "personal_relationships": "Đồng phạm với Đặng Anh Quân, Nguyễn Thị Mai Nhi, Huỳnh Công Tân, Lê Thị Thu Hà",
+    "birth_year_or_age": "53"
+  },
+  {
+    "organization": "Công ty Cổ phần Đại Nam",
+    "created_at": 1752481098513267.0,
+    "per_id": "per_id_1752481098513273",
+    "full_name": "Huỳnh Công Tân",
+    "occupation_or_position": "Nhân viên",
+    "hometown_or_residence": null,
+    "gender": "Male",
+    "personal_relationships": "Đồng phạm với Nguyễn Phương Hằng",
+    "birth_year_or_age": null
+  }
+]
 
-organizer_info:
+    organizer_info:
 
-[ { "org_id": "org_id_1752467650544849", "organization": null, "created_at": 1752467650544838.0, "full_name": "Các hội quán (Tuệ Thành, Sùng Chính, Ôn Lăng, Nghĩa An, Nhị Phủ, Hải Nam)", "occupation_or_position": "Tổ chức cộng đồng", "hometown_or_residence": "TP Hồ Chí Minh", "gender": null, "personal_relationships": "Hỗ trợ phòng chống dịch", "birth_year_or_age": null }, { "org_id": "org_id_1752467650544845", "organization": "Tập đoàn Vạn Thịnh Phát", "created_at": 1752467650544838.0, "full_name": "Công ty CP Bảo trợ Tập đoàn Vạn Thịnh Phát", "occupation_or_position": "Công ty con", "hometown_or_residence": null, "gender": null, "personal_relationships": null, "birth_year_or_age": null }, { "org_id": "org_id_1752467650544848", "organization": null, "created_at": 1752467650544838.0, "full_name": "ABC Bakery", "occupation_or_position": "Doanh nghiệp", "hometown_or_residence": null, "gender": null, "personal_relationships": "Do Kao Siêu Lực quản lý", "birth_year_or_age": null }, { "org_id": "org_id_1752467650544846", "organization": null, "created_at": 1752467650544838.0, "full_name": "Ủy ban Mặt trận Tổ quốc Việt Nam TP Hồ Chí Minh", "occupation_or_position": "Tổ chức chính trị - xã hội", "hometown_or_residence": null, "gender": null, "personal_relationships": "Nhận tài trợ từ Vạn Thịnh Phát", "birth_year_or_age": null }, { "org_id": "org_id_1752467650544839", "organization": null, "created_at": 1752467650544838.0, "full_name": "Ban Dân tộc TP Hồ Chí Minh", "occupation_or_position": "Cơ quan quản lý", "hometown_or_residence": null, "gender": null, "personal_relationships": "Nguồn thông tin bài báo", "birth_year_or_age": null }, { "org_id": "org_id_1752467650544842", "organization": "Thành ủy Sài Gòn - Gia Định", "created_at": 1752467650544838.0, "full_name": "Ban Hoa vận T4", "occupation_or_position": "Tổ chức cách mạng", "hometown_or_residence": null, "gender": null, "personal_relationships": "Liên quan đến Lý Kim Mai", "birth_year_or_age": "1967" }, { "org_id": "org_id_1752467650544847", "organization": null, "created_at": 1752467650544838.0, "full_name": "Phòng trưng bày văn hóa người Hoa Sài Gòn - Chợ Lớn", "occupation_or_position": "Cơ quan văn hóa", "hometown_or_residence": "Quận 5, TP Hồ Chí Minh", "gender": null, "personal_relationships": "Nơi tiếp nhận kỷ vật và đóng góp từ thiện", "birth_year_or_age": null }, { "org_id": "org_id_1752467650544844", "organization": null, "created_at": 1752467650544838.0, "full_name": "Tập đoàn Vạn Thịnh Phát", "occupation_or_position": "Tập đoàn kinh doanh", "hometown_or_residence": null, "gender": null, "personal_relationships": "Do Trương Mỹ Lan lãnh đạo", "birth_year_or_age": null } ]
+    [
+  {
+    "org_id": "org_id_1752481098513292",
+    "organization": null,
+    "created_at": 1752481098513292.0,
+    "full_name": "Công ty Cổ phần Đại Nam",
+    "occupation_or_position": null,
+    "hometown_or_residence": null,
+    "gender": null,
+    "personal_relationships": "Nơi làm việc của Nguyễn Phương Hằng và các đồng phạm",
+    "birth_year_or_age": null
+  },
+  {
+    "org_id": "org_id_1752481098513294",
+    "organization": null,
+    "created_at": 1752481098513292.0,
+    "full_name": "Trường Đại học Luật TP HCM",
+    "occupation_or_position": null,
+    "hometown_or_residence": null,
+    "gender": null,
+    "personal_relationships": "Nơi làm việc cũ của Đặng Anh Quân",
+    "birth_year_or_age": null
+  }
+]
 
-Nội dung bài báo mới và custom info cá nhân tương ứng
+2.  **Nội dung bài báo mới và personal_info cá nhân tương ứng**
 
-Nội dung bài báo:
+    Nội dung bài báo:
 
-Theo Ban Dân tộc TP Hồ Chí Minh, trước đây, dưới sự lãnh đạo trực tiếp của Thành ủy Sài Gòn - Gia Ðịnh, năm 1967, Ðảng ủy kiêm Ban Hoa vận T4 được thành lập; từ đó phát triển liên tục, tạo nên đội ngũ cán bộ, chiến sĩ, cơ sở cách mạng người Hoa ngày một đông đảo, rộng khắp. Nhiều cơ sở đã tự nguyện dùng nhà ở của mình làm nơi cất giấu vũ khí, nuôi giấu cán bộ, biên soạn tài liệu tiếng Hoa, vận động đồng bào dân tộc Hoa tham gia cách mạng. Việc sản xuất, kinh doanh vốn là chuyên môn của bà con, khi ấy vừa là kế sinh nhai, vừa là bình phong che mắt địch nhằm vận động tài chính, tiếp tế thuốc chữa bệnh, vận chuyển vũ khí cho Ban Hoa vận T4 cho đến khi miền nam được giải phóng. Chính vì vậy trong đại dịch Covid-19, người Hoa cùng các dân tộc khác, không đứng ngoài cuộc. Ðó là việc mới đây, hàng triệu người Việt chứng kiến hành động đầy cảm xúc của doanh nhân người Hoa Trương Mỹ Lan, Chủ tịch Tập đoàn Vạn Thịnh Phát đã cùng các công ty trực thuộc và đối tác, tài trợ 2.000 tỷ đồng ủng hộ cho kế hoạch mua vaccine phòng, chống Covid-19 của Việt Nam và TP Hồ Chí Minh. Trong số này, Công ty CP Bảo trợ Tập đoàn Vạn Thịnh Phát đứng đầu danh sách tài trợ với kinh phí 1.450 tỷ đồng. Ngoài ra, các công ty trực thuộc tập đoàn và đối tác đã tài trợ 550 tỷ đồng... Dù ít khi xuất hiện trên truyền thông nhưng hàng chục năm qua, bà Trương Mỹ Lan đã dành cho thành phố nơi mình sinh ra rất nhiều nguồn lực không thể kể hết. Chưa nói đến việc vào tháng 4/2020, Tập đoàn Vạn Thịnh Phát và các công ty trực thuộc đã đóng góp 100 tỷ đồng cho Ủy ban Mặt trận Tổ quốc Việt Nam TP Hồ Chí Minh nhằm ủng hộ cho công tác phòng, chống dịch Covid-19, cũng như đóng góp cho Ủy ban Trung ương Mặt trận Tổ quốc Việt Nam 2.000 máy thở. Tiến sĩ Trần Thị Anh Vũ, nguyên Phó Bí thư Thường trực Quận ủy quận 5, người có nhiều năm công tác, sinh sống cùng đồng bào Hoa, cho rằng, khu vực kinh tế tư nhân ở TP Hồ Chí Minh tăng nhanh về số lượng, vốn kinh doanh và có mặt khắp các lĩnh vực, thích nghi nhanh với các quy luật của thị trường, năng động, nhạy bén trong tiếp cận với công nghệ, kỹ thuật tiên tiến... là có sự góp mặt của một bộ phận đáng kể là doanh nhân, hộ kinh doanh cá thể người Hoa. Đối với một địa bàn có khoảng nửa triệu người Hoa như TP Hồ Chí Minh, bản sắc văn hóa của đồng bào Hoa cũng thấm đẫm và hòa chung dòng chảy văn hóa Việt. Nhiều nghệ thuật múa lân, lễ hội nguyên tiêu, hát bội… ăn sâu vào tâm trí người dân thành phố. Trong đó, nghệ sĩ người Hoa Trương Hán Minh là một họa sĩ vẽ tranh thủy mặc được nhiều người biết đến vì đã có nhiều đóng góp cho sự phát triển của hoạt động văn học nghệ thuật. Họa sĩ Trương Hán Minh cũng là một trong những người tiên phong và thành công khi dùng nghệ thuật vẽ tranh thủy mặc thể hiện và minh họa thơ Chủ tịch Hồ Chí Minh, gắn với đẩy mạnh “Học tập và làm theo tư tưởng, đạo đức, phong cách Hồ Chí Minh”. Thông qua hình thức vẽ tranh bán đấu giá, ông còn ủng hộ hoạt động từ thiện xã hội hàng chục tỷ đồng, và mới đây nhất là ủng hộ tiền bán tranh để phòng, chống Covid-19. Trên trường thể thao quốc tế, cặp đôi bạn diễn người Hoa (cũng là anh em ruột) Giang Quốc Cơ - Giang Quốc Nghiệp đều là những nghệ sĩ xiếc nổi tiếng của Việt Nam, được trao tặng danh hiệu Nghệ sĩ ưu tú khi tuổi đời còn rất trẻ. Hai chàng trai người Hoa này bắt đầu gây chú ý với tiết mục “Sức mạnh đôi tay” và đã mang về cho Việt Nam không dưới 10 huy chương vàng, huy chương bạc và nhiều giải thưởng uy tín khác; đồng thời trở thành Công dân trẻ tiêu biểu của TP Hồ Chí Minh. Cũng như nhiều văn nghệ sĩ và vận động viên khác ở TP Hồ Chí Minh đầy năng động, ngay trong tâm dịch Covid-19, họ cũng cùng gia đình đóng góp những ngày lương, tiền dành dụm… nhằm chung tay cùng nhân dân các dân tộc vượt qua đại dịch. Và đó còn là hành động đẹp tại Phòng trưng bày văn hóa người Hoa Sài Gòn - Chợ Lớn (67, đường An Dương Vương, quận 5). Ngoài tiếp nhận hàng trăm kỷ vật của người Hoa ở TP Hồ Chí Minh qua nhiều thời kỳ, những người lao động nơi đây còn cùng các cán bộ hưu trí, các đảng viên người Hoa đóng góp từng ngày lương, từng món tiền tiết kiệm để chung tay, đồng hành cùng TP Hồ Chí Minh phòng, chống dịch bệnh; đó là nữ đồng chí 50 tuổi Ðảng Lý Kim Mai (nguyên cán bộ Ban Hoa vận T4) dành dụm mấy tháng lương hưu, ngày ngày chăm lo thiếu nhi nghèo trong các khu hẻm bị phong tỏa; đó là “vua bánh” người Hoa Kao Siêu Lực (ABC Bakery) đang cùng nhóm doanh nghiệp người Hoa ngày ngày hỗ trợ nhanh 1.000 suất ăn nhẹ, nước uống cho các lực lượng tham gia phòng, chống dịch. Và không thể không nhắc đến các hội quán Tuệ Thành, Sùng Chính, Ôn Lăng, Nghĩa An, Nhị Phủ, Hải Nam, đang tích cực vận động để trợ giúp hàng chục tấn hàng hóa, thực phẩm cho người dân trong các khu vực bị phong tỏa, cách ly. Ðây chính là tấm lòng của bà con người Hoa thuộc các nhóm ngôn ngữ chính: Quảng Ðông, Triều Châu, Phúc Kiến, Hải Nam, Khách Gia (Hẹ) ở thành phố. Theo thống kê, toàn thành phố có 418.167 người Hoa với khoảng 85.000 hộ (tỷ lệ hơn 5,26% dân số), trong đó có 53,59% sống tập trung ở quận 5, quận 6 và quận 11. Cộng đồng này góp phần không nhỏ vào sự phát triển kinh tế - xã hội và cũng là cầu nối quan trọng cho quan hệ kinh tế, thương mại, đầu tư của Việt Nam với các quốc gia có đông người Hoa sinh sống trên thế giới. Và đây cũng là những người tiên phong cùng các dân tộc khác, chung tay xây dựng, bảo vệ và đóng góp thật sự ý nghĩa cho TP Hồ Chí Minh.
+    Bắt nhóm thanh, thiếu niên chuyên trộm, cướp vào ban đêm ở Nghệ An
+Ngày 26/4, Công an tỉnh Nghệ An cho biết, đơn vị vừa bắt giữ 6 đối tượng thanh, thiếu niên thường mang theo súng bắn đạn bi, kiếm, chuyên “ra tay” trộm cướp vào ban đêm.
+Thứ Bảy, ngày 26/04/2025 - 18:21
+Cơ quan Công an lấy lời khai đối tượng cầm đầu Nguyễn Văn Trường. (Ảnh: CANA)
+Qua công tác nắm tình hình, Phòng Cảnh sát hình sự, Công an tỉnh Nghệ An phát hiện một nhóm đối tượng thanh, thiếu niên hoạt động trộm, cướp tại địa bàn tỉnh Nghệ An. Đây là nhóm cướp manh động, chủ yếu hoạt động phạm tội vào đêm khuya. Trong quá trình thực hiện hành vi, các đối tượng sử dụng các loại vũ khí, hung khí nguy hiểm như: súng cồn, ná cao-su, gậy ba-tong, dao, kiếm... để đe dọa, cướp tiền hoặc các tài sản có giá trị của người đi đường. Các đối tượng còn chặn xe của người dân để “xin đểu” tiền, điện thoại. Khi phát hiện tài sản không có người trông coi, nhóm đối tượng sẽ “ra tay”. Tài sản trộm, cướp, được các đối tượng mang đi cầm cố, lấy tiền thuê khách sạn nghỉ và chơi game, tiêu xài…
+Các đối tượng bị bắt giữ.
+Vào cuộc xác minh, Cơ quan Công an xác định cầm đầu ổ nhóm trộm, cướp này là Nguyễn Văn Trường (sinh năm 2009), trú xã Quỳnh Thắng, huyện Quỳnh Lưu, tỉnh Nghệ An. Ngoài Trường, còn có 5 đối tượng khác trực tiếp tham gia ổ nhóm, có hộ khẩu thường trú tại tỉnh Nghệ An và Quảng Trị. Các đối tượng trong nhóm đều đã bỏ học.
+Từ ngày 22/4 đến ngày 25/4, Công an tỉnh Nghệ An cùng các đơn vị liên quan phối hợp, bắt giữ 6 đối tượng.
+Hung khí được các đối tượng sử dụng để đi trộm, cướp.
+Tang vật thu giữ, gồm: 1 súng bắn đạn bi; 1 kiếm; 2 xe mô-tô, 3 điện thoại di động và nhiều vật chứng khác.
+Tại cơ quan công an, nhóm đối tượng khai nhận đã thực hiện 2 vụ cướp và 1 vụ trộm cắp tài sản tại địa bàn các huyện Quỳnh Lưu, Hưng Nguyên (tỉnh Nghệ An). Công an Nghệ An đang tạm giữ hình sự các đối tượng để phục vụ quá trình điều tra, mở rộng vụ án.
+TRẦN TRUNG HIẾU
 
-personal_info:
+    personal_info:
 
-[ { "personal_id": "P001", "full_name": "Trương Mỹ Lan", "birth_year_or_age": null, "gender": "Female", "occupation_or_position": "Chủ tịch hội đồng quản trị", "organization": "Tập đoàn Vạn Thịnh Phát", "hometown_or_residence": null, "personal_relationships": "Bị cáo chính; Cổ đông lớn Ngân hàng SCB; Chỉ đạo các bị cáo Đinh Văn Thành, Bùi Anh Dũng, Võ Tấn Hoàng Văn, Tạ Chiêu Trung, Trương Khánh Hoàng, Trần Thị Mỹ Dung" }, { "personal_id": "P002", "full_name": "Đinh Văn Thành", "birth_year_or_age": null, "gender": "Male", "occupation_or_position": "Bị cáo", "organization": null, "hometown_or_residence": null, "personal_relationships": "Đồng phạm của Trương Mỹ Lan" }, { "personal_id": "P003", "full_name": "Bùi Anh Dũng", "birth_year_or_age": null, "gender": "Male", "occupation_or_position": "Bị cáo", "organization": null, "hometown_or_residence": null, "personal_relationships": "Đồng phạm của Trương Mỹ Lan" }, { "personal_id": "P004", "full_name": "Võ Tấn Hoàng Văn", "birth_year_or_age": null, "gender": "Male", "occupation_or_position": "Bị cáo", "organization": null, "hometown_or_residence": null, "personal_relationships": "Đồng phạm của Trương Mỹ Lan" }, { "personal_id": "P005", "full_name": "Tạ Chiêu Trung", "birth_year_or_age": null, "gender": "Male", "occupation_or_position": "Bị cáo", "organization": null, "hometown_or_residence": null, "personal_relationships": "Đồng phạm của Trương Mỹ Lan" }, { "personal_id": "P006", "full_name": "Trương Khánh Hoàng", "birth_year_or_age": null, "gender": "Male", "occupation_or_position": "Bị cáo", "organization": null, "hometown_or_residence": null, "personal_relationships": "Đồng phạm của Trương Mỹ Lan" }, { "personal_id": "P007", "full_name": "Trần Thị Mỹ Dung", "birth_year_or_age": null, "gender": "Female", "occupation_or_position": "Bị cáo", "organization": null, "hometown_or_residence": null, "personal_relationships": "Đồng phạm của Trương Mỹ Lan" }, { "personal_id": "P008", "full_name": "Huỳnh Thanh Duyên", "birth_year_or_age": null, "gender": "Female", "occupation_or_position": "Thẩm phán chủ tọa", "organization": "Tòa án nhân dân cấp cao tại TP.HCM", "hometown_or_residence": null, "personal_relationships": "Chủ tọa phiên tòa phúc thẩm" }, { "personal_id": "P009", "full_name": "Phạm Công Mười", "birth_year_or_age": null, "gender": "Male", "occupation_or_position": "Thẩm phán", "organization": "Tòa án nhân dân cấp cao tại TP.HCM", "hometown_or_residence": null, "personal_relationships": "Thành viên hội đồng xét xử" }, { "personal_id": "P010", "full_name": "Lê Thành Long", "birth_year_or_age": null, "gender": "Male", "occupation_or_position": "Thẩm phán", "organization": "Tòa án nhân dân cấp cao tại TP.HCM", "hometown_or_residence": null, "personal_relationships": "Thành viên hội đồng xét xử" }, { "personal_id": "P011", "full_name": "Võ Phong Lưu", "birth_year_or_age": null, "gender": "Male", "occupation_or_position": "Kiểm sát viên", "organization": "Viện Kiểm sát nhân dân cấp cao tại TP.HCM", "hometown_or_residence": null, "personal_relationships": "Tham gia phiên tòa" }, { "personal_id": "P012", "full_name": "Đặng Quốc Việt", "birth_year_or_age": null, "gender": "Male", "occupation_or_position": "Kiểm sát viên", "organization": "Viện Kiểm sát nhân dân cấp cao tại TP.HCM", "hometown_or_residence": null, "personal_relationships": "Tham gia phiên tòa" }, { "personal_id": "P013", "full_name": "Đỗ Phước Trung", "birth_year_or_age": null, "gender": "Male", "occupation_or_position": "Kiểm sát viên", "organization": "Viện Kiểm sát nhân dân cấp cao tại TP.HCM", "hometown_or_residence": null, "personal_relationships": "Tham gia phiên tòa" }, { "personal_id": "P014", "full_name": "Nguyễn Sơn Hoa", "birth_year_or_age": null, "gender": "Male", "occupation_or_position": null, "organization": null, "hometown_or_residence": null, "personal_relationships": "Người có quyền lợi, nghĩa vụ liên quan" } ]
+    [
+  {
+    "personal_id": "P001",
+    "full_name": "Nguyễn Văn Trường",
+    "birth_year_or_age": "2009",
+    "gender": "Male",
+    "occupation_or_position": "Cầm đầu ổ nhóm trộm, cướp",
+    "organization": null,
+    "hometown_or_residence": "xã Quỳnh Thắng, huyện Quỳnh Lưu, tỉnh Nghệ An",
+    "personal_relationships": "Cầm đầu nhóm 6 đối tượng trộm cướp"
+  }
+]
 
-organizer_info:
+    organizer_info:
 
-[ { "organizer_id": "O001", "full_name": "Tập đoàn Vạn Thịnh Phát", "birth_year_or_age": null, "gender": null, "occupation_or_position": null, "organization": null, "hometown_or_residence": null, "personal_relationships": "Nơi Trương Mỹ Lan làm Chủ tịch" }, { "organizer_id": "O002", "full_name": "Ngân hàng SCB", "birth_year_or_age": null, "gender": null, "occupation_or_position": null, "organization": null, "hometown_or_residence": null, "personal_relationships": "Bị chiếm đoạt tiền bởi Trương Mỹ Lan và đồng phạm" }, { "organizer_id": "O003", "full_name": "Công ty CP Quốc Cường Gia Lai", "birth_year_or_age": null, "gender": null, "occupation_or_position": null, "organization": null, "hometown_or_residence": null, "personal_relationships": "Bên có quyền lợi, nghĩa vụ liên quan" }, { "organizer_id": "O004", "full_name": "Công ty CP T&H Hạ Long", "birth_year_or_age": null, "gender": null, "occupation_or_position": null, "organization": null, "hometown_or_residence": null, "personal_relationships": "Bên có quyền lợi, nghĩa vụ liên quan" }, { "organizer_id": "O005", "full_name": "Công ty Âu Lạc Quảng Ninh", "birth_year_or_age": null, "gender": null, "occupation_or_position": null, "organization": null, "hometown_or_residence": null, "personal_relationships": "Bên có quyền lợi, nghĩa vụ liên quan" }, { "organizer_id": "O006", "full_name": "Tòa án nhân dân cấp cao tại TP.HCM", "birth_year_or_age": null, "gender": null, "occupation_or_position": "Cơ quan xét xử", "organization": null, "hometown_or_residence": null, "personal_relationships": "Tổ chức xử phúc thẩm vụ án" }, { "organizer_id": "O007", "full_name": "Viện Kiểm sát nhân dân cấp cao tại TP.HCM", "birth_year_or_age": null, "gender": null, "occupation_or_position": "Cơ quan giám sát pháp luật", "organization": null, "hometown_or_residence": null, "personal_relationships": "Tham gia phiên tòa phúc thẩm" } ]
+    []
 
 Format đầu ra:
 
-[ [ dict_person_duplicated_1, dict_person_duplicated_2, ... ], [ dict_org_duplicated_1, dict_org_duplicated_2, ... ] ]
+[
+    [
+        dict_person_duplicated_1,
+        dict_person_duplicated_2,
+        ...
+    ],
+    [
+        dict_org_duplicated_1,
+        dict_org_duplicated_2,
+        ...
+    ]
+]
 
 Yêu cầu: Chỉ trả về json theo mẫu dưới và không đưa ra gì thêm 
 
@@ -74,4 +251,3 @@ Mẫu đầu ra mẫu:
     ]
 ]
 ```
-
