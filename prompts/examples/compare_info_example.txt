@@ -1,142 +1,175 @@
 Mục tiêu:
 
-Sử dụng thông tin từ các danh sách `per_info` (cho cá nhân) và danh sách tổ chức từ dữ liệu cũ và dữ liệu mới để xác định các cá nhân và tổ chức trùng lặp.
+Sử dụng thông tin từ các danh sách `custom_info` (cho cá nhân) và danh sách tổ chức từ dữ liệu cũ và dữ liệu mới để xác định các cá nhân và tổ chức trùng lặp.
 
 1.  **Đối với mỗi cá nhân trùng lặp** được tìm thấy, hãy trả về một đối tượng JSON chứa `personal_id` của họ từ dữ liệu mới, `per_id` của họ từ dữ liệu cũ, và một bản tổng hợp thông tin cá nhân của họ từ cả hai nguồn (kết hợp các trường thông tin một cách đầy đủ và chính xác nhất, ưu tiên thông tin chi tiết hơn nếu có sự khác biệt).
 2.  **Đối với mỗi tổ chức trùng lặp** được tìm thấy, hãy trả về một đối tượng JSON chứa `organizer_id` của họ từ dữ liệu mới, `org_id` của họ từ dữ liệu cũ, và một bản tổng hợp thông tin của tổ chức từ cả hai nguồn (kết hợp các trường thông tin một cách đầy đủ và chính xác nhất, ưu tiên thông tin chi tiết hơn nếu có sự khác biệt).
 
-
 Dữ liệu đầu vào:
 
-1.  **Nội dung bài báo cũ, per_infocá nhân cũ và organizer info cũ tương ứng**
+1.  **Nội dung bài báo cũ, personal_info cá nhân cũ và organizer info cũ tương ứng**
 
     Nội dung bài báo:
 
-    Bà Phương Hằng: 'Vô cùng ân hận vì không hiểu biết pháp luật'
-TP HCM Được hỏi về hành vi phạm tội của bản thân và đồng phạm, bà Phương Hằng nói "vô cùng ân hận vì không hiểu pháp luật, không biết đến Luật An ninh mạng".
-Sáng 4/4, bà Hằng 53 tuổi, Tổng giám đốc Công ty Cổ phần Đại Nam, mặc áo trắng, trang điểm đậm, tỏ ra khá thoải mái khi bị áp giải đến TAND Cấp cao. Khi vào phòng xử, bà cười thành tiếng và ôm lấy các bị cáo là cựu nhân viên thân tín của mình. Họ bị cảnh sát nhắc nhở giữ trật tự, nội quy phiên tòa.
-HĐXX cho biết, bà Hằng không có đơn kháng cáo nhưng tòa vẫn triệu tập để "hỏi khi cần thiết", nhằm xem xét toàn diện vụ án, làm rõ các kháng cáo của các đồng phạm và người liên quan.
-Bà Nguyễn Phương Hằng tại tòa hôm nay. Ảnh: Quỳnh Trần
-Các bị cáo và người liên quan tại tòa, sáng 4/4. Video: Quỳnh Trần
-Trong đó, ông Đặng Anh Quân (43 tuổi, cựu giảng viên Trường đại học Luật TP HCM) cho rằng bản án 2 năm 6 tháng tù tòa áp dụng đối với mình là quá nặng (tại phiên sơ thẩm bị cáo nói không phạm tội); các bị cáo Nguyễn Thị Mai Nhi, Huỳnh Công Tân, Lê Thị Thu Hà (nhân viên Công ty Cổ phần Đại Nam) xin hưởng án treo (án sơ thẩm tuyên 1 năm 6 tháng tù). Còn cựu nhà báo Hàn Ni , Đinh Thị Lan đề nghị tòa phúc thẩm xem xét lại tư cách tố tụng của mình trong vụ án. Tức, họ là bị hại chứ không phải người có quyền, nghĩa vụ liên quan.
-Đặng Anh Quân: 'Mục đích livestream là phản biện xã hội'
-Được gọi lên đầu tiên, bị cáo Quân cho biết giữ nguyên kháng cáo, đề nghị tòa phúc thẩm xem xét các chứng cứ, tài liệu; xin được giảm nhẹ hình phạt. Theo bị cáo, các tình tiết trong cáo trạng và bản án sơ thẩm khác với lời khai của mình và của bà Hằng. Ví dụ như, bản án cho rằng bị cáo "cùng quan điểm, cùng ý chí" với bà Hằng là không đúng. "Tôi chỉ cùng quan điểm việc phản biện xã hội, và mục đích livestream của tôi là phản biện xã hội", cựu giảng viên trường luật nói.
-Về kết luận giám định video, bị cho là "xúc phạm nghệ sĩ Hoài Linh", ông Quân giải thích: "Bị cáo chỉ phân tích bài báo, nhưng những clip đưa đi giám định bị xáo trộn trật tự, cắt ghép từ nhiều nguồn YouTube khác nhau. Bị cáo đã cung cấp các vi bằng chứng minh nhưng không được cấp sơ thẩm xem xét"...
-Cựu giảng viên luật Đặng Anh Quân với vẻ tiều tụy sau khoảng 2 năm bị bắt. Ảnh: Quỳnh Trần
-Trả lời thẩm vấn VKS sau đó, ông Quân cho biết đã xem các buổi livestream của bà Hằng về từ thiện, từ tháng 3 đến tháng 6, nhưng đến tháng 10 mới tham gia. Mục đích là muốn lên tiếng dưới góc độ pháp lý về các vấn đề bà Hằng nói. Để làm rõ hành vi đồng phạm của ông Quân, đại diện VKS đọc lại nội dung phát ngôn của bà Hằng trong một số buổi livestream, ông Quân thừa nhận là "xúc phạm người khác".
-"Tại sao bị cáo không giải thích cho bà Hằng đây là hành vi vi phạm pháp luật?", VKS hỏi. Ngập ngừng một lúc, cựu giảng viên trường luật trả lời: "Bản chất chị Hằng không phải như vậy. Bị cáo là nhà giáo, sẽ dùng biện pháp từ từ để khuyên nhủ". Tuy nhiên, ông Quân sau đó nói "ngay cả gia đình chị Hằng còn không cản được thì bị cáo cũng không cản nổi", và cho biết từng góp ý cho bà Hằng làm đơn tố cáo những người đã xúc phạm bà, thay vì nói trên livestream.
-HĐXX gọi bà Hằng , hỏi "có ý kiến về các hành vi trong vụ án hay không?". CEO Công ty Đại Nam không trả lời thẳng vào câu hỏi, nói: "Tôi hạnh phúc nhất lúc này là đứng trước tòa mà không chống án. Ở phiên sơ thẩm tôi không được nói...". Chủ tọa ngắt lời, nhắc lại câu hỏi, đề nghị bà Hằng trả lời thẳng vào vấn đề. Bà Hằng cho biết "không có vấn đề gì về lời khai của các bị cáo khác", sau đó nói bằng giọng đầy vẻ ấm ức: "Tôi có tội nhưng vẫn có công. Tòa án là nơi tất cả công dân đặt niềm tin vào, nhưng thẩm phán, luật sư, mọi người chỉ xoay quanh tội danh mà quên hết các công sức của tôi. Tôi đã hết lòng trong công tác từ thiện".
-Trả lời xét hỏi của các luật sư bào chữa cho các bị cáo sau đó, bà Hằng cho biết, xem YouTube biết "thầy Quân" bị tấn công, cảm thấy đồng cảm dù không quen biết trước đó. Việc mời Quân tham gia livestream là vì thấy ông "hiểu biết pháp luật"; nội dung nói trong các buổi trực tuyến không bàn bạc trước, chủ yếu là cùng sở thích ca hát, tâm sự... với nhau. Khi luật sư đặt vấn đề "liệu ông Quân có thể ngăn cản được các phát ngôn của bà không?", bà Hằng thẳng thừng: "Không ai có thể ngăn cản tôi".
-Về quá trình thực hiện hành vi phạm tội, bà Hằng nhắc lại quan điểm đã trình bày tại phiên sơ thẩm, cho rằng bản thân "đã trở thành tội phạm, dù trước đó là nạn nhân". "Tôi vô cùng ân hận vì không hiểu pháp luật, không biết đến Luật An ninh mạng. Nếu trước đó công an nhắc tôi về luật này thì tôi đã dừng lại...", bà Hằng nói.
-VKS đề nghị tòa bác toàn bộ kháng cáo
-Nêu quan điểm về vụ án, đại diện VKS xác định ông Quân có hành vi tương tác với bà Hằng trong các buổi livesteam, cổ vũ tinh thần, tiếp thêm ý trí cho bà này thực hiện hành vi phạm tội. Tại tòa phúc thẩm, bị cáo thừa nhận tham gia nhưng cho rằng "không chịu trách nhiệm đối với các phát ngôn vi phạm của bà Hằng" là không đúng. "Với học vị tiến sĩ luật, bị cáo biết bà Hằng vi phạm pháp luật nhưng không ngăn cản, không tỏ thái độ phản đối còn tương tác, giúp sức", đại diện VKS nêu quan điểm, cho rằng đủ căn cứ xác định bị cáo là đồng phạm của bà Hằng. Việc ông Quân không thừa nhận phạm tội là thể hiện "không ăn năn hối lỗi".
-Đối với kháng cáo của các bị cáo khác và người có quyền, nghĩa vụ liên quan, đại diện VKS cho rằng bản án sơ thẩm đã tuyên đúng. Từ đó, VKS đề nghị HĐXX bác toàn bộ kháng cáo. Chiều nay, các luật sư sẽ bào chữa cho thân chủ.
-Bà Phương Hằng khi gặp lại các bị cáo là cựu nhân viên. Ảnh: Quỳnh Trần
-Hồi tháng 9 năm ngoái, bà Hằng bị TAND TP HCM xử sơ thẩm, tuyên 3 năm tù về tội Lợi dụng các quyền tự do dân chủ xâm phạm lợi ích của nhà nước, quyền, lợi ích hợp pháp của tổ chức, cá nhân . Bà chấp nhận mức án, không kháng cáo và đã thi hành án.
-Bản án sơ thẩm xác định, từ tháng 3/2021 đến tháng 3/2022, bà Hằng và 4 đồng phạm đã thực hiện 57 buổi livestream tại nhà riêng trên đường Nguyễn Thông (quận 3, TP HCM) và Khu du lịch Đại Nam (Bình Dương) với nội dung xúc phạm nghiêm trọng danh dự, uy tín của ca sĩ Vy Oanh, Đàm Vĩnh Hưng, nghệ sĩ Hoài Linh, vợ chồng ca sĩ Thủy Tiên, nhà báo Hàn Ni, nhà báo Đức Hiển... Trong đó, bà Hằng đã mời tiến sĩ luật Đặng Anh Quân tham gia 11 buổi livestream với vai trò cố vấn pháp lý để tăng độ tin cậy cho những phát ngôn của mình. Theo tòa, bị cáo Hằng có vai trò chủ mưu, khởi xướng; Nhi, Tân, Hà là đồng phạm giúp sức. Hành vi của các bị cáo vi phạm Luật An ninh mạng và Nghị định 72/2013/NĐ-CP; gây ảnh hưởng xấu đến an ninh trật tự, an toàn xã hội. Ngoài mức án, các bị cáo phải liên đới bồi thường cho nhà báo Hàn Ni, bà Đinh Thị Lan 18 triệu đồng.
-Bà Đinh Thị Lan, người có quyền, nghĩa vụ liên quan. Ảnh: Quỳnh Trần
-Quốc Thắng - Quỳnh Trần
+    
+    Ngày 4-11, Tòa án nhân dân cấp cao tại TP.HCM mở phiên tòa xét xử phúc thẩm đối với bà Trương Mỹ Lan và 48 bị cáo trong vụ án xảy ra tại Tập đoàn Vạn Thịnh Phát, Ngân hàng TMCP Sài Gòn (SCB) - giai đoạn 1. Hôm nay xử phúc thẩm vụ bà Trương Mỹ Lan tham ô 304.000 tỉ của SCB - Ảnh 1. Bà Trương Mỹ Lan - Ảnh: HỮU HẠNH Bà Trương Mỹ Lan và 48 đồng phạm kháng cáo Vụ án được xử phúc thẩm do có kháng cáo của bà Trương Mỹ Lan (68 tuổi, chủ tịch Tập đoàn Vạn Thịnh Phát) cùng 48 đồng phạm; kháng cáo của bị hại là SCB và kháng cáo của những người có quyền lợi, nghĩa vụ liên quan gồm: Công ty cổ phần Quốc Cường Gia Lai, ông Nguyễn Sơn Hoa, Công ty cổ phần T&H Hạ Long, Công ty TNHH Âu Lạc Quảng Ninh.Bà Trương Mỹ Lan nói gì về bản án sơ thẩm tuyên tử hình đối với bà trong kháng cáo? Phiên tòa dự kiến sẽ kéo dài đến ngày 25-11 với hội đồng xét xử gồm: thẩm phán - chủ tọa phiên tòa Huỳnh Thanh Duyên và các thẩm phán Phạm Công Mười, Lê Thành Long. Đại diện Viện Kiểm sát nhân dân cấp cao tại TP.HCM tham gia phiên tòa có ông Võ Phong Lưu, ông Đặng Quốc Việt và ông Đỗ Phước Trung. Đối với kháng cáo của bà Trương Mỹ Lan, bà Lan cho rằng bản án sơ thẩm tuyên tử hình đối với bà là quá nặng nề và quá nghiêm khắc. Theo đơn kháng cáo, bà Lan trình bày bà cùng người thân và các bạn bè đã giúp Ngân hàng SCB hợp nhất kịp thời vào ngày 1-1-2012 theo lời vận động và kêu gọi của Ngân hàng Nhà nước, nhằm ổn định toàn hệ thống tiền tệ tài chính quốc gia. Vào thời điểm này SCB có tổng tài sản là 145.000 tỉ đồng, trong đó tổng nợ phải trả là 133.000 tỉ đồng với lãi suất 35 - 52% mà SCB không có tài sản đáng giá, áp lực rất lớn. Các cổ đông đã không chia lợi nhuận suốt 11 năm, cho mượn tiền, sổ tiết kiệm, tài sản, SCB đã hoạt động ổn định, không mất thanh khoản, không vay tái cấp vốn, không sử dụng kinh phí của Ngân hàng Nhà nước. Ngày nay SCB đã trở thành một ngân hàng thương mại cổ phần có tổng giá trị tài sản lớn. "Dù trong hoàn cảnh nào, suốt quá trình điều tra cho tới phiên tòa xét xử sơ thẩm tôi luôn thể hiện sự tự nguyện mang hết tài sản của tôi và tích cực phối hợp cùng SCB giải quyết khắc phục hậu quả, dùng các dự án đang dang dở để thu hồi đúng giá trị cho SCB. SCB là một ngân hàng thương mại cổ phần có hàng nghìn cổ đông và hàng nghìn khách hàng vay tiền gồm các cá nhân, doanh nghiệp lớn, vừa và nhỏ. SCB hoạt động theo luật tổ chức tín dụng dưới sự giám sát của Ngân hàng Nhà nước và các liên ngành suốt 11 năm. SCB không phải là một công ty trách nhiệm hữu hạn mà quy buộc cho một cá nhân chịu trách nhiệm toàn bộ" - đơn kháng cáo nêu. Từ đó, bà Trương Mỹ Lan xin hội đồng xét xử và các cơ quan tiến hành tố tụng xem xét thấu đáo và có đường lối xử lý phù hợp đối với gia đình bà cùng một số cá nhân khác. Tham ô 304.000 tỉ, bà Trương Mỹ Lan bị tuyên tử hình Trước đó, Tòa án nhân dân TP.HCM xử sơ thẩm vụ án giai đoạn 1 đã tuyên bà Trương Mỹ Lan tử hình về tội tham ô tài sản; 20 năm tù về tội đưa hối lộ và 20 năm tù về tội vi phạm quy định về cho vay trong hoạt động của các tổ chức tín dụng, tổng hợp mức án là tử hình. Về trách nhiệm dân sự, cấp sơ thẩm buộc bà Trương Mỹ Lan phải bồi hoàn cho SCB dư nợ của 1.243 khoản vay còn lại tính đến ngày 17-10-2022, tương đương số tiền 673.849 tỉ đồng. Theo án sơ thẩm, tính đến tháng 10-2022, bà Trương Mỹ Lan đã thâu tóm, nắm giữ đến 91,5% cổ phần Ngân hàng SCB thông qua các cá nhân, pháp nhân đứng tên giùm. Lợi dụng vai trò là cổ đông lớn, quyền lực, nắm giữ trên thực tế số lượng cổ phần gần tuyệt đối của Ngân hàng SCB, bà Trương Mỹ Lan đã truyền đạt ý chí cho các bị cáo Đinh Văn Thành, Bùi Anh Dũng, Võ Tấn Hoàng Văn, Tạ Chiêu Trung, Trương Khánh Hoàng, Trần Thị Mỹ Dung thực hiện việc rút tiền từ SCB nhằm chiếm đoạt số tiền lớn của ngân hàng để sử dụng vào mục đích cá nhân. Các bị cáo Đinh Văn Thành, Bùi Anh Dũng, Võ Tấn Hoàng Văn, Tạ Chiêu Trung, Trương Khánh Hoàng, Trần Thị Mỹ Dung tiếp nhận ý chí của bà Trương Mỹ Lan, bỏ qua các quy định pháp luật, giúp sức tích cực để Trương Mỹ Lan rút tiền của Ngân hàng SCB, gây hậu quả thiệt hại đặc biệt lớn. Hành vi nêu trên của Trương Mỹ Lan và các bị cáo đủ cấu thành tội tham ô tài sản. Tuy nhiên SCB không có vốn nhà nước, các bị cáo này thực hiện hành vi phạm tội trong một thời gian dài, trong khi Bộ luật Hình sự có sự thay đổi cơ bản về đường lối xử lý tại thời điểm trước và sau ngày 1-1-2018. Theo đó, Bộ luật Hình sự 1999 không quy định tội tham ô tài sản đối với các pháp nhân ngoài nhà nước. Nên những hành vi phạm tội xảy ra trước ngày 1-1-2018 bị xử lý theo điều, khoản tương ứng (điều 179) Bộ luật Hình sự năm 1999; những hành vi phạm tội xảy ra sau ngày 1-1-2018 bị xử lý theo các điều, khoản (điều 353, điều 206) Bộ luật Hình sự năm 2015, có xem xét đến nguyên tắc có lợi cho các bị cáo. Liên quan vụ án, 85 bị cáo còn lại trong vụ án nhận các mức hình phạt từ 3 năm tù nhưng cho hưởng án treo đến tù chung thân.
+
 
     personal_info:
 
     [
   {
-    "organization": null,
-    "created_at": 1752481098513267.0,
-    "per_id": "per_id_1752481098513277",
-    "full_name": "Hoài Linh",
-    "occupation_or_position": "Nghệ sĩ",
+    "organization": "Ngân hàng SCB",
+    "created_at": 1752491810464028.0,
+    "per_id": "per_id_1752491810464041",
+    "full_name": "Trần Thị Mỹ Dung",
+    "occupation_or_position": null,
+    "hometown_or_residence": null,
+    "gender": "Female",
+    "personal_relationships": "Đồng phạm của Trương Mỹ Lan",
+    "birth_year_or_age": null
+  },
+  {
+    "organization": "Viện Kiểm sát nhân dân cấp cao tại TP.HCM",
+    "created_at": 1752491810464028.0,
+    "per_id": "per_id_1752491810464037",
+    "full_name": "Đỗ Phước Trung",
+    "occupation_or_position": "Kiểm sát viên",
     "hometown_or_residence": null,
     "gender": "Male",
-    "personal_relationships": "Bị hại bởi Nguyễn Phương Hằng và đồng phạm",
+    "personal_relationships": null,
     "birth_year_or_age": null
   },
   {
-    "organization": "Trường Đại học Luật TP HCM",
-    "created_at": 1752481098513267.0,
-    "per_id": "per_id_1752481098513270",
-    "full_name": "Đặng Anh Quân",
-    "occupation_or_position": "Cựu giảng viên",
+    "organization": "Ngân hàng SCB",
+    "created_at": 1752491810464028.0,
+    "per_id": "per_id_1752491810464038",
+    "full_name": "Bùi Anh Dũng",
+    "occupation_or_position": null,
     "hometown_or_residence": null,
     "gender": "Male",
-    "personal_relationships": "Đồng phạm với Nguyễn Phương Hằng",
-    "birth_year_or_age": "43"
-  },
-  {
-    "organization": null,
-    "created_at": 1752481098513267.0,
-    "per_id": "per_id_1752481098513275",
-    "full_name": "Đinh Thị Lan",
-    "occupation_or_position": "Người có quyền, nghĩa vụ liên quan",
-    "hometown_or_residence": null,
-    "gender": "Female",
-    "personal_relationships": "Bị hại bởi Nguyễn Phương Hằng và đồng phạm",
+    "personal_relationships": "Đồng phạm của Trương Mỹ Lan",
     "birth_year_or_age": null
   },
   {
-    "organization": null,
-    "created_at": 1752481098513267.0,
-    "per_id": "per_id_1752481098513279",
-    "full_name": "Đức Hiển",
-    "occupation_or_position": "Nhà báo",
+    "organization": "Ngân hàng SCB",
+    "created_at": 1752491810464028.0,
+    "per_id": "per_id_1752491810464041",
+    "full_name": "Trần Thị Mỹ Dung",
+    "occupation_or_position": null,
+    "hometown_or_residence": null,
+    "gender": "Female",
+    "personal_relationships": "Đồng phạm của Trương Mỹ Lan",
+    "birth_year_or_age": null
+  },
+  {
+    "organization": "Ngân hàng SCB",
+    "created_at": 1752491810464028.0,
+    "per_id": "per_id_1752491810464040",
+    "full_name": "Tạ Chiêu Trung",
+    "occupation_or_position": null,
     "hometown_or_residence": null,
     "gender": "Male",
-    "personal_relationships": "Bị hại bởi Nguyễn Phương Hằng và đồng phạm",
+    "personal_relationships": "Đồng phạm của Trương Mỹ Lan",
     "birth_year_or_age": null
   },
   {
-    "organization": "Công ty Cổ phần Đại Nam",
-    "created_at": 1752481098513267.0,
-    "per_id": "per_id_1752481098513272",
-    "full_name": "Nguyễn Thị Mai Nhi",
-    "occupation_or_position": "Nhân viên",
-    "hometown_or_residence": null,
-    "gender": "Female",
-    "personal_relationships": "Đồng phạm với Nguyễn Phương Hằng",
-    "birth_year_or_age": null
-  },
-  {
-    "organization": null,
-    "created_at": 1752481098513267.0,
-    "per_id": "per_id_1752481098513275",
-    "full_name": "Đinh Thị Lan",
-    "occupation_or_position": "Người có quyền, nghĩa vụ liên quan",
-    "hometown_or_residence": null,
-    "gender": "Female",
-    "personal_relationships": "Bị hại bởi Nguyễn Phương Hằng và đồng phạm",
-    "birth_year_or_age": null
-  },
-  {
-    "organization": null,
-    "created_at": 1752481098513267.0,
-    "per_id": "per_id_1752481098513276",
-    "full_name": "Vy Oanh",
-    "occupation_or_position": "Ca sĩ",
-    "hometown_or_residence": null,
-    "gender": "Female",
-    "personal_relationships": "Bị hại bởi Nguyễn Phương Hằng và đồng phạm",
-    "birth_year_or_age": null
-  },
-  {
-    "organization": "Công ty Cổ phần Đại Nam",
-    "created_at": 1752481098513267.0,
-    "per_id": "per_id_1752481098513268",
-    "full_name": "Nguyễn Phương Hằng",
-    "occupation_or_position": "Tổng giám đốc",
-    "hometown_or_residence": null,
-    "gender": "Female",
-    "personal_relationships": "Đồng phạm với Đặng Anh Quân, Nguyễn Thị Mai Nhi, Huỳnh Công Tân, Lê Thị Thu Hà",
-    "birth_year_or_age": "53"
-  },
-  {
-    "organization": "Công ty Cổ phần Đại Nam",
-    "created_at": 1752481098513267.0,
-    "per_id": "per_id_1752481098513273",
-    "full_name": "Huỳnh Công Tân",
-    "occupation_or_position": "Nhân viên",
+    "organization": "Viện Kiểm sát nhân dân cấp cao tại TP.HCM",
+    "created_at": 1752491810464028.0,
+    "per_id": "per_id_1752491810464037",
+    "full_name": "Đỗ Phước Trung",
+    "occupation_or_position": "Kiểm sát viên",
     "hometown_or_residence": null,
     "gender": "Male",
-    "personal_relationships": "Đồng phạm với Nguyễn Phương Hằng",
+    "personal_relationships": null,
+    "birth_year_or_age": null
+  },
+  {
+    "organization": "Tập đoàn Vạn Thịnh Phát, Ngân hàng SCB",
+    "created_at": 1752491810464028.0,
+    "per_id": "per_id_1752491810464029",
+    "full_name": "Trương Mỹ Lan",
+    "occupation_or_position": "Chủ tịch Tập đoàn Vạn Thịnh Phát",
+    "hometown_or_residence": null,
+    "gender": "Female",
+    "personal_relationships": "Cổ đông lớn (91.5%) Ngân hàng SCB; Chỉ đạo các bị cáo Đinh Văn Thành, Bùi Anh Dũng, Võ Tấn Hoàng Văn, Tạ Chiêu Trung, Trương Khánh Hoàng, Trần Thị Mỹ Dung",
+    "birth_year_or_age": "68 tuổi"
+  },
+  {
+    "organization": "Tòa án nhân dân cấp cao tại TP.HCM",
+    "created_at": 1752491810464028.0,
+    "per_id": "per_id_1752491810464032",
+    "full_name": "Huỳnh Thanh Duyên",
+    "occupation_or_position": "Thẩm phán chủ tọa",
+    "hometown_or_residence": null,
+    "gender": "Female",
+    "personal_relationships": null,
+    "birth_year_or_age": null
+  },
+  {
+    "organization": "Ngân hàng SCB",
+    "created_at": 1752491810464028.0,
+    "per_id": "per_id_1752491810464038",
+    "full_name": "Bùi Anh Dũng",
+    "occupation_or_position": null,
+    "hometown_or_residence": null,
+    "gender": "Male",
+    "personal_relationships": "Đồng phạm của Trương Mỹ Lan",
+    "birth_year_or_age": null
+  },
+  {
+    "organization": "Tòa án nhân dân cấp cao tại TP.HCM",
+    "created_at": 1752491810464028.0,
+    "per_id": "per_id_1752491810464035",
+    "full_name": "Lê Thành Long",
+    "occupation_or_position": "Thẩm phán",
+    "hometown_or_residence": null,
+    "gender": "Male",
+    "personal_relationships": null,
+    "birth_year_or_age": null
+  },
+  {
+    "organization": "Tòa án nhân dân cấp cao tại TP.HCM",
+    "created_at": 1752491810464028.0,
+    "per_id": "per_id_1752491810464034",
+    "full_name": "Phạm Công Mười",
+    "occupation_or_position": "Thẩm phán",
+    "hometown_or_residence": null,
+    "gender": "Male",
+    "personal_relationships": null,
+    "birth_year_or_age": null
+  },
+  {
+    "organization": "Viện Kiểm sát nhân dân cấp cao tại TP.HCM",
+    "created_at": 1752491810464028.0,
+    "per_id": "per_id_1752491810464036",
+    "full_name": "Võ Phong Lưu",
+    "occupation_or_position": "Kiểm sát viên",
+    "hometown_or_residence": null,
+    "gender": "Male",
+    "personal_relationships": null,
+    "birth_year_or_age": null
+  },
+  {
+    "organization": null,
+    "created_at": 1752491810464028.0,
+    "per_id": "per_id_1752491810464042",
+    "full_name": "Nguyễn Sơn Hoa",
+    "occupation_or_position": null,
+    "hometown_or_residence": null,
+    "gender": "Male",
+    "personal_relationships": "Người có quyền lợi, nghĩa vụ liên quan",
+    "birth_year_or_age": null
+  },
+  {
+    "organization": "Ngân hàng SCB",
+    "created_at": 1752491810464028.0,
+    "per_id": "per_id_1752491810464039",
+    "full_name": "Võ Tấn Hoàng Văn",
+    "occupation_or_position": null,
+    "hometown_or_residence": null,
+    "gender": "Male",
+    "personal_relationships": "Đồng phạm của Trương Mỹ Lan",
     "birth_year_or_age": null
   }
 ]
@@ -145,25 +178,91 @@ Quốc Thắng - Quỳnh Trần
 
     [
   {
-    "org_id": "org_id_1752481098513292",
+    "org_id": "org_id_1752491810464089",
     "organization": null,
-    "created_at": 1752481098513292.0,
-    "full_name": "Công ty Cổ phần Đại Nam",
-    "occupation_or_position": null,
+    "created_at": 1752491810464084.0,
+    "full_name": "Tòa án nhân dân cấp cao tại TP.HCM",
+    "occupation_or_position": "Cơ quan xét xử",
     "hometown_or_residence": null,
     "gender": null,
-    "personal_relationships": "Nơi làm việc của Nguyễn Phương Hằng và các đồng phạm",
+    "personal_relationships": null,
     "birth_year_or_age": null
   },
   {
-    "org_id": "org_id_1752481098513294",
+    "org_id": "org_id_1752491810464090",
     "organization": null,
-    "created_at": 1752481098513292.0,
-    "full_name": "Trường Đại học Luật TP HCM",
+    "created_at": 1752491810464084.0,
+    "full_name": "Viện Kiểm sát nhân dân cấp cao tại TP.HCM",
+    "occupation_or_position": "Cơ quan công tố",
+    "hometown_or_residence": null,
+    "gender": null,
+    "personal_relationships": null,
+    "birth_year_or_age": null
+  },
+  {
+    "org_id": "org_id_1752491810464087",
+    "organization": null,
+    "created_at": 1752491810464084.0,
+    "full_name": "Công ty cổ phần T&H Hạ Long",
     "occupation_or_position": null,
     "hometown_or_residence": null,
     "gender": null,
-    "personal_relationships": "Nơi làm việc cũ của Đặng Anh Quân",
+    "personal_relationships": "Bên có quyền lợi, nghĩa vụ liên quan",
+    "birth_year_or_age": null
+  },
+  {
+    "org_id": "org_id_1752491810464085",
+    "organization": null,
+    "created_at": 1752491810464084.0,
+    "full_name": "Tập đoàn Vạn Thịnh Phát",
+    "occupation_or_position": null,
+    "hometown_or_residence": null,
+    "gender": null,
+    "personal_relationships": "Có Trương Mỹ Lan là Chủ tịch",
+    "birth_year_or_age": null
+  },
+  {
+    "org_id": "org_id_1752491810464087",
+    "organization": null,
+    "created_at": 1752491810464084.0,
+    "full_name": "Công ty cổ phần T&H Hạ Long",
+    "occupation_or_position": null,
+    "hometown_or_residence": null,
+    "gender": null,
+    "personal_relationships": "Bên có quyền lợi, nghĩa vụ liên quan",
+    "birth_year_or_age": null
+  },
+  {
+    "org_id": "org_id_1752491810464088",
+    "organization": null,
+    "created_at": 1752491810464084.0,
+    "full_name": "Công ty TNHH Âu Lạc Quảng Ninh",
+    "occupation_or_position": null,
+    "hometown_or_residence": null,
+    "gender": null,
+    "personal_relationships": "Bên có quyền lợi, nghĩa vụ liên quan",
+    "birth_year_or_age": null
+  },
+  {
+    "org_id": "org_id_1752491810464089",
+    "organization": null,
+    "created_at": 1752491810464084.0,
+    "full_name": "Tòa án nhân dân cấp cao tại TP.HCM",
+    "occupation_or_position": "Cơ quan xét xử",
+    "hometown_or_residence": null,
+    "gender": null,
+    "personal_relationships": null,
+    "birth_year_or_age": null
+  },
+  {
+    "org_id": "org_id_1752491810464086",
+    "organization": null,
+    "created_at": 1752491810464084.0,
+    "full_name": "Ngân hàng TMCP Sài Gòn (SCB)",
+    "occupation_or_position": "Ngân hàng thương mại cổ phần",
+    "hometown_or_residence": null,
+    "gender": null,
+    "personal_relationships": "Bị Trương Mỹ Lan thâu tóm 91.5% cổ phần",
     "birth_year_or_age": null
   }
 ]
@@ -172,37 +271,229 @@ Quốc Thắng - Quỳnh Trần
 
     Nội dung bài báo:
 
-    Bắt nhóm thanh, thiếu niên chuyên trộm, cướp vào ban đêm ở Nghệ An
-Ngày 26/4, Công an tỉnh Nghệ An cho biết, đơn vị vừa bắt giữ 6 đối tượng thanh, thiếu niên thường mang theo súng bắn đạn bi, kiếm, chuyên “ra tay” trộm cướp vào ban đêm.
-Thứ Bảy, ngày 26/04/2025 - 18:21
-Cơ quan Công an lấy lời khai đối tượng cầm đầu Nguyễn Văn Trường. (Ảnh: CANA)
-Qua công tác nắm tình hình, Phòng Cảnh sát hình sự, Công an tỉnh Nghệ An phát hiện một nhóm đối tượng thanh, thiếu niên hoạt động trộm, cướp tại địa bàn tỉnh Nghệ An. Đây là nhóm cướp manh động, chủ yếu hoạt động phạm tội vào đêm khuya. Trong quá trình thực hiện hành vi, các đối tượng sử dụng các loại vũ khí, hung khí nguy hiểm như: súng cồn, ná cao-su, gậy ba-tong, dao, kiếm... để đe dọa, cướp tiền hoặc các tài sản có giá trị của người đi đường. Các đối tượng còn chặn xe của người dân để “xin đểu” tiền, điện thoại. Khi phát hiện tài sản không có người trông coi, nhóm đối tượng sẽ “ra tay”. Tài sản trộm, cướp, được các đối tượng mang đi cầm cố, lấy tiền thuê khách sạn nghỉ và chơi game, tiêu xài…
-Các đối tượng bị bắt giữ.
-Vào cuộc xác minh, Cơ quan Công an xác định cầm đầu ổ nhóm trộm, cướp này là Nguyễn Văn Trường (sinh năm 2009), trú xã Quỳnh Thắng, huyện Quỳnh Lưu, tỉnh Nghệ An. Ngoài Trường, còn có 5 đối tượng khác trực tiếp tham gia ổ nhóm, có hộ khẩu thường trú tại tỉnh Nghệ An và Quảng Trị. Các đối tượng trong nhóm đều đã bỏ học.
-Từ ngày 22/4 đến ngày 25/4, Công an tỉnh Nghệ An cùng các đơn vị liên quan phối hợp, bắt giữ 6 đối tượng.
-Hung khí được các đối tượng sử dụng để đi trộm, cướp.
-Tang vật thu giữ, gồm: 1 súng bắn đạn bi; 1 kiếm; 2 xe mô-tô, 3 điện thoại di động và nhiều vật chứng khác.
-Tại cơ quan công an, nhóm đối tượng khai nhận đã thực hiện 2 vụ cướp và 1 vụ trộm cắp tài sản tại địa bàn các huyện Quỳnh Lưu, Hưng Nguyên (tỉnh Nghệ An). Công an Nghệ An đang tạm giữ hình sự các đối tượng để phục vụ quá trình điều tra, mở rộng vụ án.
-TRẦN TRUNG HIẾU
+    
+    Tòa án nhân dân cấp cao tại TP.HCM đã ban hành quyết định xét xử phúc thẩm bà Trương Mỹ Lan và các đồng phạm trong vụ Vạn Thịnh Phát giai đoạn 1 vào ngày 4-11. Sắp xử phúc thẩm Vạn Thịnh Phát giai đoạn 1, xem xét kháng cáo mức án tử hình của bà Trương Mỹ Lan - Ảnh 1. Bà Trương Mỹ Lan (áo trắng) tại phiên xét xử trước đó - Ảnh: HỮU HẠNH Vụ án này có 48 bị cáo có kháng cáo, trong đó bà Trương Mỹ Lan (chủ tịch hội đồng quản trị Tập đoàn Vạn Thịnh Phát) kháng cáo toàn bộ bản án. Bên cạnh đó, bị hại là Ngân hàng SCB cùng người có quyền lợi, nghĩa vụ liên quan là Công ty CP Quốc Cường Gia Lai, ông Nguyễn Sơn Hoa, Công ty CP T&H Hạ Long, Công ty Âu Lạc Quảng Ninh cũng có kháng cáo. Sắp xử phúc thẩm, xem xét kháng cáo mức án tử hình của bà Trương Mỹ Lan Thời gian mở phiên tòa lúc 8h từ ngày 4-11, dự kiến kết thúc ngày 25-11, do thẩm phán chủ tọa là bà Huỳnh Thanh Duyên và các thẩm phán là ông Phạm Công Mười, ông Lê Thành Long. Đại diện Viện Kiểm sát nhân dân cấp cao tại TP.HCM tham gia phiên tòa có ông Võ Phong Lưu, ông Đặng Quốc Việt và ông Đỗ Phước Trung. Theo nội dung vụ án, lợi dụng vai trò là cổ đông lớn, quyền lực, nắm giữ trên thực tế số lượng cổ phần gần tuyệt đối của Ngân hàng SCB, bà Trương Mỹ Lan đã truyền đạt ý chí cho các bị cáo Đinh Văn Thành, Bùi Anh Dũng, Võ Tấn Hoàng Văn, Tạ Chiêu Trung, Trương Khánh Hoàng, Trần Thị Mỹ Dung thực hiện việc rút tiền từ SCB, nhằm chiếm đoạt số tiền lớn của ngân hàng để sử dụng vào mục đích cá nhân. Các bị cáo Đinh Văn Thành, Bùi Anh Dũng, Võ Tấn Hoàng Văn, Tạ Chiêu Trung, Trương Khánh Hoàng, Trần Thị Mỹ Dung tiếp nhận ý chí của bà Trương Mỹ Lan, bỏ qua các quy định pháp luật, giúp sức tích cực để Trương Mỹ Lan rút tiền của Ngân hàng SCB, gây hậu quả thiệt hại đặc biệt lớn. Xét xử sơ thẩm, Tòa án nhân dân TP.HCM tuyên phạt bà Trương Mỹ Lan tử hình về tội tham ô tài sản; 20 năm tù về tội đưa hối lộ và 20 năm tù về tội vi phạm quy định về cho vay trong hoạt động của các tổ chức tín dụng, tổng hợp mức án là tử hình.
+
 
     personal_info:
 
     [
   {
     "personal_id": "P001",
-    "full_name": "Nguyễn Văn Trường",
-    "birth_year_or_age": "2009",
+    "full_name": "Trương Mỹ Lan",
+    "birth_year_or_age": null,
+    "gender": "Female",
+    "occupation_or_position": "Chủ tịch hội đồng quản trị",
+    "organization": "Tập đoàn Vạn Thịnh Phát",
+    "hometown_or_residence": null,
+    "personal_relationships": "Bị cáo chính; Cổ đông lớn Ngân hàng SCB; Chỉ đạo các bị cáo Đinh Văn Thành, Bùi Anh Dũng, Võ Tấn Hoàng Văn, Tạ Chiêu Trung, Trương Khánh Hoàng, Trần Thị Mỹ Dung"
+  },
+  {
+    "personal_id": "P002",
+    "full_name": "Đinh Văn Thành",
+    "birth_year_or_age": null,
     "gender": "Male",
-    "occupation_or_position": "Cầm đầu ổ nhóm trộm, cướp",
+    "occupation_or_position": null,
     "organization": null,
-    "hometown_or_residence": "xã Quỳnh Thắng, huyện Quỳnh Lưu, tỉnh Nghệ An",
-    "personal_relationships": "Cầm đầu nhóm 6 đối tượng trộm cướp"
+    "hometown_or_residence": null,
+    "personal_relationships": "Đồng phạm của Trương Mỹ Lan"
+  },
+  {
+    "personal_id": "P003",
+    "full_name": "Bùi Anh Dũng",
+    "birth_year_or_age": null,
+    "gender": "Male",
+    "occupation_or_position": null,
+    "organization": null,
+    "hometown_or_residence": null,
+    "personal_relationships": "Đồng phạm của Trương Mỹ Lan"
+  },
+  {
+    "personal_id": "P004",
+    "full_name": "Võ Tấn Hoàng Văn",
+    "birth_year_or_age": null,
+    "gender": "Male",
+    "occupation_or_position": null,
+    "organization": null,
+    "hometown_or_residence": null,
+    "personal_relationships": "Đồng phạm của Trương Mỹ Lan"
+  },
+  {
+    "personal_id": "P005",
+    "full_name": "Tạ Chiêu Trung",
+    "birth_year_or_age": null,
+    "gender": "Male",
+    "occupation_or_position": null,
+    "organization": null,
+    "hometown_or_residence": null,
+    "personal_relationships": "Đồng phạm của Trương Mỹ Lan"
+  },
+  {
+    "personal_id": "P006",
+    "full_name": "Trương Khánh Hoàng",
+    "birth_year_or_age": null,
+    "gender": "Male",
+    "occupation_or_position": null,
+    "organization": null,
+    "hometown_or_residence": null,
+    "personal_relationships": "Đồng phạm của Trương Mỹ Lan"
+  },
+  {
+    "personal_id": "P007",
+    "full_name": "Trần Thị Mỹ Dung",
+    "birth_year_or_age": null,
+    "gender": "Female",
+    "occupation_or_position": null,
+    "organization": null,
+    "hometown_or_residence": null,
+    "personal_relationships": "Đồng phạm của Trương Mỹ Lan"
+  },
+  {
+    "personal_id": "P008",
+    "full_name": "Huỳnh Thanh Duyên",
+    "birth_year_or_age": null,
+    "gender": "Female",
+    "occupation_or_position": "Thẩm phán chủ tọa",
+    "organization": "Tòa án nhân dân cấp cao tại TP.HCM",
+    "hometown_or_residence": null,
+    "personal_relationships": "Chủ tọa phiên tòa phúc thẩm"
+  },
+  {
+    "personal_id": "P009",
+    "full_name": "Phạm Công Mười",
+    "birth_year_or_age": null,
+    "gender": "Male",
+    "occupation_or_position": "Thẩm phán",
+    "organization": "Tòa án nhân dân cấp cao tại TP.HCM",
+    "hometown_or_residence": null,
+    "personal_relationships": "Thành viên hội đồng xét xử"
+  },
+  {
+    "personal_id": "P010",
+    "full_name": "Lê Thành Long",
+    "birth_year_or_age": null,
+    "gender": "Male",
+    "occupation_or_position": "Thẩm phán",
+    "organization": "Tòa án nhân dân cấp cao tại TP.HCM",
+    "hometown_or_residence": null,
+    "personal_relationships": "Thành viên hội đồng xét xử"
+  },
+  {
+    "personal_id": "P011",
+    "full_name": "Võ Phong Lưu",
+    "birth_year_or_age": null,
+    "gender": "Male",
+    "occupation_or_position": "Kiểm sát viên",
+    "organization": "Viện Kiểm sát nhân dân cấp cao tại TP.HCM",
+    "hometown_or_residence": null,
+    "personal_relationships": "Tham gia phiên tòa"
+  },
+  {
+    "personal_id": "P012",
+    "full_name": "Đặng Quốc Việt",
+    "birth_year_or_age": null,
+    "gender": "Male",
+    "occupation_or_position": "Kiểm sát viên",
+    "organization": "Viện Kiểm sát nhân dân cấp cao tại TP.HCM",
+    "hometown_or_residence": null,
+    "personal_relationships": "Tham gia phiên tòa"
+  },
+  {
+    "personal_id": "P013",
+    "full_name": "Đỗ Phước Trung",
+    "birth_year_or_age": null,
+    "gender": "Male",
+    "occupation_or_position": "Kiểm sát viên",
+    "organization": "Viện Kiểm sát nhân dân cấp cao tại TP.HCM",
+    "hometown_or_residence": null,
+    "personal_relationships": "Tham gia phiên tòa"
+  },
+  {
+    "personal_id": "P014",
+    "full_name": "Nguyễn Sơn Hoa",
+    "birth_year_or_age": null,
+    "gender": "Male",
+    "occupation_or_position": null,
+    "organization": "Công ty CP Quốc Cường Gia Lai",
+    "hometown_or_residence": null,
+    "personal_relationships": "Người có quyền lợi, nghĩa vụ liên quan"
   }
 ]
 
     organizer_info:
 
-    []
+    [
+  {
+    "organizer_id": "O001",
+    "full_name": "Tập đoàn Vạn Thịnh Phát",
+    "birth_year_or_age": null,
+    "gender": null,
+    "occupation_or_position": null,
+    "organization": null,
+    "hometown_or_residence": null,
+    "personal_relationships": "Có Trương Mỹ Lan là Chủ tịch HĐQT"
+  },
+  {
+    "organizer_id": "O002",
+    "full_name": "Ngân hàng SCB",
+    "birth_year_or_age": null,
+    "gender": null,
+    "occupation_or_position": null,
+    "organization": null,
+    "hometown_or_residence": null,
+    "personal_relationships": "Bị hại; Liên quan đến Trương Mỹ Lan"
+  },
+  {
+    "organizer_id": "O003",
+    "full_name": "Công ty CP Quốc Cường Gia Lai",
+    "birth_year_or_age": null,
+    "gender": null,
+    "occupation_or_position": null,
+    "organization": null,
+    "hometown_or_residence": null,
+    "personal_relationships": "Người có quyền lợi, nghĩa vụ liên quan"
+  },
+  {
+    "organizer_id": "O004",
+    "full_name": "Công ty CP T&H Hạ Long",
+    "birth_year_or_age": null,
+    "gender": null,
+    "occupation_or_position": null,
+    "organization": null,
+    "hometown_or_residence": null,
+    "personal_relationships": "Người có quyền lợi, nghĩa vụ liên quan"
+  },
+  {
+    "organizer_id": "O005",
+    "full_name": "Công ty Âu Lạc Quảng Ninh",
+    "birth_year_or_age": null,
+    "gender": null,
+    "occupation_or_position": null,
+    "organization": null,
+    "hometown_or_residence": null,
+    "personal_relationships": "Người có quyền lợi, nghĩa vụ liên quan"
+  },
+  {
+    "organizer_id": "O006",
+    "full_name": "Tòa án nhân dân cấp cao tại TP.HCM",
+    "birth_year_or_age": null,
+    "gender": null,
+    "occupation_or_position": "Cơ quan xét xử",
+    "organization": null,
+    "hometown_or_residence": null,
+    "personal_relationships": "Tổ chức phiên tòa phúc thẩm"
+  },
+  {
+    "organizer_id": "O007",
+    "full_name": "Viện Kiểm sát nhân dân cấp cao tại TP.HCM",
+    "birth_year_or_age": null,
+    "gender": null,
+    "occupation_or_position": "Cơ quan công tố",
+    "organization": null,
+    "hometown_or_residence": null,
+    "personal_relationships": "Tham gia phiên tòa"
+  }
+]
 
 Format đầu ra:
 
@@ -221,6 +512,7 @@ Format đầu ra:
 
 Yêu cầu 1: Chỉ thực hiện ghép nối thông tin per_info mới và per_info cũ nếu có xuất hiện trùng lặp, không thì trả về rỗng.
 Yêu cầu 2: Chỉ trả về file json theo mẫu dưới và không đưa ra thêm lời giải thích.
+
 Mẫu đầu ra mẫu:
 ```json
 [
@@ -251,4 +543,4 @@ Mẫu đầu ra mẫu:
         }
     ]
 ]
-```
+```...
