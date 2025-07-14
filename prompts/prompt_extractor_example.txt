@@ -1,0 +1,266 @@
+🧭 BƯỚC 1: TRÍCH XUẤT THÔNG TIN CÁ NHÂN
+
+Hãy đọc kỹ bài báo dưới đây và xác định tất cả các cá nhân được đề cập trong nội dung.
+
+Đối với mỗi cá nhân được nêu trong bài, hãy trích xuất đầy đủ các thông tin sau (nếu có):
+
+- ID định danh duy nhất cho người xuất hiện trong bài báo (personal_id)
+
+- Họ và tên đầy đủ
+
+- Năm sinh hoặc tuổi
+
+- Giới tính
+
+- Nghề nghiệp hoặc chức vụ
+
+- Cơ quan hoặc tổ chức liên quan
+
+- Quê quán hoặc nơi cư trú
+
+- Mối quan hệ cá nhân với các nhân vật khác trong bài báo (nếu có)
+
+📌 Đầu ra yêu cầu: Trả về dưới dạng danh sách JSON, trong đó mỗi phần tử là một đối tượng chứa thông tin của một cá nhân. Các key trong JSON phải viết bằng **tiếng Anh** theo mẫu sau:
+
+[
+{
+"personal_id": "....",
+"full_name": "...",
+"birth_year_or_age": "...",
+"gender": "...",
+"occupation_or_position": "...",
+"organization": "...",
+"hometown_or_residence": "...",
+"personal_relationships": "..."
+},
+...
+]
+
+🧭 BƯỚC 2: TRÍCH XUẤT THÔNG TIN TỔ CHỨC
+
+Hãy đọc kỹ bài báo dưới đây và xác định tất cả các tổ chức được đề cập trong nội dung.
+
+Đối với mỗi tổ chức được nêu trong bài, hãy trích xuất đầy đủ các thông tin sau (nếu có):
+
+- ID định danh duy nhất cho tổ chức xuất hiện trong bài báo (organizer_id)
+
+- Tên đầy đủ
+
+- Năm thành lập
+
+- Nghề nghiệp hoặc chức vụ (áp dụng nếu tổ chức đóng vai trò như một cơ quan quản lý, giám sát, v.v.)
+
+- Cơ quan hoặc tổ chức liên quan (ví dụ: công ty con, công ty mẹ, đối tác)
+
+- Mối quan hệ với các cá nhân/tổ chức khác trong bài báo (nếu có)
+
+📌 Đầu ra yêu cầu: Trả về dưới dạng danh sách JSON, trong đó mỗi phần tử là một đối tượng chứa thông tin của một tổ chức. Các key trong JSON phải viết bằng **tiếng Anh** theo mẫu sau:
+
+[
+{
+"organizer_id": "....",
+"full_name": "...",
+"birth_year_or_age": "...",
+"gender": null,
+"occupation_or_position": "...",
+"organization": "...",
+"hometown_or_residence": null,
+"personal_relationships": "..."
+},
+...
+]
+
+🧭 BƯỚC 3: PHÂN TÍCH ĐẶC TRƯNG RỦI RO THEO TỪNG CÁ NHÂN/TỔ CHỨC
+
+✅ 1. news_sentiment_type (Bản chất của tin tức tổng thể)
+→ Chỉ định cho toàn bài: "Negative", "Neutral", hoặc "Positive".
+
+✅ 2. recency (Thời gian xuất hiện bài báo so với thời gian hiện tại là 10 năm)
+-> Chỉ định cho toàn bài: "recent", "old"
+
+✅ 3. source_credibility (Độ tin cậy của bài báo)
+-> Chỉ định cho toàn bài: "High", "Medium" hoặc "Low"
+
+Dựa trên danh sách cá nhân được trích xuất ở BƯỚC 1 và tổ chức được trích xuất ở BƯỚC 2, hãy đánh giá **từng người/tổ chức** theo các đặc trưng rủi ro sau:
+
+✅ 4. Đặc trưng rủi ro theo từng cá nhân (mỗi cá nhân là một phần tử trong danh sách):
+
+list_personal_risks (key)
+
+[
+{
+"entity_id": "..." ← Lưu ý personal_id phải trùng với personal_id của cá nhân ở bước 1
+"entity_name": "...", ← tên cá nhân khớp với Bước 1
+"is_individual": true, ← Luôn là true cho cá nhân
+"role_in_event": "...", ← vai trò trong sự việc (ví dụ: bị cáo, người tố cáo, người đại diện, bị hại, nhân chứng, ...)
+"violation_type": "...", ← Rửa tiền / Tài trợ khủng bố / Lừa đảo / Chiếm đoạt tài sản / Tham nhũng / Hối lộ / Vi phạm dân sự / hành chính / tranh chấp nhỏ / Đưa vào danh sách trừng phạt / Cấm vận kinh tế tài chính / Trừng phạt ngành lĩnh vực / Hạn chế truy cập vào hệ thống tài chính Hoa Kỳ / Trừng phạt thứ cấp / Không có hành vi phạm được đề cập
+"customer_role": "...", ← Chủ mưu / Cầm đầu / Tổ chức thực hiện hành vi vi phạm / Tham gia / Đồng phạm / Giúp sức hoặc thực hiện một phần / Bên liên quan bị động / Bị nhắc tên nhưng không trực tiếp / Không có liên quan rõ ràng trong bài báo
+"legal_status": "...", ← Đã kết án / Đang trong quá trình điều tra / truy tố / chưa có phán quyết / Tin chưa rõ ràng / Được minh oan
+"source_level": "..." ← Tuổi Trẻ / Dân Trí / Thanh Niên / VNExpress / Cổng thông tin Chính phủ / OFAC/ Other
+},
+...
+]
+
+✅ 5. Đặc trưng rủi ro theo từng tổ chức (mỗi tổ chức là một phần tử trong danh sách):
+
+list_organizer_risks (key)
+
+[
+{
+"entity_id": "..." ← Lưu ý organizer_id phải trùng với organizer_id của tổ chức ở bước 2
+"entity_name": "...", ← tên tổ chức khớp với Bước 2
+"is_individual": false, ← Luôn là false cho tổ chức
+"role_in_event": "...", ← vai trò trong sự việc (ví dụ: bị cáo, bên liên quan, bị hại, cơ quan quản lý, ...)
+"violation_type": "...", ← Rửa tiền / Tài trợ khủng bố / Lừa đảo / Chiếm đoạt tài sản / Tham nhũng / Hối lộ / Vi phạm dân sự / hành chính / tranh chấp nhỏ / Đưa vào danh sách trừng phạt / Cấm vận kinh tế tài chính / Trừng phạt ngành lĩnh vực / Hạn chế truy cập vào hệ thống tài chính Hoa Kỳ / Trừng phạt thứ cấp / Không có hành vi phạm được đề cập
+"customer_role": "...", ← Chủ mưu / Cầm đầu / Tổ chức thực hiện hành vi vi phạm / Tham gia / Đồng phạm / Giúp sức hoặc thực hiện một phần / Bên liên quan bị động / Bị nhắc tên nhưng không trực tiếp / Không có liên quan rõ ràng trong bài báo
+"legal_status": "...", ← Đã kết án / Đang trong quá trình điều tra / truy tố / chưa có phán quyết / Tin chưa rõ ràng / Được minh oan
+"source_level": "..." ← Tuổi Trẻ / Dân Trí / Thanh Niên / VNExpress / Cổng thông tin Chính phủ / OFAC/ Other
+},
+...
+]
+
+📌 Lưu ý: Mỗi cá nhân/tổ chức trong danh sách phải được đánh giá độc lập, không gộp chung. Nếu không đủ thông tin để xác định, hãy để null.
+
+LƯU Ý: Chỉ trả về **hai danh sách JSON (một cho cá nhân, một cho tổ chức) và một đối tượng JSON (chứa thông tin rủi ro tổng thể và danh sách rủi ro của từng thực thể) như trên**, không thêm giải thích, tiêu đề, mô tả hay bất kỳ nội dung nào khác.
+
+📰 Nội dung bài báo cần phân tích:
+
+\"\"\"
+
+    Theo Ban Dân tộc TP Hồ Chí Minh, trước đây, dưới sự lãnh đạo trực tiếp của Thành ủy Sài Gòn - Gia Ðịnh, năm 1967, Ðảng ủy kiêm Ban Hoa vận T4 được thành lập; từ đó phát triển liên tục, tạo nên đội ngũ cán bộ, chiến sĩ, cơ sở cách mạng người Hoa ngày một đông đảo, rộng khắp. Nhiều cơ sở đã tự nguyện dùng nhà ở của mình làm nơi cất giấu vũ khí, nuôi giấu cán bộ, biên soạn tài liệu tiếng Hoa, vận động đồng bào dân tộc Hoa tham gia cách mạng. Việc sản xuất, kinh doanh vốn là chuyên môn của bà con, khi ấy vừa là kế sinh nhai, vừa là bình phong che mắt địch nhằm vận động tài chính, tiếp tế thuốc chữa bệnh, vận chuyển vũ khí cho Ban Hoa vận T4 cho đến khi miền nam được giải phóng. Chính vì vậy trong đại dịch Covid-19, người Hoa cùng các dân tộc khác, không đứng ngoài cuộc. Ðó là việc mới đây, hàng triệu người Việt chứng kiến hành động đầy cảm xúc của doanh nhân người Hoa Trương Mỹ Lan, Chủ tịch Tập đoàn Vạn Thịnh Phát đã cùng các công ty trực thuộc và đối tác, tài trợ 2.000 tỷ đồng ủng hộ cho kế hoạch mua vaccine phòng, chống Covid-19 của Việt Nam và TP Hồ Chí Minh. Trong số này, Công ty CP Bảo trợ Tập đoàn Vạn Thịnh Phát đứng đầu danh sách tài trợ với kinh phí 1.450 tỷ đồng. Ngoài ra, các công ty trực thuộc tập đoàn và đối tác đã tài trợ 550 tỷ đồng... Dù ít khi xuất hiện trên truyền thông nhưng hàng chục năm qua, bà Trương Mỹ Lan đã dành cho thành phố nơi mình sinh ra rất nhiều nguồn lực không thể kể hết. Chưa nói đến việc vào tháng 4/2020, Tập đoàn Vạn Thịnh Phát và các công ty trực thuộc đã đóng góp 100 tỷ đồng cho Ủy ban Mặt trận Tổ quốc Việt Nam TP Hồ Chí Minh nhằm ủng hộ cho công tác phòng, chống dịch Covid-19, cũng như đóng góp cho Ủy ban Trung ương Mặt trận Tổ quốc Việt Nam 2.000 máy thở. Tiến sĩ Trần Thị Anh Vũ, nguyên Phó Bí thư Thường trực Quận ủy quận 5, người có nhiều năm công tác, sinh sống cùng đồng bào Hoa, cho rằng, khu vực kinh tế tư nhân ở TP Hồ Chí Minh tăng nhanh về số lượng, vốn kinh doanh và có mặt khắp các lĩnh vực, thích nghi nhanh với các quy luật của thị trường, năng động, nhạy bén trong tiếp cận với công nghệ, kỹ thuật tiên tiến... là có sự góp mặt của một bộ phận đáng kể là doanh nhân, hộ kinh doanh cá thể người Hoa. Đối với một địa bàn có khoảng nửa triệu người Hoa như TP Hồ Chí Minh, bản sắc văn hóa của đồng bào Hoa cũng thấm đẫm và hòa chung dòng chảy văn hóa Việt. Nhiều nghệ thuật múa lân, lễ hội nguyên tiêu, hát bội… ăn sâu vào tâm trí người dân thành phố. Trong đó, nghệ sĩ người Hoa Trương Hán Minh là một họa sĩ vẽ tranh thủy mặc được nhiều người biết đến vì đã có nhiều đóng góp cho sự phát triển của hoạt động văn học nghệ thuật. Họa sĩ Trương Hán Minh cũng là một trong những người tiên phong và thành công khi dùng nghệ thuật vẽ tranh thủy mặc thể hiện và minh họa thơ Chủ tịch Hồ Chí Minh, gắn với đẩy mạnh “Học tập và làm theo tư tưởng, đạo đức, phong cách Hồ Chí Minh”. Thông qua hình thức vẽ tranh bán đấu giá, ông còn ủng hộ hoạt động từ thiện xã hội hàng chục tỷ đồng, và mới đây nhất là ủng hộ tiền bán tranh để phòng, chống Covid-19. Trên trường thể thao quốc tế, cặp đôi bạn diễn người Hoa (cũng là anh em ruột) Giang Quốc Cơ - Giang Quốc Nghiệp đều là những nghệ sĩ xiếc nổi tiếng của Việt Nam, được trao tặng danh hiệu Nghệ sĩ ưu tú khi tuổi đời còn rất trẻ. Hai chàng trai người Hoa này bắt đầu gây chú ý với tiết mục “Sức mạnh đôi tay” và đã mang về cho Việt Nam không dưới 10 huy chương vàng, huy chương bạc và nhiều giải thưởng uy tín khác; đồng thời trở thành Công dân trẻ tiêu biểu của TP Hồ Chí Minh. Cũng như nhiều văn nghệ sĩ và vận động viên khác ở TP Hồ Chí Minh đầy năng động, ngay trong tâm dịch Covid-19, họ cũng cùng gia đình đóng góp những ngày lương, tiền dành dụm… nhằm chung tay cùng nhân dân các dân tộc vượt qua đại dịch. Và đó còn là hành động đẹp tại Phòng trưng bày văn hóa người Hoa Sài Gòn - Chợ Lớn (67, đường An Dương Vương, quận 5). Ngoài tiếp nhận hàng trăm kỷ vật của người Hoa ở TP Hồ Chí Minh qua nhiều thời kỳ, những người lao động nơi đây còn cùng các cán bộ hưu trí, các đảng viên người Hoa đóng góp từng ngày lương, từng món tiền tiết kiệm để chung tay, đồng hành cùng TP Hồ Chí Minh phòng, chống dịch bệnh; đó là nữ đồng chí 50 tuổi Ðảng Lý Kim Mai (nguyên cán bộ Ban Hoa vận T4) dành dụm mấy tháng lương hưu, ngày ngày chăm lo thiếu nhi nghèo trong các khu hẻm bị phong tỏa; đó là “vua bánh” người Hoa Kao Siêu Lực (ABC Bakery) đang cùng nhóm doanh nghiệp người Hoa ngày ngày hỗ trợ nhanh 1.000 suất ăn nhẹ, nước uống cho các lực lượng tham gia phòng, chống dịch. Và không thể không nhắc đến các hội quán Tuệ Thành, Sùng Chính, Ôn Lăng, Nghĩa An, Nhị Phủ, Hải Nam, đang tích cực vận động để trợ giúp hàng chục tấn hàng hóa, thực phẩm cho người dân trong các khu vực bị phong tỏa, cách ly. Ðây chính là tấm lòng của bà con người Hoa thuộc các nhóm ngôn ngữ chính: Quảng Ðông, Triều Châu, Phúc Kiến, Hải Nam, Khách Gia (Hẹ) ở thành phố. Theo thống kê, toàn thành phố có 418.167 người Hoa với khoảng 85.000 hộ (tỷ lệ hơn 5,26% dân số), trong đó có 53,59% sống tập trung ở quận 5, quận 6 và quận 11. Cộng đồng này góp phần không nhỏ vào sự phát triển kinh tế - xã hội và cũng là cầu nối quan trọng cho quan hệ kinh tế, thương mại, đầu tư của Việt Nam với các quốc gia có đông người Hoa sinh sống trên thế giới. Và đây cũng là những người tiên phong cùng các dân tộc khác, chung tay xây dựng, bảo vệ và đóng góp thật sự ý nghĩa cho TP Hồ Chí Minh.
+
+\"\"\"
+
+Lưu ý tuân thủ theo format sau:
+
+[
+[
+dict_person_1,
+dict_person_2,
+...
+],
+[
+dict_org_1,
+dict_org_2,
+...
+],
+dict_risk_info
+]
+
+Mẫu đầu ra mẫu:
+
+[
+[
+{
+"personal_id": "P001",
+"full_name": "Trương Mỹ Lan",
+"birth_year_or_age": null,
+"gender": "Female",
+"occupation_or_position": "Chủ tịch hội đồng quản trị",
+"organization": "Tập đoàn Vạn Thịnh Phát",
+"hometown_or_residence": null,
+"personal_relationships": "Bị cáo chính trong vụ án Vạn Thịnh Phát; Cổ đông lớn, người nắm giữ gần tuyệt đối cổ phần Ngân hàng SCB; Người ra chỉ thị cho các bị cáo Đinh Văn Thành, Bùi Anh Dũng, Võ Tấn Hoàng Văn, Tạ Chiêu Trung, Trương Khánh Hoàng, Trần Thị Mỹ Dung"
+},
+{
+"personal_id": "P002",
+"full_name": "Huỳnh Thanh Duyên",
+"birth_year_or_age": null,
+"gender": "Female",
+"occupation_or_position": "Thẩm phán chủ tọa",
+"organization": "Tòa án nhân dân cấp cao tại TP.HCM",
+"hometown_or_residence": null,
+"personal_relationships": "Chủ tọa phiên tòa phúc thẩm vụ Vạn Thịnh Phát giai đoạn 1"
+},
+{
+"personal_id": "P003",
+"full_name": "Phạm Công Mười",
+"birth_year_or_age": null,
+"gender": "Male",
+"occupation_or_position": "Thẩm phán",
+"organization": "Tòa án nhân dân cấp cao tại TP.HCM",
+"hometown_or_residence": null,
+"personal_relationships": "Thẩm phán trong hội đồng xét xử phúc thẩm vụ Vạn Thịnh Phát giai đoạn 1"
+}
+],
+[
+{
+"organizer_id": "O001",
+"full_name": "Tập đoàn Vạn Thịnh Phát",
+"birth_year_or_age": null,
+"gender": null,
+"occupation_or_position": null,
+"organization": null,
+"hometown_or_residence": null,
+"personal_relationships": "Có Trương Mỹ Lan là chủ tịch hội đồng quản trị"
+},
+{
+"organizer_id": "O002",
+"full_name": "Ngân hàng SCB",
+"birth_year_or_age": null,
+"gender": null,
+"occupation_or_position": null,
+"organization": null,
+"hometown_or_residence": null,
+"personal_relationships": "Có Trương Mỹ Lan là cổ đông lớn"
+}
+],
+{
+"news_sentiment_type": "Negative",
+"recency": "recent",
+"source_credibility": "High",
+"list_personal_risks": [
+{
+"entity_id": "P001",
+"entity_name": "Trương Mỹ Lan",
+"is_individual": true,
+"role_in_event": "Bị cáo chính trong vụ án Vạn Thịnh Phát",
+"violation_type": "Lừa đảo",
+"customer_role": "Chủ mưu",
+"legal_status": "Đã kết án",
+"source_level": "Other"
+},
+{
+"entity_id": "P002",
+"entity_name": "Huỳnh Thanh Duyên",
+"is_individual": true,
+"role_in_event": "Chủ tọa phiên tòa phúc thẩm vụ Vạn Thịnh Phát giai đoạn 1",
+"violation_type": "Không có hành vi phạm được đề cập",
+"customer_role": "Không có liên quan rõ ràng trong bài báo",
+"legal_status": "Tin chưa rõ ràng",
+"source_level": "Other"
+},
+{
+"entity_id": "P003",
+"entity_name": "Phạm Công Mười",
+"is_individual": true,
+"role_in_event": "Thẩm phán trong hội đồng xét xử phúc thẩm vụ Vạn Thịnh Phát giai đoạn 1",
+"violation_type": "Không có hành vi phạm được đề cập",
+"customer_role": "Không có liên quan rõ ràng trong bài báo",
+"legal_status": "Tin chưa rõ ràng",
+"source_level": "Other"
+}
+],
+"list_organizer_risks": [
+{
+"entity_id": "O001",
+"entity_name": "Tập đoàn Vạn Thịnh Phát",
+"is_individual": false,
+"role_in_event": "Liên quan đến vụ án Trương Mỹ Lan",
+"violation_type": "Lừa đảo",
+"customer_role": "Tham gia",
+"legal_status": "Đang trong quá trình điều tra",
+"source_level": "Other"
+},
+{
+"entity_id": "O002",
+"entity_name": "Ngân hàng SCB",
+"is_individual": false,
+"role_in_event": "Liên quan đến vụ án Trương Mỹ Lan",
+"violation_type": "Lừa đảo",
+"customer_role": "Tham gia",
+"legal_status": "Đang trong quá trình điều tra",
+"source_level": "Other"
+}
+]
+}
+]...
