@@ -1,0 +1,137 @@
+2025-07-13 13:30:54,022 - INFO - 🚀 Starting DynamoDB to MongoDB migration with Decimal fix
+2025-07-13 13:30:54,022 - INFO - 📍 MongoDB URI: mongodb+srv://hoivd:vinhhoi@cluster0.amxct9l.mongodb.net/
+2025-07-13 13:30:54,037 - INFO - 🗄️ MongoDB Database: vpbank_hackathon
+2025-07-13 13:30:54,037 - DEBUG - [load_api_key_from_env] ✅ Đã load key 'AWS_ACCESS_KEY' từ môi trường
+2025-07-13 13:30:54,038 - DEBUG - [load_api_key_from_env] ✅ Đã load key 'AWS_SECRET_KEY' từ môi trường
+2025-07-13 13:30:55,079 - INFO - 🔗 Successfully connected to DynamoDB region: ap-southeast-1
+2025-07-13 13:31:00,254 - INFO - 🔗 Successfully connected to MongoDB database: vpbank_hackathon
+2025-07-13 13:31:00,254 - INFO - 🔄 Migrating main tables with force refresh (excluding demo tables)
+2025-07-13 13:31:00,254 - INFO - 🚀 Starting comprehensive migration from DynamoDB to MongoDB
+2025-07-13 13:31:00,321 - INFO - 📋 Found 10 DynamoDB tables
+2025-07-13 13:31:00,321 - INFO - 📋 Excluding demo tables, migrating 5 main tables
+2025-07-13 13:31:00,321 - INFO - 🔄 Processing table: adverse_media
+2025-07-13 13:31:00,321 - INFO - 🔄 Starting migration: adverse_media -> adverse_media
+2025-07-13 13:31:00,321 - INFO - 📥 Retrieving data from DynamoDB table: adverse_media
+2025-07-13 13:31:00,321 - INFO - 📊 Scanning adverse_media - batch 1
+2025-07-13 13:31:01,028 - INFO - 📥 Retrieved 4 items in batch 1 (total: 4)
+2025-07-13 13:31:01,028 - INFO - ✅ Successfully retrieved 4 total items from table: adverse_media
+2025-07-13 13:31:01,029 - INFO - 🔄 Converting 4 items to MongoDB format
+2025-07-13 13:31:01,105 - INFO - ✅ Successfully converted 4 items from adverse_media
+2025-07-13 13:31:01,194 - INFO - 🗑️ Cleared 0 existing documents in collection: adverse_media
+2025-07-13 13:31:01,195 - INFO - 📥 Inserting batch 1: 4 items
+2025-07-13 13:31:01,325 - INFO - ✅ Successfully inserted 4 items in batch 1
+2025-07-13 13:31:01,482 - INFO - 📊 Final verification: 4 documents in MongoDB collection
+2025-07-13 13:31:01,482 - INFO - ✅ Successfully migrated 4 items from adverse_media to adverse_media
+2025-07-13 13:31:02,484 - INFO - 🔄 Processing table: org2media
+2025-07-13 13:31:02,484 - INFO - 🔄 Starting migration: org2media -> org2media
+2025-07-13 13:31:02,485 - INFO - 📥 Retrieving data from DynamoDB table: org2media
+2025-07-13 13:31:02,486 - INFO - 📊 Scanning org2media - batch 1
+2025-07-13 13:31:02,556 - INFO - 📥 Retrieved 25 items in batch 1 (total: 25)
+2025-07-13 13:31:02,556 - INFO - ✅ Successfully retrieved 25 total items from table: org2media
+2025-07-13 13:31:02,556 - INFO - 🔄 Converting 25 items to MongoDB format
+2025-07-13 13:31:02,619 - INFO - ✅ Successfully converted 25 items from org2media
+2025-07-13 13:31:02,675 - INFO - 🗑️ Cleared 0 existing documents in collection: org2media
+2025-07-13 13:31:02,675 - INFO - 📥 Inserting batch 1: 25 items
+2025-07-13 13:31:02,736 - INFO - ✅ Successfully inserted 25 items in batch 1
+2025-07-13 13:31:02,886 - INFO - 📊 Final verification: 25 documents in MongoDB collection
+2025-07-13 13:31:02,886 - INFO - ✅ Successfully migrated 25 items from org2media to org2media
+2025-07-13 13:31:03,895 - INFO - 🔄 Processing table: organization_info
+2025-07-13 13:31:03,895 - INFO - 🔄 Starting migration: organization_info -> organization_info
+2025-07-13 13:31:03,895 - INFO - 📥 Retrieving data from DynamoDB table: organization_info
+2025-07-13 13:31:03,895 - INFO - 📊 Scanning organization_info - batch 1
+2025-07-13 13:31:03,971 - INFO - 📥 Retrieved 25 items in batch 1 (total: 25)
+2025-07-13 13:31:03,972 - INFO - ✅ Successfully retrieved 25 total items from table: organization_info
+2025-07-13 13:31:03,972 - INFO - 🔄 Converting 25 items to MongoDB format
+2025-07-13 13:31:04,036 - INFO - ✅ Successfully converted 25 items from organization_info
+2025-07-13 13:31:04,102 - INFO - 🗑️ Cleared 0 existing documents in collection: organization_info
+2025-07-13 13:31:04,102 - INFO - 📥 Inserting batch 1: 25 items
+2025-07-13 13:31:04,169 - INFO - ✅ Successfully inserted 25 items in batch 1
+2025-07-13 13:31:04,318 - INFO - 📊 Final verification: 25 documents in MongoDB collection
+2025-07-13 13:31:04,334 - INFO - ✅ Successfully migrated 25 items from organization_info to organization_info
+2025-07-13 13:31:05,335 - INFO - 🔄 Processing table: personal2media
+2025-07-13 13:31:05,335 - INFO - 🔄 Starting migration: personal2media -> personal2media
+2025-07-13 13:31:05,335 - INFO - 📥 Retrieving data from DynamoDB table: personal2media
+2025-07-13 13:31:05,336 - INFO - 📊 Scanning personal2media - batch 1
+2025-07-13 13:31:05,467 - INFO - 📥 Retrieved 37 items in batch 1 (total: 37)
+2025-07-13 13:31:05,468 - INFO - ✅ Successfully retrieved 37 total items from table: personal2media
+2025-07-13 13:31:05,468 - INFO - 🔄 Converting 37 items to MongoDB format
+2025-07-13 13:31:05,520 - INFO - ✅ Successfully converted 37 items from personal2media
+2025-07-13 13:31:05,588 - INFO - 🗑️ Cleared 0 existing documents in collection: personal2media
+2025-07-13 13:31:05,588 - INFO - 📥 Inserting batch 1: 37 items
+2025-07-13 13:31:05,653 - INFO - ✅ Successfully inserted 37 items in batch 1
+2025-07-13 13:31:05,811 - INFO - 📊 Final verification: 37 documents in MongoDB collection
+2025-07-13 13:31:05,811 - INFO - ✅ Successfully migrated 37 items from personal2media to personal2media
+2025-07-13 13:31:06,813 - INFO - 🔄 Processing table: personal_info
+2025-07-13 13:31:06,813 - INFO - 🔄 Starting migration: personal_info -> personal_info
+2025-07-13 13:31:06,813 - INFO - 📥 Retrieving data from DynamoDB table: personal_info
+2025-07-13 13:31:06,814 - INFO - 📊 Scanning personal_info - batch 1
+2025-07-13 13:31:06,960 - INFO - 📥 Retrieved 37 items in batch 1 (total: 37)
+2025-07-13 13:31:06,961 - INFO - ✅ Successfully retrieved 37 total items from table: personal_info
+2025-07-13 13:31:06,961 - INFO - 🔄 Converting 37 items to MongoDB format
+2025-07-13 13:31:07,035 - INFO - ✅ Successfully converted 37 items from personal_info
+2025-07-13 13:31:07,089 - INFO - 🗑️ Cleared 0 existing documents in collection: personal_info
+2025-07-13 13:31:07,089 - INFO - 📥 Inserting batch 1: 37 items
+2025-07-13 13:31:07,207 - INFO - ✅ Successfully inserted 37 items in batch 1
+2025-07-13 13:31:07,373 - INFO - 📊 Final verification: 37 documents in MongoDB collection
+2025-07-13 13:31:07,373 - INFO - ✅ Successfully migrated 37 items from personal_info to personal_info
+2025-07-13 13:31:08,385 - INFO - 🎉 Migration complete! 5/5 tables migrated successfully
+2025-07-13 13:31:08,385 - INFO - 🔧 Creating indexes
+2025-07-13 13:31:08,385 - INFO - 🔧 Creating indexes in MongoDB collections
+2025-07-13 13:31:08,449 - INFO - 📊 Created index on adverse_media.media_id
+2025-07-13 13:31:08,524 - INFO - 📊 Created index on adverse_media.created_at
+2025-07-13 13:31:08,595 - INFO - 📊 Created index on adverse_media.news_sentiment_type
+2025-07-13 13:31:08,679 - INFO - 📊 Created index on personal_info.per_id
+2025-07-13 13:31:08,760 - INFO - 📊 Created index on personal_info.full_name
+2025-07-13 13:31:08,851 - INFO - 📊 Created index on personal_info.created_at
+2025-07-13 13:31:08,918 - INFO - 📊 Created index on organization_info.org_id
+2025-07-13 13:31:09,054 - INFO - 📊 Created index on organization_info.full_name
+2025-07-13 13:31:09,154 - INFO - 📊 Created index on organization_info.created_at
+2025-07-13 13:31:09,220 - INFO - 📊 Created index on personal2media.p2m_id
+2025-07-13 13:31:09,285 - INFO - 📊 Created index on personal2media.per_id
+2025-07-13 13:31:09,356 - INFO - 📊 Created index on personal2media.media_id
+2025-07-13 13:31:09,443 - INFO - 📊 Created index on personal2media.created_at
+2025-07-13 13:31:09,506 - INFO - 📊 Created index on org2media.o2m_id
+2025-07-13 13:31:09,576 - INFO - 📊 Created index on org2media.org_id
+2025-07-13 13:31:09,644 - INFO - 📊 Created index on org2media.media_id
+2025-07-13 13:31:09,706 - INFO - 📊 Created index on org2media.created_at
+2025-07-13 13:31:09,706 - INFO - ✅ All indexes created successfully
+2025-07-13 13:31:09,706 - INFO - 🔍 Verifying migration
+2025-07-13 13:31:09,706 - INFO - 🔍 Verifying migration with accurate counts...
+2025-07-13 13:31:09,768 - INFO - 📋 Found 10 DynamoDB tables
+2025-07-13 13:31:09,768 - INFO - 📊 Verifying adverse_media...
+2025-07-13 13:31:09,774 - INFO - 📊 Scanning adverse_media - batch 1
+2025-07-13 13:31:09,906 - INFO - 📥 Retrieved 4 items in batch 1 (total: 4)
+2025-07-13 13:31:09,906 - INFO - ✅ Successfully retrieved 4 total items from table: adverse_media
+2025-07-13 13:31:09,906 - INFO - 📋 DynamoDB adverse_media: 4 items
+2025-07-13 13:31:09,975 - INFO - 🍃 MongoDB adverse_media: 4 documents
+2025-07-13 13:31:09,975 - INFO - ✅ adverse_media: DynamoDB=4, MongoDB=4
+2025-07-13 13:31:09,975 - INFO - 📊 Verifying org2media...
+2025-07-13 13:31:09,975 - INFO - 📊 Scanning org2media - batch 1
+2025-07-13 13:31:10,068 - INFO - 📥 Retrieved 25 items in batch 1 (total: 25)
+2025-07-13 13:31:10,068 - INFO - ✅ Successfully retrieved 25 total items from table: org2media
+2025-07-13 13:31:10,068 - INFO - 📋 DynamoDB org2media: 25 items
+2025-07-13 13:31:10,125 - INFO - 🍃 MongoDB org2media: 25 documents
+2025-07-13 13:31:10,125 - INFO - ✅ org2media: DynamoDB=25, MongoDB=25
+2025-07-13 13:31:10,125 - INFO - 📊 Verifying organization_info...
+2025-07-13 13:31:10,134 - INFO - 📊 Scanning organization_info - batch 1
+2025-07-13 13:31:10,222 - INFO - 📥 Retrieved 25 items in batch 1 (total: 25)
+2025-07-13 13:31:10,222 - INFO - ✅ Successfully retrieved 25 total items from table: organization_info
+2025-07-13 13:31:10,222 - INFO - 📋 DynamoDB organization_info: 25 items
+2025-07-13 13:31:10,285 - INFO - 🍃 MongoDB organization_info: 25 documents
+2025-07-13 13:31:10,285 - INFO - ✅ organization_info: DynamoDB=25, MongoDB=25
+2025-07-13 13:31:10,285 - INFO - 📊 Verifying personal2media...
+2025-07-13 13:31:10,285 - INFO - 📊 Scanning personal2media - batch 1
+2025-07-13 13:31:10,362 - INFO - 📥 Retrieved 37 items in batch 1 (total: 37)
+2025-07-13 13:31:10,363 - INFO - ✅ Successfully retrieved 37 total items from table: personal2media
+2025-07-13 13:31:10,363 - INFO - 📋 DynamoDB personal2media: 37 items
+2025-07-13 13:31:10,433 - INFO - 🍃 MongoDB personal2media: 37 documents
+2025-07-13 13:31:10,433 - INFO - ✅ personal2media: DynamoDB=37, MongoDB=37
+2025-07-13 13:31:10,434 - INFO - 📊 Verifying personal_info...
+2025-07-13 13:31:10,435 - INFO - 📊 Scanning personal_info - batch 1
+2025-07-13 13:31:10,522 - INFO - 📥 Retrieved 37 items in batch 1 (total: 37)
+2025-07-13 13:31:10,524 - INFO - ✅ Successfully retrieved 37 total items from table: personal_info
+2025-07-13 13:31:10,524 - INFO - 📋 DynamoDB personal_info: 37 items
+2025-07-13 13:31:10,583 - INFO - 🍃 MongoDB personal_info: 37 documents
+2025-07-13 13:31:10,583 - INFO - ✅ personal_info: DynamoDB=37, MongoDB=37
+2025-07-13 13:31:10,585 - INFO - ✅ Migration completed successfully!
+2025-07-13 13:31:10,635 - INFO - 🔌 Database connections closed

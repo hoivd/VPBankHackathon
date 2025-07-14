@@ -10,7 +10,6 @@ mcp_use.set_debug(2)  # DEBUG level (full verbose output)
 async def main():
     # Load environment variables
     load_dotenv()
-
     # Create configuration dictionary
     config = {
       "mcpServers": {
@@ -18,19 +17,9 @@ async def main():
         "command": "npx",
         "args": ["-y", "mongodb-mcp-server"],
         "env": {
-            "MDB_MCP_CONNECTION_STRING": os.getenv("MDB_MCP_CONNECTION_STRING")
+            "MDB_MCP_CONNECTION_STRING": os.getenv("MONGO_URI")
         }
-        },
-        "dynamodb": {
-      "command": "docker",
-      "args": [ "run", "-i", "--rm", "-e", "AWS_ACCESS_KEY_ID", "-e", "AWS_SECRET_ACCESS_KEY", "-e", "AWS_REGION", "-e", "AWS_SESSION_TOKEN", "mcp/dynamodb-mcp-server" ],
-      "env": {
-        "AWS_ACCESS_KEY_ID": os.getenv("AWS_ACCESS_KEY_ID"),
-        "AWS_SECRET_ACCESS_KEY": os.getenv("AWS_SECRET_ACCESS_KEY"),
-        "AWS_REGION": os.getenv("AWS_REGION"),
-        "AWS_SESSION_TOKEN": os.getenv("AWS_SESSION_TOKEN")  
-      }
-    }
+        }
       }
     }
 
@@ -39,49 +28,60 @@ async def main():
 
     # Create LLM
     llm = ChatGoogleGenerativeAI(model="gemini-2.5-pro", api_key=os.getenv("GEMINI_API_KEY"))
-
-    # Create agent with the client
-    agent = MCPAgent(llm=llm, client=client, max_steps=30)
     
+    # Create agent with the client
+    # Add parent directory to Python path for imports
+    import sys
+    sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    
+    from prompts.data_prompt.dynamodb_origin import DYNAMODB_SCHEMA, RELATION_TABLES, COLLECTION_STRUCTURE
+    
+    instructions = f"""
+    You are a helpful assistant that can answer questions about the data in the database.
+    You can access the MongoDB database.
+    You can use the MONGO_SCHEMA to understand the data in the database vp_bank_hackathon.
+    {DYNAMODB_SCHEMA}
+    You can use the RELATION_TABLES to understand the relationships between the tables in the database.
+    {RELATION_TABLES}
+    You can use the COLLECTION_STRUCTURE to understand the data in the database. Remember use EXACTLY the collection name (dont uppercase it)
+    {COLLECTION_STRUCTURE}
+    
+    """
+    agent = MCPAgent(llm=llm, client=client, max_steps=30)
+    # Run the query
+    # try:
+    #     async for step in agent.stream(
+    #         final_prompt
+    #     ):
+    #         if isinstance(step, str):
+    #             print("Result:", step)
+    #         else:
+    #             action, observation = step
+    #             print("Observation:", observation[:20])
+    #             print("Calling:", action.tool)
+    #             print("Input:", action.tool_input)
     query = """
-    hãy truy cập vào mongodb và giúp tôi tìm kiếm thông tin về bà Trương Mỹ Lan, 
+    hãy truy cập vào MongoDB và giúp tôi tìm kiếm thông tin về bà Trương Mỹ Lan, 
     trả về tất cả thông tin vi phạm pháp lý và nguồn bài báo mà bạn có được, 
-    đừng truy cập vào những collection khác ngoài collection customer2media, customer_info
     nếu bạn không tìm thấy thông tin về bà Trương Mỹ Lan, hãy trả về 'không tìm thấy thông tin'
     """
-    query_eng = """
-    Please access MongoDB and help me search for information about Ms. Truong My Lan.
-    Return all legal violation information and the source of the articles you found.
-    Do not access any collections other than customer2media and customer_info.
-    If you cannot find any information about Ms. Truong My Lan, return 'no information found'.
+    query_en = """
+    Please access MongoDB and help me search for information about Mrs. Trương Mỹ Lan. 
+    Return all legal violation information and the source of the news articles you found. 
+    If you cannot find any information about Mrs. Trương Mỹ Lan, return 'no information found'.
     """
-    # test = "cho tôi xem toàn bộ tables bạn có trong database blacklist, collection là adverse_media "
-    connect_prompt = "database : blacklist, collection : customer2media, customer_info"
-    final_prompt = f""" 
-    {query}
-    {connect_prompt}
-    """
-    # Run the query
-    try:
-        async for step in agent.stream(
-            final_prompt
-        ):
-            if isinstance(step, str):
-                print("Result:", step)
-            else:
-                action, observation = step
-                print("Observation:", observation[:20])
-                print("Calling:", action.tool)
-                print("Input:", action.tool_input)
 
-        # result = await agent.run(
-        #     query,
-        #     connect_prompt
-        # )
-        # print(f"\nResult: {result}")
-    finally:
-        # Clean up all sessions
-        await client.close_all_sessions()
+    final_prompt = f"""
+    {instructions}
+    {query_en}
+    """
+    result = await agent.run(
+        final_prompt
+    )
+    print(f"\nResult: {result}")
+    # finally:
+    #     # Clean up all sessions
+    #     await client.close_all_sessions()
 
 if __name__ == "__main__":
     asyncio.run(main())
