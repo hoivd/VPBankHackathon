@@ -13,6 +13,7 @@ from utils import Utils
 from logger import _setup_logger
 from llm_model.bedrock_manager import BedrockModelManager
 import json
+import re
 
 logger = _setup_logger(__name__, config.LOG_LEVEL)
 
@@ -77,27 +78,32 @@ class InfoComparer:
                 new_organizer_info=new_organizer_info
             )
 
-            logger.debug("Tiến hành gọi deepseek")
+            logger.debug("Tiến hành gọi LLM COMPARER INFO")
 
-            result, reasoning = self.llm_manager.generate_deepseek(prompt)
-            logger.info(f"📌 Thinking (DeepSeek):{reasoning}")
-            logger.info(f"📌 Result (DeepSeek): {result}")
+            result, reasoning = self.llm_manager.generate(prompt)
+            logger.info(f"📌 Thinking :{reasoning}")
+            logger.info(f"📌 Result : {result}")
             logger.info(f"Goi mo hinh so sanh thanh cong")
             return result
         except Exception as e:
-            logger.error(f"❌ Lỗi khi gọi DeepSeek: {e}")
+            logger.error(f"❌ Lỗi khi gọi LLM COMPARE INFO: {e}")
             return ""
 
     def extract_resp_json(self, json_str):
         """
         Loại bỏ dấu markdown ```json và ``` rồi chuyển đổi nội dung JSON thành dict.
         """
-        # Bỏ dấu markdown đầu và cuối nếu có
-        cleaned_str = json_str.strip()
-        if cleaned_str.startswith("```json"):
-            cleaned_str = cleaned_str[len("```json"):].strip()
-        if cleaned_str.endswith("```"):
-            cleaned_str = cleaned_str[:-len("```")].strip()
+        # Regex pattern để lấy chuỗi JSON có dạng [[...],[...]]
+        pattern = r'(\[\s*\[.*?\],\s*\[.*?\]\s*\])'
+
+        match = re.search(pattern, json_str, re.DOTALL)
+
+        if not match:
+            logger.error("Không tìm thấy JSON hợp lệ trong chuỗi đầu vào")
+            raise ValueError("Không tìm thấy JSON hợp lệ trong chuỗi đầu vào")
+
+        # Chuỗi JSON sau khi trích xuất bằng regex
+        cleaned_str = match.group(1)
 
         # Parse thành dict
         try:
@@ -108,6 +114,7 @@ class InfoComparer:
             logger.info(f"Trich xuat response tu LLM thanh cong")
             return personal_duplicated, organization_duplicated
         except json.JSONDecodeError as e:
+            logger.error(f"Lỗi khi parse JSON: {e}")
             raise ValueError(f"Lỗi khi parse JSON: {e}")
 
     def get_old_info(self, media_id: str) -> tuple[str, List[dict], List[dict]]:

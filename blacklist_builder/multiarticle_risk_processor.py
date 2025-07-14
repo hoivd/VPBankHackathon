@@ -45,6 +45,7 @@ class ArticleBatchRunner:
         success = 0
         failure = 0
 
+        total_start = time.time()
         for idx, article in enumerate(article_list):
             logger.info(f"[Batch] 🔎 Bài báo {idx + 1}/{len(article_list)}")
             try:
@@ -73,7 +74,8 @@ class ArticleBatchRunner:
                 end = time.time()
                 logger.error(f"[Batch] Thời gian xử lý bài báo {idx + 1} thất bại: {end - start:.2f} giây")
 
-        logger.info(f"[ArticleBatchRunner] ✅ Hoàn tất: {success} thành công, {failure} lỗi.")
+        total_end = time.time()
+        logger.info(f"[ArticleBatchRunner] ✅ Hoàn tất: {success} thành công, {failure} lỗi. Tong thoi gian {total_end - total_start:.2f} giay")
 
     def run_from_jsonl(self, file_path: str, text_key: str, table_config: dict):
         """
@@ -104,7 +106,7 @@ if __name__ == "__main__":
     MODEL_ID = "arn:aws:bedrock:us-east-1:048013208071:inference-profile/us.deepseek.r1-v1:0"
 
     # Khởi tạo manager
-    bedrock_manager = BedrockModelManager(
+    llm_person_extractor = BedrockModelManager(
         aws_access_key_id=AWS_ACCESS_KEY,
         aws_secret_access_key=AWS_SECRET_KEY,
         region_name=REGION_MODEL,
@@ -115,11 +117,11 @@ if __name__ == "__main__":
     extractor_prompt = Utils.load_text(extractor_prompt_file)
     logger.info(f"Đã tải prompt từ {extractor_prompt_file}")
 
-    extractor = ArticlePersonExtractor(model_manager=bedrock_manager, prompt_template=extractor_prompt)
+    personal_extractor = ArticlePersonExtractor(model_manager=llm_person_extractor, prompt_template=extractor_prompt)
     logger.info("Đã khởi tạo ArticlePersonExtractor")
 
     new_processor = ArticleRiskProcessor(
-        info_extractor=extractor,
+        info_extractor=personal_extractor,
         base_dynamo=base_dynamo.dynamodb
     )
 
@@ -128,19 +130,28 @@ if __name__ == "__main__":
     extractor_prompt = Utils.load_text(extractor_prompt_file)
     logger.info(f"Đã tải prompt từ {extractor_prompt_file}")
 
-    extractor = ArticlePersonExtractor(model_manager=bedrock_manager, prompt_template=extractor_prompt)
-    logger.info("Đã khởi tạo ArticlePersonExtractor")
-
     compare_prompt_file = config.PROMPT_COMPARE_INFO_FILE
     compare_prompt = Utils.load_text(compare_prompt_file)
     logger.info(f"Đã tải prompt từ {compare_prompt_file}")
 
+    COMPARE_INFO_MODEL_ID =  config.CLAUDE_35_HAIKU_MODEL_ID
+
+    llm_compare_info = BedrockModelManager(
+        aws_access_key_id=AWS_ACCESS_KEY,
+        aws_secret_access_key=AWS_SECRET_KEY,
+        region_name=REGION_MODEL,
+        default_model_id=COMPARE_INFO_MODEL_ID
+    )
+
+
     rebuild_processor = ArticleRiskMatchingExtractor(
-        info_extractor=extractor,
+        info_extractor=personal_extractor,
         base_dynamo=base_dynamo.dynamodb,
-        llm_manager=bedrock_manager,
+        llm_manager=llm_compare_info,
         compare_prompt_template=compare_prompt
     )
+
+
 
     table_config = config.TABLE_CONFIG
 

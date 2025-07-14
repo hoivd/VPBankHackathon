@@ -56,6 +56,8 @@ class BedrockModelManager(LlmModelManager):
         """
         Gửi prompt đến mô hình DeepSeek-R1 và trả về kết quả text (hoặc raise lỗi nếu thất bại sau 3 lần).
         """
+
+        logger.info(f"🚀 Đang gọi mô hình DeepSeek...{model_id}")
         formatted_prompt = f"<｜begin▁of▁sentence｜><｜User｜>{prompt}<｜Assistant｜><think>\n"
 
         body = json.dumps({
@@ -107,6 +109,8 @@ class BedrockModelManager(LlmModelManager):
         enable_thinking: bool = False,
         thinking_budget_tokens: int = 2000
     ) -> str:
+        
+        logger.info(f"🚀 Đang gọi mô hình Bedrock...{model_name}")
         model_id = self.get_model(model_name)
 
         # Claude 3 request format
@@ -138,6 +142,7 @@ class BedrockModelManager(LlmModelManager):
                 accept="application/json",
                 contentType="application/json"
             )
+
         except (ClientError, Exception) as e:
             raise RuntimeError(f"❌ Lỗi khi gọi mô hình {model_id}: {e}")
 
@@ -145,7 +150,7 @@ class BedrockModelManager(LlmModelManager):
 
         # ✅ Lấy content list từ Claude 3.7
         content_blocks = result.get("content", [])
-
+        logger.debug(f"Conten {content_blocks}")
         # ✅ Reasoning (type == "thinking") → giá trị nằm trực tiếp trong "thinking"
         reasoning_text = None
         final_text = None

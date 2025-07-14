@@ -151,9 +151,7 @@ class ArticleRiskMatchingExtractor:
         old_media_ids = self.table_adverse_media.get_all_media_ids()
         logger.info(f" Tìm thấy {len(old_media_ids)} old media \n List OLD MEDIA: {old_media_ids}")
 
-        self.dynamo_pusher.insert(adverse_media_item, table_config=table_config['media_config'])
         
-        logger.info('Lưu adverse media mới vào DynamoDB thành công')
 
         for old_media_id in old_media_ids:
             logger.info(f'Đang xu ly media_id: {old_media_id}')
@@ -166,7 +164,11 @@ class ArticleRiskMatchingExtractor:
 
             rebuild_items, old_ids = self.prepare_dynamodb_items(personal_duplicated, organization_duplicated, new_risk_info_json, media_id)
             self.process_dynamodb(rebuild_items, old_ids, table_config)
-            
+        
+        self.dynamo_pusher.insert(adverse_media_item, table_config=table_config['media_config'])
+        
+        logger.info('Lưu adverse media mới vào DynamoDB thành công')
+        logger.info('Xu ly so sanh bai bao cu va luu bai bao moi thanh cong')
         
 
 if __name__ == "__main__":

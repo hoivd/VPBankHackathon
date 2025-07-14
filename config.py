@@ -1,6 +1,6 @@
 import logging
 
-LOG_LEVEL = logging.INFO  # Mức độ log mặc định
+LOG_LEVEL = logging.DEBUG  # Mức độ log mặc định
 AWS_REGION = "ap-southeast-1"  # Khu vực AWS mặc định
 S3_BUCKET_NAME = "team253"  # Tên bucket S3 mặc định
 PROMPT_EXTRACTOR_FILE = "prompts/prompt_extractor.txt"  # Đường dẫn tới file prompt extractor
@@ -23,3 +23,5 @@ TABLE_CONFIG = {
 
 AWS_VIRGINA_REGION = 'us-east-1'
 DEEPSEEK_MODEL_VIRGINA_ID = "arn:aws:bedrock:us-east-1:048013208071:inference-profile/us.deepseek.r1-v1:0"
+CLAUDE_35_CROSS_REGION_HAIKU_MODEL_ID = 'arn:aws:bedrock:us-east-1:048013208071:inference-profile/us.anthropic.claude-3-5-haiku-20241022-v1:0'
+CLAUDE_35_ON_DEMAND_HAIKU_MODEL_ID

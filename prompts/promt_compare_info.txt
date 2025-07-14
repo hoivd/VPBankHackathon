@@ -50,6 +50,7 @@ Format đầu ra:
     ]
 ]
 
+Yêu cầu: Chỉ trả về json theo mẫu dưới và không đưa ra gì thêm 
 
 Mẫu đầu ra mẫu:
 ```json
@@ -81,3 +82,4 @@ Mẫu đầu ra mẫu:
         }}
     ]
 ]
+```
