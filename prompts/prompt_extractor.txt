@@ -1,6 +1,7 @@
+prompt = f"""
 🧭 BƯỚC 1: TRÍCH XUẤT THÔNG TIN CÁ NHÂN
 
-Hãy đọc kỹ bài báo dưới đây và xác định tất cả các cá nhân được đề cập trong nội dung.
+Hãy đọc kỹ bài báo dưới đây và xác định tất cả các cá nhân được đề cập trong nội dung **có liên quan đến các yếu tố rủi ro hoặc vi phạm theo định nghĩa ở BƯỚC 3 (tức là `violation_type` khác 'Không có hành vi phạm được đề cập' và `customer_role` khác 'Không có liên quan rõ ràng trong bài báo').**
 
 Đối với mỗi cá nhân được nêu trong bài, hãy trích xuất đầy đủ các thông tin sau (nếu có):
 
@@ -38,7 +39,7 @@ Hãy đọc kỹ bài báo dưới đây và xác định tất cả các cá nh
 
 🧭 BƯỚC 2: TRÍCH XUẤT THÔNG TIN TỔ CHỨC
 
-Hãy đọc kỹ bài báo dưới đây và xác định tất cả các tổ chức được đề cập trong nội dung.
+Hãy đọc kỹ bài báo dưới đây và xác định tất cả các tổ chức được đề cập trong nội dung **có liên quan đến các yếu tố rủi ro hoặc vi phạm theo định nghĩa ở BƯỚC 3 (tức là `violation_type` khác 'Không có hành vi phạm được đề cập' và `customer_role` khác 'Không có liên quan rõ ràng trong bài báo').**
 
 Đối với mỗi tổ chức được nêu trong bài, hãy trích xuất đầy đủ các thông tin sau (nếu có):
 
@@ -81,7 +82,7 @@ Hãy đọc kỹ bài báo dưới đây và xác định tất cả các tổ c
 ✅ 3. source_credibility (Độ tin cậy của bài báo)
 -> Chỉ định cho toàn bài: "High", "Medium" hoặc "Low"
 
-Dựa trên danh sách cá nhân được trích xuất ở BƯỚC 1 và tổ chức được trích xuất ở BƯỚC 2, hãy đánh giá **từng người/tổ chức** theo các đặc trưng rủi ro sau:
+Dựa trên danh sách cá nhân được trích xuất ở BƯỚC 1 và tổ chức được trích xuất ở BƯỚC 2, hãy đánh giá **từng người/tổ chức** theo các đặc trưng rủi ro sau. **Chỉ đánh giá những cá nhân/tổ chức có liên quan đến các yếu tố rủi ro hoặc vi phạm được nêu rõ trong bài báo.**
 
 ✅ 4. Đặc trưng rủi ro theo từng cá nhân (mỗi cá nhân là một phần tử trong danh sách):
 
@@ -119,15 +120,8 @@ list_organizer_risks (key)
 ...
 ]
 
-📌 Lưu ý: Mỗi cá nhân/tổ chức trong danh sách phải được đánh giá độc lập, không gộp chung. Nếu không đủ thông tin để xác định, hãy để null.
-
-LƯU Ý: Chỉ trả về **hai danh sách JSON (một cho cá nhân, một cho tổ chức) và một đối tượng JSON (chứa thông tin rủi ro tổng thể và danh sách rủi ro của từng thực thể) như trên**, không thêm giải thích, tiêu đề, mô tả hay bất kỳ nội dung nào khác.
-
-📰 Nội dung bài báo cần phân tích:
-
-\"\"\"
-{article_text}
-\"\"\"
+📌 Lưu ý 1: Mỗi cá nhân/tổ chức trong danh sách phải được đánh giá độc lập, không gộp chung. Nếu không đủ thông tin để xác định, hãy để null.
+Lưu ý 2: **Chỉ bao gồm các cá nhân và tổ chức được xác định có các đặc trưng rủi ro cụ thể trong bài báo (nghĩa là `violation_type` không phải là 'Không có hành vi phạm được đề cập' và `customer_role` không phải là 'Không có liên quan rõ ràng trong bài báo'). Nếu một cá nhân hoặc tổ chức không đáp ứng tiêu chí này, họ sẽ không được đưa vào bất kỳ danh sách nào trong đầu ra (cả danh sách ở BƯỚC 1, BƯỚC 2 và các danh sách rủi ro ở BƯỚC 3).**
 
 Lưu ý tuân thủ theo format sau:
 
@@ -145,7 +139,17 @@ dict_org_2,
 dict_risk_info
 ]
 
-Mẫu đầu ra mẫu:
+LƯU Ý: Chỉ trả về **hai danh sách JSON (một cho cá nhân, một cho tổ chức) và một đối tượng JSON (chứa thông tin rủi ro tổng thể và danh sách rủi ro của từng thực thể) như trên**, không thêm giải thích, tiêu đề, mô tả hay bất kỳ nội dung nào khác.
+
+📰 Nội dung bài báo cần phân tích:
+
+\"\"\"
+
+    Theo Ban Dân tộc TP Hồ Chí Minh, trước đây, dưới sự lãnh đạo trực tiếp của Thành ủy Sài Gòn - Gia Ðịnh, năm 1967, Ðảng ủy kiêm Ban Hoa vận T4 được thành lập; từ đó phát triển liên tục, tạo nên đội ngũ cán bộ, chiến sĩ, cơ sở cách mạng người Hoa ngày một đông đảo, rộng khắp. Nhiều cơ sở đã tự nguyện dùng nhà ở của mình làm nơi cất giấu vũ khí, nuôi giấu cán bộ, biên soạn tài liệu tiếng Hoa, vận động đồng bào dân tộc Hoa tham gia cách mạng. Việc sản xuất, kinh doanh vốn là chuyên môn của bà con, khi ấy vừa là kế sinh nhai, vừa là bình phong che mắt địch nhằm vận động tài chính, tiếp tế thuốc chữa bệnh, vận chuyển vũ khí cho Ban Hoa vận T4 cho đến khi miền nam được giải phóng. Chính vì vậy trong đại dịch Covid-19, người Hoa cùng các dân tộc khác, không đứng ngoài cuộc. Ðó là việc mới đây, hàng triệu người Việt chứng kiến hành động đầy cảm xúc của doanh nhân người Hoa Trương Mỹ Lan, Chủ tịch Tập đoàn Vạn Thịnh Phát đã cùng các công ty trực thuộc và đối tác, tài trợ 2.000 tỷ đồng ủng hộ cho kế hoạch mua vaccine phòng, chống Covid-19 của Việt Nam và TP Hồ Chí Minh. Trong số này, Công ty CP Bảo trợ Tập đoàn Vạn Thịnh Phát đứng đầu danh sách tài trợ với kinh phí 1.450 tỷ đồng. Ngoài ra, các công ty trực thuộc tập đoàn và đối tác đã tài trợ 550 tỷ đồng... Dù ít khi xuất hiện trên truyền thông nhưng hàng chục năm qua, bà Trương Mỹ Lan đã dành cho thành phố nơi mình sinh ra rất nhiều nguồn lực không thể kể hết. Chưa nói đến việc vào tháng 4/2020, Tập đoàn Vạn Thịnh Phát và các công ty trực thuộc đã đóng góp 100 tỷ đồng cho Ủy ban Mặt trận Tổ quốc Việt Nam TP Hồ Chí Minh nhằm ủng hộ cho công tác phòng, chống dịch Covid-19, cũng như đóng góp cho Ủy ban Trung ương Mặt trận Tổ quốc Việt Nam 2.000 máy thở. Tiến sĩ Trần Thị Anh Vũ, nguyên Phó Bí thư Thường trực Quận ủy quận 5, người có nhiều năm công tác, sinh sống cùng đồng bào Hoa, cho rằng, khu vực kinh tế tư nhân ở TP Hồ Chí Minh tăng nhanh về số lượng, vốn kinh doanh và có mặt khắp các lĩnh vực, thích nghi nhanh với các quy luật của thị trường, năng động, nhạy bén trong tiếp cận với công nghệ, kỹ thuật tiên tiến... là có sự góp mặt của một bộ phận đáng kể là doanh nhân, hộ kinh doanh cá thể người Hoa. Đối với một địa bàn có khoảng nửa triệu người Hoa như TP Hồ Chí Minh, bản sắc văn hóa của đồng bào Hoa cũng thấm đẫm và hòa chung dòng chảy văn hóa Việt. Nhiều nghệ thuật múa lân, lễ hội nguyên tiêu, hát bội… ăn sâu vào tâm trí người dân thành phố. Trong đó, nghệ sĩ người Hoa Trương Hán Minh là một họa sĩ vẽ tranh thủy mặc được nhiều người biết đến vì đã có nhiều đóng góp cho sự phát triển của hoạt động văn học nghệ thuật. Họa sĩ Trương Hán Minh cũng là một trong những người tiên phong và thành công khi dùng nghệ thuật vẽ tranh thủy mặc thể hiện và minh họa thơ Chủ tịch Hồ Chí Minh, gắn với đẩy mạnh “Học tập và làm theo tư tưởng, đạo đức, phong cách Hồ Chí Minh”. Thông qua hình thức vẽ tranh bán đấu giá, ông còn ủng hộ hoạt động từ thiện xã hội hàng chục tỷ đồng, và mới đây nhất là ủng hộ tiền bán tranh để phòng, chống Covid-19. Trên trường thể thao quốc tế, cặp đôi bạn diễn người Hoa (cũng là anh em ruột) Giang Quốc Cơ - Giang Quốc Nghiệp đều là những nghệ sĩ xiếc nổi tiếng của Việt Nam, được trao tặng danh hiệu Nghệ sĩ ưu tú khi tuổi đời còn rất trẻ. Hai chàng trai người Hoa này bắt đầu gây chú ý với tiết mục “Sức mạnh đôi tay” và đã mang về cho Việt Nam không dưới 10 huy chương vàng, huy chương bạc và nhiều giải thưởng uy tín khác; đồng thời trở thành Công dân trẻ tiêu biểu của TP Hồ Chí Minh. Cũng như nhiều văn nghệ sĩ và vận động viên khác ở TP Hồ Chí Minh đầy năng động, ngay trong tâm dịch Covid-19, họ cũng cùng gia đình đóng góp những ngày lương, tiền dành dụm… nhằm chung tay cùng nhân dân các dân tộc vượt qua đại dịch. Và đó còn là hành động đẹp tại Phòng trưng bày văn hóa người Hoa Sài Gòn - Chợ Lớn (67, đường An Dương Vương, quận 5). Ngoài tiếp nhận hàng trăm kỷ vật của người Hoa ở TP Hồ Chí Minh qua nhiều thời kỳ, những người lao động nơi đây còn cùng các cán bộ hưu trí, các đảng viên người Hoa đóng góp từng ngày lương, từng món tiền tiết kiệm để chung tay, đồng hành cùng TP Hồ Chí Minh phòng, chống dịch bệnh; đó là nữ đồng chí 50 tuổi Ðảng Lý Kim Mai (nguyên cán bộ Ban Hoa vận T4) dành dụm mấy tháng lương hưu, ngày ngày chăm lo thiếu nhi nghèo trong các khu hẻm bị phong tỏa; đó là “vua bánh” người Hoa Kao Siêu Lực (ABC Bakery) đang cùng nhóm doanh nghiệp người Hoa ngày ngày hỗ trợ nhanh 1.000 suất ăn nhẹ, nước uống cho các lực lượng tham gia phòng, chống dịch. Và không thể không nhắc đến các hội quán Tuệ Thành, Sùng Chính, Ôn Lăng, Nghĩa An, Nhị Phủ, Hải Nam, đang tích cực vận động để trợ giúp hàng chục tấn hàng hóa, thực phẩm cho người dân trong các khu vực bị phong tỏa, cách ly. Ðây chính là tấm lòng của bà con người Hoa thuộc các nhóm ngôn ngữ chính: Quảng Ðông, Triều Châu, Phúc Kiến, Hải Nam, Khách Gia (Hẹ) ở thành phố. Theo thống kê, toàn thành phố có 418.167 người Hoa với khoảng 85.000 hộ (tỷ lệ hơn 5,26% dân số), trong đó có 53,59% sống tập trung ở quận 5, quận 6 và quận 11. Cộng đồng này góp phần không nhỏ vào sự phát triển kinh tế - xã hội và cũng là cầu nối quan trọng cho quan hệ kinh tế, thương mại, đầu tư của Việt Nam với các quốc gia có đông người Hoa sinh sống trên thế giới. Và đây cũng là những người tiên phong cùng các dân tộc khác, chung tay xây dựng, bảo vệ và đóng góp thật sự ý nghĩa cho TP Hồ Chí Minh.
+
+\"\"\"
+
+Mẫu đầu ra mẫu 1 (Nếu là người hoặc tổ chức có rủi ro):
 
 [
 [
@@ -262,3 +266,17 @@ Mẫu đầu ra mẫu:
 ]
 }}
 ]
+
+Mẫu đầu ra mẫu 2 (Nếu không có người hoặc tổ chức có rủi ro):
+[
+[],
+[],
+{{
+"news_sentiment_type": "Positive",
+"recency": "recent",
+"source_credibility": "High",
+"list_personal_risks": [],
+"list_organizer_risks": []
+}}
+]
+"""
