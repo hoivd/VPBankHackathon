@@ -5,6 +5,8 @@ Sử dụng thông tin từ các danh sách custom_info (cho cá nhân) và danh
 
 Đối với mỗi cá nhân trùng lặp được tìm thấy, hãy trả về một đối tượng JSON chứa personal_id của họ từ dữ liệu mới, per_id của họ từ dữ liệu cũ, và một bản tổng hợp thông tin cá nhân của họ từ cả hai nguồn (kết hợp các trường thông tin một cách đầy đủ và chính xác nhất, ưu tiên thông tin chi tiết hơn nếu có sự khác biệt).
 Đối với mỗi tổ chức trùng lặp được tìm thấy, hãy trả về một đối tượng JSON chứa organizer_id của họ từ dữ liệu mới, org_id của họ từ dữ liệu cũ, và một bản tổng hợp thông tin của tổ chức từ cả hai nguồn (kết hợp các trường thông tin một cách đầy đủ và chính xác nhất, ưu tiên thông tin chi tiết hơn nếu có sự khác biệt).
+
+
 Dữ liệu đầu vào:
 
 Nội dung bài báo cũ, custom info cá nhân cũ và organizer info cũ tương ứng
@@ -39,8 +41,10 @@ Format đầu ra:
 
 [ [ dict_person_duplicated_1, dict_person_duplicated_2, ... ], [ dict_org_duplicated_1, dict_org_duplicated_2, ... ] ]
 
-Mẫu đầu ra mẫu:
+Yêu cầu: Chỉ trả về json theo mẫu dưới và không đưa ra gì thêm 
 
+Mẫu đầu ra mẫu:
+```json
 [
     [
         {
@@ -68,4 +72,6 @@ Mẫu đầu ra mẫu:
             "personal_relationships": "Có Trương Mỹ Lan là Chủ tịch"
         }
     ]
-]...
+]
+```
+
