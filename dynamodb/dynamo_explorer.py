@@ -480,7 +480,7 @@ def main():
                 print("  python dynamo_explorer.py                 # Default: save to dynamodb_report.txt")
         else:
             # Default behavior: save to file
-            explorer.save_report("dynamodb_report.txt")
+            explorer.save_report("dynamodb_report_final.txt")
         
     except Exception as e:
         logging.error(f"Error running DynamoDB explorer: {e}")

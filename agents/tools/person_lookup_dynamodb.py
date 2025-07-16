@@ -470,13 +470,10 @@ def main():
         # Initialize lookup
         lookup = PersonLookupDynamoDB(region_name=args.region)
         
-        # Perform lookup
         result = lookup.lookup_person_comprehensive(args.name)
         
-        # Print formatted result
         lookup.print_formatted_result(result)
         
-        # Save to JSON if requested
         if args.output_json:
             with open(args.output_json, 'w', encoding='utf-8') as f:
                 json.dump(result, f, ensure_ascii=False, indent=2, default=str)
