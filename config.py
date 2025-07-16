@@ -24,4 +24,3 @@ TABLE_CONFIG = {
 AWS_VIRGINA_REGION = 'us-east-1'
 DEEPSEEK_MODEL_VIRGINA_ID = "arn:aws:bedrock:us-east-1:048013208071:inference-profile/us.deepseek.r1-v1:0"
 CLAUDE_35_CROSS_REGION_HAIKU_MODEL_ID = 'arn:aws:bedrock:us-east-1:048013208071:inference-profile/us.anthropic.claude-3-5-haiku-20241022-v1:0'
-CLAUDE_35_ON_DEMAND_HAIKU_MODEL_ID

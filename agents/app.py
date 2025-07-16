@@ -14,22 +14,18 @@ from pydantic import BaseModel
 from dotenv import load_dotenv
 import uvicorn
 
-# Load environment variables
 load_dotenv()
 
-# Add current directory to path to import modules
 sys.path.append(os.path.dirname(os.path.abspath(__file__)))
 
-from person_risk_agent import PersonRiskAgent
+from agents.tools.person_risk_agent import PersonRiskAgent
 
-# Initialize FastAPI app
 app = FastAPI(
     title="VP Bank Person Risk Analysis API",
     description="Vietnamese-language API for person risk analysis using DynamoDB lookup and characteristic scoring",
     version="1.0.0"
 )
 
-# Add CORS middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],  # In production, specify exact origins
@@ -38,7 +34,6 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Global agent instance
 agent = None
 
 @app.on_event("startup")
