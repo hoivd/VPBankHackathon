@@ -1,0 +1,150 @@
+{
+  "invidual_AML": {
+    "summarize": {
+      "Trương Mỹ Lan": {
+        "Chiếm đoạt tài sản": {
+          "legal_status": "Đã kết án",
+          "media_ids": [
+            "media_id_1752508252199101",
+            "media_id_1752506699359203",
+            "media_id_1752506736598630",
+            "media_id_1752507220082644",
+            "media_id_1752507822257912",
+            "media_id_1752507491864010",
+            "media_id_1752507033628467",
+            "media_id_1752506646783633",
+            "media_id_1752507064399447"
+          ]
+        },
+        "Tham ô tài sản": {
+          "legal_status": "Đã kết án",
+          "media_ids": [
+            "media_id_1752506342061619",
+            "media_id_1752508362186387",
+            "media_id_1752508094916843"
+          ]
+        },
+        "Lợi dụng các quyền tự do dân chủ xâm phạm lợi ích của Nhà nước, quyền, lợi ích hợp pháp của tổ chức, cá nhân": {
+          "legal_status": "Đã kết án",
+          "media_ids": [
+            "media_id_1752506576993321",
+            "media_id_1752506278013855"
+          ]
+        },
+        "Trộm cắp tài sản": {
+          "legal_status": "Đang trong quá trình điều tra",
+          "media_ids": [
+            "media_id_1752506947156825"
+          ]
+        },
+        "Lừa đảo chiếm đoạt tài sản": {
+          "legal_status": "Đã kết án",
+          "media_ids": [
+            "media_id_1752506883320510"
+          ]
+        },
+        "Lợi dụng các quyền tự do dân chủ xâm phạm lợi ích của nhà nước, quyền, lợi ích hợp pháp của tổ chức, cá nhân": {
+          "legal_status": "Đã kết án",
+          "media_ids": [
+            "media_id_1752506605587017"
+          ]
+        },
+        "Vi phạm dân sự": {
+          "legal_status": "Đã kết án",
+          "media_ids": [
+            "media_id_1752506032806429",
+            "media_id_1752508051510145"
+          ]
+        }
+      }
+    }
+  },
+  "organization_AML": {
+    "Tập đoàn Vạn Thịnh Phát": {
+      "Tham ô tài sản": {
+        "legal_status": "Đã kết án",
+        "media_ids": [
+          "media_id_1752506342061619",
+          "media_id_1752507113664518",
+          "media_id_1752508094916843",
+          "media_id_1752508362186387"
+        ]
+      },
+      "Rửa tiền": {
+        "legal_status": "Đã kết án",
+        "media_ids": [
+          "media_id_1752506129101623",
+          "media_id_1752507620454275"
+        ]
+      },
+      "Chiếm đoạt tài sản": {
+        "legal_status": "Đang trong quá trình điều tra",
+        "media_ids": [
+          "media_id_1752508252199101"
+        ]
+      },
+      "Vi phạm dân sự": {
+        "legal_status": "Tin chưa rõ ràng",
+        "media_ids": [
+          "media_id_1752506032806429",
+          "media_id_1752508051510145"
+        ]
+      },
+      "Lợi dụng các quyền tự do dân chủ xâm phạm lợi ích của nhà nước, quyền, lợi ích hợp pháp của tổ chức, cá nhân": {
+        "legal_status": "Đã kết án",
+        "media_ids": [
+          "media_id_1752506605587017"
+        ]
+      },
+      "Lợi dụng các quyền tự do dân chủ xâm phạm lợi ích của Nhà nước, quyền, lợi ích hợp pháp của tổ chức, cá nhân": {
+        "legal_status": "Đang trong quá trình điều tra",
+        "media_ids": [
+          "media_id_1752506576993321",
+          "media_id_1752506278013855"
+        ]
+      },
+      "Tham nhũng": {
+        "legal_status": "Đang trong quá trình điều tra",
+        "media_ids": [
+          "media_id_1752506431325505"
+        ]
+      }
+    },
+    "Ngân hàng SCB": {
+      "Tham nhũng": {
+        "legal_status": "Đang trong quá trình điều tra",
+        "media_ids": [
+          "media_id_1752506431325505"
+        ]
+      }
+    }
+  },
+  "personal_risk_analysis": [
+    {
+      "per_id": "per_id_1752506032806484",
+      "per_name": "Trương Mỹ Lan",
+      "is_individual": true,
+      "violation_type": "Chiếm đoạt tài sản",
+      "customer_role": "Chủ mưu",
+      "legal_status": "Đã kết án"
+    }
+  ],
+  "organizer_risk_analysis": [
+    {
+      "org_id": "org_id_1752506032806508",
+      "org_name": "Tập đoàn Vạn Thịnh Phát",
+      "is_individual": false,
+      "violation_type": "Tham ô tài sản",
+      "customer_role": "Tổ chức thực hiện hành vi vi phạm",
+      "legal_status": "Đã kết án"
+    },
+    {
+      "org_id": "org_id_1752506524920800",
+      "org_name": "Ngân hàng SCB",
+      "is_individual": false,
+      "violation_type": "Tham nhũng",
+      "customer_role": "Tham gia",
+      "legal_status": "Đang trong quá trình điều tra"
+    }
+  ]
+}

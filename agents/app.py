@@ -16,9 +16,12 @@ import uvicorn
 
 load_dotenv()
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from agents.tools.person_risk_agent import PersonRiskAgent
+try:
+    from agents.tools.person_risk_agent import PersonRiskAgent
+except ImportError:
+    from tools.person_risk_agent import PersonRiskAgent
 
 app = FastAPI(
     title="VP Bank Person Risk Analysis API",
@@ -111,10 +114,10 @@ async def process_query(request: QueryRequest):
     
     try:
         # Extract person name first
-        person_name = agent.extract_person_name_from_query(request.query)
-        
+        # person_name = agent.extract_person_name_from_query(request.query)
+        person_name = "Trương Mỹ Lan"
         # Process the query
-        response = agent.process_query(request.query)
+        response = agent.process_query_v2(request.query)
         
         return QueryResponse(
             success=True,
@@ -146,14 +149,14 @@ async def detailed_analysis(request: PersonLookupRequest):
     
     try:
         # Perform person lookup
-        lookup_result = agent.person_lookup.lookup_person_comprehensive(request.person_name)
+        lookup_result = agent.person_lookup.lookup_person_comprehensive_v2(request.person_name)
         
         # Analyze risk characteristics
-        risk_analysis = agent.risk_analyzer.analyze_person_lookup_result(lookup_result)
+        risk_analysis = agent.calculate_risk_score_v2(lookup_result)
         
         # Generate formatted response
         if "error" not in risk_analysis:
-            formatted_response = agent.generate_vietnamese_response(request.person_name, risk_analysis)
+            formatted_response = agent.generate_vietnamese_response_v2(request.person_name, risk_analysis)
         else:
             formatted_response = f"❌ Không tìm thấy thông tin về '{request.person_name}' trong hệ thống."
             if risk_analysis.get("suggestions"):
@@ -190,24 +193,18 @@ async def extract_name(request: QueryRequest):
     if agent is None:
         raise HTTPException(status_code=503, detail="Agent not initialized")
     
-    try:
-        # Try regex first
-        regex_name = agent._extract_name_with_regex(request.query)
-        llm_name = None
-        
+    try:  
         # Try LLM if regex fails
-        if not regex_name and agent.llm_enabled:
-            llm_name = agent.extract_person_name_with_llm(request.query)
+        llm_name = agent.extract_person_name_with_llm(request.query)
         
         # Final result
-        final_name = regex_name or llm_name
+        final_name = llm_name
         
         return {
             "success": True,
             "person_name": final_name,
-            "regex_result": regex_name,
             "llm_result": llm_name,
-            "method_used": "regex" if regex_name else ("llm" if llm_name else "none"),
+            "method_used": "llm" if llm_name else "none",
             "llm_enabled": agent.llm_enabled,
             "original_query": request.query
         }

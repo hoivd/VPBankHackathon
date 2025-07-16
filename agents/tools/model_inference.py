@@ -7,11 +7,13 @@ Loads CatBoost model from S3 and provides inference functionality
 import boto3
 import joblib
 import pandas as pd
-import os
 import tempfile
 from typing import Dict, Any, Union
+from catboost import CatBoostClassifier, Pool
 import sys 
-
+import dotenv   
+import os
+dotenv.load_dotenv()
 # Add the project root to Python path
 project_root = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(0, project_root)
@@ -39,17 +41,64 @@ class AMLModelInference:
         """
         self.bucket_name = bucket_name
         self.model_s3_key = model_s3_key
-        self.s3_client = boto3.client("s3", region_name=region_name)
+
+        aws_access_key_id = os.getenv("AWS_ACCESS_KEY")
+        aws_secret_access_key = os.getenv("AWS_SECRET_KEY")
+        region_name = os.getenv("AWS_REGION", "ap-southeast-1")
+        self.s3_client = boto3.client(
+                        's3',
+                        region_name=region_name,
+                        aws_access_key_id=aws_access_key_id,
+                        aws_secret_access_key=aws_secret_access_key
+                    )
+
         self.model = None
         self.categorical_features = [
-            'residence_area', 'occupation', 'per_role',
-            'per_violation_type_1', 'per_legal_status_1', 'per_violation_type_2', 'per_legal_status_2',
-            'per_violation_type_3', 'per_legal_status_3', 'per_violation_type_4', 'per_legal_status_4',
-            'per_violation_type_5', 'per_legal_status_5',
-            'org_violation_type_1', 'org_legal_status_1', 'org_violation_type_2', 'org_legal_status_2',
-            'org_violation_type_3', 'org_legal_status_3', 'org_violation_type_4', 'org_legal_status_4',
-            'org_violation_type_5', 'org_legal_status_5'
-        ]
+                "residence_area",
+                "occupation",
+                "age",
+
+                "per_violation_type_1",
+                "per_legal_status_1",
+                "per_role_1",
+
+                "per_violation_type_2",
+                "per_legal_status_2",
+                "per_role_2",
+
+                "per_violation_type_3",
+                "per_legal_status_3",
+                "per_role_3",
+
+                "per_violation_type_4",
+                "per_legal_status_4",
+                "per_role_4",
+
+                "per_violation_type_5",
+                "per_legal_status_5",
+                "per_role_5",
+
+                "org_violation_type_1",
+                "org_legal_status_1",
+                "org_role_1",
+
+                "org_violation_type_2",
+                "org_legal_status_2",
+                "org_role_2",
+
+                "org_violation_type_3",
+                "org_legal_status_3",
+                "org_role_3",
+
+                "org_violation_type_4",
+                "org_legal_status_4",
+                "org_role_4",
+
+                "org_violation_type_5",
+                "org_legal_status_5",
+                "org_role_5"
+            ]
+
         
     def download_model_from_s3(self) -> str:
         """

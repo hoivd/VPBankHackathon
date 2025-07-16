@@ -1,0 +1,116 @@
+📋 Kết Quả Phân Tích
+Đây là thông tin về Trương Mỹ Lan mà hệ thống tìm được:
+
+📊 PHÂN TÍCH RỦI RO CHO: Trương Mỹ Lan
+👤 THÔNG TIN CÁ NHÂN: • Họ tên: Trương Mỹ Lan • Giới tính: Female • Chức vụ: Chủ tịch Tập đoàn Vạn Thịnh Phát • Tổ chức: Tập đoàn Vạn Thịnh Phát
+
+🚨 ĐÁNH GIÁ RỦI RO TỔNG THỂ: • Mức độ rủi ro: Rất Cao • Điểm rủi ro cao nhất: 12/15 • Điểm rủi ro trung bình: 8.23/15 • Tổng số mục phân tích: 44 • Số mục có rủi ro cao: 34
+
+📋 PHÂN TÍCH RỦI RO CÁ NHÂN:
+
+Mục p2m_id_1752508353285348: • Loại vi phạm: Chiếm đoạt tài sản (Điểm: 4) • Vai trò: Đồng phạm (Điểm: 2) • Tình trạng pháp lý: Đã kết án (Điểm: 3) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 9/15 - Cao
+
+Mục p2m_id_1752506376854101: • Loại vi phạm: Tham ô tài sản (Điểm: 4) • Vai trò: Chủ mưu (Điểm: 3) • Tình trạng pháp lý: Đã kết án (Điểm: 3) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 10/15 - Rất Cao
+
+Mục p2m_id_1752506590156689: • Loại vi phạm: Lợi dụng các quyền tự do dân chủ xâm phạm lợi ích của Nhà nước, quyền, lợi ích hợp pháp của tổ chức, cá nhân (Điểm: 0) • Vai trò: Chủ mưu (Điểm: 3) • Tình trạng pháp lý: Đang trong quá trình điều tra (Điểm: 2) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 5/15 - Trung Bình
+
+Mục p2m_id_1752506713636376: • Loại vi phạm: Chiếm đoạt tài sản (Điểm: 4) • Vai trò: Tham gia (Điểm: 2) • Tình trạng pháp lý: Đang trong quá trình điều tra (Điểm: 2) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 8/15 - Cao
+
+Mục p2m_id_1752508369739097: • Loại vi phạm: Tham ô tài sản/Đưa hối lộ/Lừa đảo chiếm đoạt tài sản/Rửa tiền/Vận chuyển trái phép tiền tệ qua biên giới (Điểm: 6) • Vai trò: Chủ mưu (Điểm: 3) • Tình trạng pháp lý: Đã kết án (Điểm: 3) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 12/15 - Rất Cao
+
+Mục p2m_id_1752506755898723: • Loại vi phạm: Chiếm đoạt tài sản (Điểm: 4) • Vai trò: Tham gia (Điểm: 2) • Tình trạng pháp lý: Đang trong quá trình điều tra (Điểm: 2) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 8/15 - Cao
+
+Mục p2m_id_1752507285872106: • Loại vi phạm: Chiếm đoạt tài sản (Điểm: 4) • Vai trò: Bên liên quan bị động (Điểm: 1) • Tình trạng pháp lý: Đã kết án (Điểm: 3) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 8/15 - Cao
+
+Mục p2m_id_1752508110501141: • Loại vi phạm: Tham ô tài sản/Hối lộ/Vi phạm quy định về cho vay (Điểm: 4) • Vai trò: Chủ mưu (Điểm: 3) • Tình trạng pháp lý: Đã kết án (Điểm: 3) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 10/15 - Rất Cao
+
+Mục p2m_id_1752506969302473: • Loại vi phạm: Trộm cắp tài sản (Điểm: 0) • Vai trò: Chủ mưu (Điểm: 3) • Tình trạng pháp lý: Đang trong quá trình điều tra (Điểm: 2) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 5/15 - Trung Bình
+
+Mục p2m_id_1752506904213951: • Loại vi phạm: Lừa đảo chiếm đoạt tài sản (Điểm: 4) • Vai trò: Chủ mưu (Điểm: 3) • Tình trạng pháp lý: Đã kết án (Điểm: 3) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 10/15 - Rất Cao
+
+Mục p2m_id_1752506625606229: • Loại vi phạm: Lợi dụng các quyền tự do dân chủ xâm phạm lợi ích của nhà nước, quyền, lợi ích hợp pháp của tổ chức, cá nhân (Điểm: 0) • Vai trò: Chủ mưu (Điểm: 3) • Tình trạng pháp lý: Đã kết án (Điểm: 3) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 6/15 - Trung Bình
+
+Mục p2m_id_1752507840747132: • Loại vi phạm: Chiếm đoạt tài sản (Điểm: 4) • Vai trò: Tổ chức thực hiện hành vi vi phạm (Điểm: 3) • Tình trạng pháp lý: Đang trong quá trình điều tra (Điểm: 2) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 9/15 - Cao
+
+Mục p2m_id_1752506615871446: • Loại vi phạm: Lợi dụng các quyền tự do dân chủ xâm phạm lợi ích của nhà nước, quyền, lợi ích hợp pháp của tổ chức, cá nhân (Điểm: 0) • Vai trò: Chủ mưu (Điểm: 3) • Tình trạng pháp lý: Đã kết án (Điểm: 3) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 6/15 - Trung Bình
+
+Mục p2m_id_1752507600686822: • Loại vi phạm: Chiếm đoạt tài sản (Điểm: 4) • Vai trò: Đồng phạm (Điểm: 2) • Tình trạng pháp lý: Đang trong quá trình điều tra (Điểm: 2) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 8/15 - Cao
+
+Mục p2m_id_1752507058602242: • Loại vi phạm: Chiếm đoạt tài sản / Bắt cóc con tin (Điểm: 4) • Vai trò: Chủ mưu (Điểm: 3) • Tình trạng pháp lý: Đang trong quá trình điều tra (Điểm: 2) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 9/15 - Cao
+
+Mục p2m_id_1752506032806587: • Loại vi phạm: Vi phạm dân sự / hành chính (Điểm: 2) • Vai trò: Chủ mưu (Điểm: 3) • Tình trạng pháp lý: Đã kết án (Điểm: 3) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 8/15 - Cao
+
+Mục p2m_id_1752508060227967: • Loại vi phạm: Vi phạm dân sự / hành chính / tranh chấp nhỏ (Điểm: 2) • Vai trò: Chủ mưu (Điểm: 3) • Tình trạng pháp lý: Đang trong quá trình điều tra / truy tố / chưa có phán quyết (Điểm: 2) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 7/15 - Cao
+
+Mục p2m_id_1752508260707267: • Loại vi phạm: Chiếm đoạt tài sản (Điểm: 4) • Vai trò: Chủ mưu (Điểm: 3) • Tình trạng pháp lý: Đã kết án (Điểm: 3) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 10/15 - Rất Cao
+
+Mục p2m_id_1752508278885770: • Loại vi phạm: Chiếm đoạt tài sản (Điểm: 4) • Vai trò: Đồng phạm (Điểm: 2) • Tình trạng pháp lý: Đã kết án (Điểm: 3) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 9/15 - Cao
+
+Mục p2m_id_1752506664613827: • Loại vi phạm: Chiếm đoạt tài sản (Điểm: 4) • Vai trò: Tham gia (Điểm: 2) • Tình trạng pháp lý: Đang trong quá trình điều tra (Điểm: 2) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 8/15 - Cao
+
+Mục p2m_id_1752508121120936: • Loại vi phạm: Tham ô tài sản (Điểm: 4) • Vai trò: Đồng phạm (Điểm: 2) • Tình trạng pháp lý: Đã kết án (Điểm: 3) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 9/15 - Cao
+
+Mục p2m_id_1752507243056067: • Loại vi phạm: Chiếm đoạt tài sản (Điểm: 4) • Vai trò: Chủ mưu (Điểm: 3) • Tình trạng pháp lý: Đã kết án (Điểm: 3) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 10/15 - Rất Cao
+
+Mục p2m_id_1752507095939125: • Loại vi phạm: Chiếm đoạt tài sản (Điểm: 4) • Vai trò: Chủ mưu (Điểm: 3) • Tình trạng pháp lý: Đang trong quá trình điều tra (Điểm: 2) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 9/15 - Cao
+
+Mục p2m_id_1752508287510656: • Loại vi phạm: Chiếm đoạt tài sản (Điểm: 4) • Vai trò: Đồng phạm (Điểm: 2) • Tình trạng pháp lý: Đã kết án (Điểm: 3) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 9/15 - Cao
+
+Mục p2m_id_1752508195395405: • Loại vi phạm: Tham ô tài sản (Điểm: 4) • Vai trò: Đồng phạm (Điểm: 2) • Tình trạng pháp lý: Đã kết án (Điểm: 3) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 9/15 - Cao
+
+Mục p2m_id_1752506321619996: • Loại vi phạm: Lợi dụng các quyền tự do dân chủ xâm phạm lợi ích của Nhà nước, quyền, lợi ích hợp pháp của tổ chức, cá nhân (Điểm: 0) • Vai trò: Chủ mưu (Điểm: 3) • Tình trạng pháp lý: Đã kết án (Điểm: 3) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 6/15 - Trung Bình
+
+Mục p2m_id_1752508269060204: • Loại vi phạm: Chiếm đoạt tài sản (Điểm: 4) • Vai trò: Chủ mưu (Điểm: 3) • Tình trạng pháp lý: Đã kết án (Điểm: 3) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 10/15 - Rất Cao
+
+🏢 PHÂN TÍCH RỦI RO TỔ CHỨC:
+
+Tổ chức: Tập đoàn Vạn Thịnh Phát (ID: o2m_id_1752506388451215): • Loại vi phạm: Tham ô tài sản (Điểm: 4) • Vai trò: Tổ chức thực hiện hành vi vi phạm (Điểm: 3) • Tình trạng pháp lý: Đang trong quá trình điều tra (Điểm: 2) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 9/15 - Cao
+
+Tổ chức: Tập đoàn Vạn Thịnh Phát (ID: o2m_id_1752506152331041): • Loại vi phạm: Rửa tiền (Điểm: 6) • Vai trò: Giúp sức hoặc thực hiện một phần (Điểm: 2) • Tình trạng pháp lý: Đã kết án (Điểm: 3) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 11/15 - Rất Cao
+
+Tổ chức: Tập đoàn Vạn Thịnh Phát (ID: o2m_id_1752506360093878): • Loại vi phạm: Vi phạm quy định về cho vay (Điểm: 0) • Vai trò: Tổ chức thực hiện hành vi vi phạm (Điểm: 3) • Tình trạng pháp lý: Đang trong quá trình điều tra (Điểm: 2) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 5/15 - Trung Bình
+
+Tổ chức: Tập đoàn Vạn Thịnh Phát (ID: o2m_id_1752508269060295): • Loại vi phạm: Chiếm đoạt tài sản (Điểm: 4) • Vai trò: Tổ chức thực hiện hành vi vi phạm (Điểm: 3) • Tình trạng pháp lý: Đang trong quá trình điều tra (Điểm: 2) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 9/15 - Cao
+
+Tổ chức: Tập đoàn Vạn Thịnh Phát (ID: o2m_id_1752506032806671): • Loại vi phạm: Vi phạm dân sự / hành chính (Điểm: 2) • Vai trò: Tổ chức thực hiện hành vi vi phạm (Điểm: 3) • Tình trạng pháp lý: Tin chưa rõ ràng (Điểm: 1) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 6/15 - Trung Bình
+
+Tổ chức: Tập đoàn Vạn Thịnh Phát (ID: o2m_id_1752507134484859): • Loại vi phạm: Tham ô tài sản/Hối lộ (Điểm: 4) • Vai trò: Tổ chức thực hiện hành vi vi phạm (Điểm: 3) • Tình trạng pháp lý: Đã kết án (Điểm: 3) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 10/15 - Rất Cao
+
+Tổ chức: Tập đoàn Vạn Thịnh Phát (ID: o2m_id_1752508287510720): • Loại vi phạm: Chiếm đoạt tài sản (Điểm: 4) • Vai trò: Bên liên quan bị động (Điểm: 1) • Tình trạng pháp lý: Đang trong quá trình điều tra (Điểm: 2) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 7/15 - Cao
+
+Tổ chức: Tập đoàn Vạn Thịnh Phát (ID: o2m_id_1752508110501202): • Loại vi phạm: Tham ô tài sản (Điểm: 4) • Vai trò: Tổ chức thực hiện hành vi vi phạm (Điểm: 3) • Tình trạng pháp lý: Đang trong quá trình điều tra (Điểm: 2) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 9/15 - Cao
+
+Tổ chức: Tập đoàn Vạn Thịnh Phát (ID: o2m_id_1752506615871513): • Loại vi phạm: Lợi dụng các quyền tự do dân chủ xâm phạm lợi ích của nhà nước, quyền, lợi ích hợp pháp của tổ chức, cá nhân (Điểm: 0) • Vai trò: Tổ chức thực hiện hành vi vi phạm (Điểm: 3) • Tình trạng pháp lý: Đã kết án (Điểm: 3) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 6/15 - Trung Bình
+
+Tổ chức: Tập đoàn Vạn Thịnh Phát (ID: o2m_id_1752508074605332): • Loại vi phạm: Vi phạm dân sự / hành chính / tranh chấp nhỏ (Điểm: 2) • Vai trò: Tổ chức thực hiện hành vi vi phạm (Điểm: 3) • Tình trạng pháp lý: Đang trong quá trình điều tra / truy tố / chưa có phán quyết (Điểm: 2) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 7/15 - Cao
+
+Tổ chức: Tập đoàn Vạn Thịnh Phát (ID: o2m_id_1752506590156784): • Loại vi phạm: Lợi dụng các quyền tự do dân chủ xâm phạm lợi ích của Nhà nước, quyền, lợi ích hợp pháp của tổ chức, cá nhân (Điểm: 0) • Vai trò: Tổ chức thực hiện hành vi vi phạm (Điểm: 3) • Tình trạng pháp lý: Đang trong quá trình điều tra (Điểm: 2) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 5/15 - Trung Bình
+
+Tổ chức: Tập đoàn Vạn Thịnh Phát (ID: o2m_id_1752508379046276): • Loại vi phạm: Tham ô tài sản/Đưa hối lộ/Lừa đảo chiếm đoạt tài sản/Rửa tiền (Điểm: 6) • Vai trò: Tổ chức thực hiện hành vi vi phạm (Điểm: 3) • Tình trạng pháp lý: Đã kết án (Điểm: 3) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 12/15 - Rất Cao
+
+Tổ chức: Tập đoàn Vạn Thịnh Phát (ID: o2m_id_1752506445158465): • Loại vi phạm: Tham nhũng (Điểm: 4) • Vai trò: Tổ chức thực hiện hành vi vi phạm (Điểm: 3) • Tình trạng pháp lý: Đang trong quá trình điều tra (Điểm: 2) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 9/15 - Cao
+
+Tổ chức: Tập đoàn Vạn Thịnh Phát (ID: o2m_id_1752507771957397): • Loại vi phạm: Rửa tiền (Điểm: 6) • Vai trò: Tổ chức thực hiện hành vi vi phạm (Điểm: 3) • Tình trạng pháp lý: Đang trong quá trình điều tra (Điểm: 2) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 11/15 - Rất Cao
+
+Tổ chức: Tập đoàn Vạn Thịnh Phát (ID: o2m_id_1752506304601789): • Loại vi phạm: Lợi dụng các quyền tự do dân chủ xâm phạm lợi ích của Nhà nước, quyền, lợi ích hợp pháp của tổ chức, cá nhân (Điểm: 0) • Vai trò: Tổ chức thực hiện hành vi vi phạm (Điểm: 3) • Tình trạng pháp lý: Tin chưa rõ ràng (Điểm: 1) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 4/15 - Trung Bình
+
+Tổ chức: Tập đoàn Vạn Thịnh Phát (ID: o2m_id_1752508195395476): • Loại vi phạm: Tham ô tài sản (Điểm: 4) • Vai trò: Bên liên quan bị động (Điểm: 1) • Tình trạng pháp lý: Đang trong quá trình điều tra (Điểm: 2) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 7/15 - Cao
+
+Tổ chức: Ngân hàng SCB (ID: o2m_id_1752506524921367): • Loại vi phạm: Tham nhũng (Điểm: 4) • Vai trò: Tham gia (Điểm: 2) • Tình trạng pháp lý: Đang trong quá trình điều tra (Điểm: 2) • Mức độ nguồn: None (Điểm: 0) • 🎯 TỔNG ĐIỂM RỦI RO: 8/15 - Cao
+
+📖 THANG ĐIỂM RỦI RO: • 10-15 điểm: Rất Cao 🔴 • 7-9 điểm: Cao 🟠 • 4-6 điểm: Trung Bình 🟡 • 1-3 điểm: Thấp 🟢 • 0 điểm: Không Có Rủi Ro ⚪
+
+🤖 DỰ ĐOÁN MACHINE LEARNING:
+🎯 Mức độ rủi ro dự đoán: 0 - AML rất thấp
+
+📊 Xác suất cho từng mức độ rủi ro: Class_0_Very Low: 98.4% ███████████████████░ Class_1_Low: 1.3% ░░░░░░░░░░░░░░░░░░░░ Class_2_Medium: 0.2% ░░░░░░░░░░░░░░░░░░░░ Class_3_High: 0.0% ░░░░░░░░░░░░░░░░░░░░ Class_4_Very High: 0.0% ░░░░░░░░░░░░░░░░░░░░
+
+🔧 Dữ liệu đầu vào cho model: • Khu vực cư trú: Unknown • Nghề nghiệp: Unknown • Tuổi: 35 • Vai trò: Unknown
+
+🔍 PHÂN TÍCH ĐẶC TRƯNG RỦI RO (QUY TẮC): Hệ thống đã phân tích các đặc trưng sau theo quy tắc chấm điểm: 1️⃣ Loại hình vi phạm (violation_type) 2️⃣ Vai trò trong vụ việc (customer_role) 3️⃣ Tình trạng pháp lý (legal_status) 4️⃣ Độ tin cậy của nguồn (source_level)
+
+💼 KHUYẾN NGHỊ: 🤖 Dự đoán AI: AML rất thấp (Điểm: 0/4) 📊 Quy tắc: Rất Cao (Điểm tối đa: 12)
+
+🔴 RỦI RO RẤT CAO - Cần thực hiện các biện pháp sau: • Từ chối giao dịch hoặc ngưng hợp tác ngay lập tức • Báo cáo lên cấp quản lý cao nhất • Xem xét báo cáo lên cơ quan chức năng • Thực hiện due diligence mở rộng nếu cần thiết • Lưu trữ tài liệu đầy đủ để đối phó với kiểm toán
+
+⚠️ LƯU Ý: Đánh giá này dựa trên thông tin hiện có và có thể thay đổi khi có cập nhật mới. Luôn tham khảo ý kiến chuyên gia pháp lý khi cần thiết.

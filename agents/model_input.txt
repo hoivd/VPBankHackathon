@@ -1,0 +1,45 @@
+sample = {
+    "residence_area": "Hà Nội",
+    "occupation": "Doanh nhân",
+    "age": 38,
+    
+    "per_violation_type_1": "Rửa tiền",
+    "per_legal_status_1": "Đã kết án",
+    "per_role_1": "Chủ mưu",
+
+    "per_violation_type_2": "Vi phạm hành chính",
+    "per_legal_status_2": "Chưa rõ",
+    "per_role_2": "Bị nhắc tên",
+
+    "per_violation_type_3": None,
+    "per_legal_status_3": None,
+    "per_role_3": None,
+
+    "per_violation_type_4": None,
+    "per_legal_status_4": None,
+    "per_role_4": None,
+
+    "per_violation_type_5": None,
+    "per_legal_status_5": None,
+    "per_role_5": None,
+
+    "org_violation_type_1": "Trừng phạt tài chính",
+    "org_legal_status_1": "Đang điều tra",
+    "org_role_1": "Chủ quản",
+
+    "org_violation_type_2": None,
+    "org_legal_status_2": None,
+    "org_role_2": None,
+
+    "org_violation_type_3": None,
+    "org_legal_status_3": None,
+    "org_role_3": None,
+
+    "org_violation_type_4": None,
+    "org_legal_status_4": None,
+    "org_role_4": None,
+
+    "org_violation_type_5": None,
+    "org_legal_status_5": None,
+    "org_role_5": None
+}

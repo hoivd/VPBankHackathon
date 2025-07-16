@@ -17,7 +17,7 @@ import dotenv
 dotenv.load_dotenv()
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from utils import Utils
+# from utils import Utils
 
 class PersonLookupDynamoDB:
     def __init__(self, region_name: str = None, aws_access_key_id: str = None, aws_secret_access_key: str = None):
@@ -32,9 +32,9 @@ class PersonLookupDynamoDB:
         self.region_name = region_name or os.getenv("AWS_REGION", "ap-southeast-1")
         
         try:
-            aws_access_key_id = aws_access_key_id or Utils.load_api_key_from_env("AWS_ACCESS_KEY")
-            aws_secret_access_key = aws_secret_access_key or Utils.load_api_key_from_env("AWS_SECRET_KEY")
             
+            aws_access_key_id = os.getenv("AWS_ACCESS_KEY")
+            aws_secret_access_key = os.getenv("AWS_SECRET_KEY")
             if aws_access_key_id and aws_secret_access_key:
                 self.dynamodb = boto3.resource(
                     'dynamodb',
@@ -320,13 +320,17 @@ class PersonLookupDynamoDB:
         media_details = {}
         for media_id in all_media_ids:
             media_details[media_id] = self.get_media_details(media_id)
-        
-        # 5. Compile comprehensive result
+        if int(person.get("birth_year_or_age"))>100:
+            age = 2025 - int(person.get("birth_year_or_age"))
+        else:
+            age = person.get("birth_year_or_age")
         result = {
             "person_info": {
                 "per_id": person.get('per_id'),
                 "full_name": person.get('full_name'),
+                "age": age,
                 "gender": person.get('gender'),
+                "hometown_or_residence": person.get('hometown_or_residence'),
                 "occupation_or_position": person.get('occupation_or_position'),
                 "organization": person.get('organization'),
                 "personal_relationships": person.get('personal_relationships')
@@ -343,6 +347,160 @@ class PersonLookupDynamoDB:
         }
         
         return result
+    
+    def lookup_person_comprehensive_v2(self, full_name: str) -> Dict[str, Any]:
+        """
+        Comprehensive lookup for a person with formatted output according to expected format
+        
+        Args:
+            full_name: Full name of the person
+            
+        Returns:
+            Dictionary with formatted information according to expected_result.txt
+        """
+        try:
+            # Import the formatter functions
+            import sys
+            import os
+            sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            
+            from agents.data_formatter import (
+                get_most_frequent_violation_type,
+                get_most_frequent_customer_role, 
+                get_highest_legal_status,
+                group_violations_by_media
+            )
+        except ImportError:
+            # Fallback implementation if import fails
+            from collections import Counter, defaultdict
+            
+            def get_most_frequent_violation_type(entries):
+                violation_counts = Counter()
+                for entry in entries:
+                    violation_type = entry.get('violation_type', '')
+                    if violation_type:
+                        violations = violation_type.split('/')
+                        for v in violations:
+                            v_clean = v.strip()
+                            if v_clean:
+                                violation_counts[v_clean] += 1
+                return violation_counts.most_common(1)[0][0] if violation_counts else "Không có hành vi phạm được đề cập"
+            
+            def get_most_frequent_customer_role(entries):
+                role_counts = Counter()
+                for entry in entries:
+                    customer_role = entry.get('customer_role', '')
+                    if customer_role:
+                        role_counts[customer_role] += 1
+                return role_counts.most_common(1)[0][0] if role_counts else "Không có liên quan rõ ràng trong bài báo"
+            
+            def get_highest_legal_status(entries):
+                status_priority = {
+                    "Đã kết án": 1,
+                    "Đang trong quá trình điều tra": 2,
+                    "Đang trong quá trình điều tra / truy tố / chưa có phán quyết": 2,
+                    "Tin chưa rõ ràng": 3,
+                    "Được minh oan": 4
+                }
+                statuses = [entry.get('legal_status', '') for entry in entries]
+                for status in statuses:
+                    if status == "Đã kết án":
+                        return status
+                valid_statuses = [s for s in statuses if s in status_priority]
+                if valid_statuses:
+                    return min(valid_statuses, key=lambda x: status_priority[x])
+                return "Tin chưa rõ ràng"
+            
+            def group_violations_by_media(entries):
+                # Group by violation type first, then analyze
+                violation_groups = defaultdict(list)
+                
+                # Group all entries by violation type
+                for entry in entries:
+                    violation_type = entry.get('violation_type', '')
+                    if violation_type:
+                        # Handle multiple violation types separated by '/'
+                        violations = violation_type.split('/')
+                        for v in violations:
+                            v_clean = v.strip()
+                            if v_clean:
+                                violation_groups[v_clean].append(entry)
+                
+                violation_summary = {}
+                for violation_type, violation_entries in violation_groups.items():
+                    # Get the most frequent customer_role for this violation type
+                    customer_role = get_most_frequent_customer_role(violation_entries)
+                    # Get the highest priority legal status for this violation type
+                    legal_status = get_highest_legal_status(violation_entries)
+                    # Get all media_ids for this violation type
+                    media_ids = list(set([entry.get('media_id', '') for entry in violation_entries if entry.get('media_id')]))
+                    
+                    violation_summary[violation_type] = {
+                        'customer_role': customer_role,
+                        'legal_status': legal_status,
+                        'media_ids': media_ids
+                    }
+                
+                return violation_summary
+        
+        print(f"🔍 Looking up formatted information for: {full_name}")
+        
+        # Get comprehensive data first
+        comprehensive_data = self.lookup_person_comprehensive(full_name)
+        
+        if "error" in comprehensive_data:
+            return comprehensive_data
+        
+        person_info = comprehensive_data.get('person_info', {})
+        personal2media_info = comprehensive_data.get('personal2media_info', [])
+        org2media_info = comprehensive_data.get('org2media_info', [])
+        
+        # Get entries for the main person only
+        main_person_entries = [
+            entry for entry in personal2media_info 
+            if entry.get('entity_name') == full_name
+        ]
+        
+        # Create individual crime summary
+        individual_crime_summary = {}
+        if main_person_entries:
+            violation_summary = group_violations_by_media(main_person_entries)
+            individual_crime_summary[full_name] = violation_summary
+        
+        # Create organizational crime summary
+        org_groups = defaultdict(list)
+        for entry in org2media_info:
+            org_name = entry.get('organization_name', '')
+            if org_name:
+                org_groups[org_name].append(entry)
+        
+        organizational_crime_summary = {}
+        for org_name, org_entries in org_groups.items():
+            violation_summary = group_violations_by_media(org_entries)
+            organizational_crime_summary[org_name] = violation_summary
+        
+        # For personal_risk_analysis, return all individual entries with customer_role
+        # This matches the format in formatted_lookup_result_v2.json
+        
+        # For organizer_risk_analysis, return all organization entries with customer_role
+        # This matches the format in formatted_lookup_result_v2.json
+        
+        # Create final formatted result matching the expected format
+        formatted_result = {
+            "person_info": person_info,
+            "invidual_AML": individual_crime_summary,
+            "organization_AML": organizational_crime_summary,
+            "personal_risk_analysis": personal2media_info,  # Return all detailed entries
+            "organizer_risk_analysis": org2media_info       # Return all detailed entries
+        }
+        
+        print(f"✅ Formatted result created for: {full_name}")
+        print(f"📊 Individual crimes: {len(individual_crime_summary)}")
+        print(f"🏢 Organizational crimes: {len(organizational_crime_summary)}")
+        print(f"👤 Personal risks: {len(personal2media_info)}")
+        print(f"🏛️ Organizer risks: {len(org2media_info)}")
+        
+        return formatted_result
 
     def get_similar_names(self, full_name: str, limit: int = 5) -> List[str]:
         """

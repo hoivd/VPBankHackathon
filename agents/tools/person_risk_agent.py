@@ -8,13 +8,14 @@ import os
 import sys
 import json
 import re
+from datetime import datetime
 from typing import Dict, Any, Optional
+from collections import Counter
 
 # Add parent directory to path to import modules
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from agents.tools.person_lookup_dynamodb import PersonLookupDynamoDB
-from agents.tools.risk_analyzer import RiskAnalyzer
 from agents.tools.model_inference import AMLModelInference
 from llm_model.bedrock_manager import BedrockModelManager
 from utils import Utils
@@ -28,9 +29,6 @@ class PersonRiskAgent:
             aws_access_key_id=aws_access_key_id,
             aws_secret_access_key=aws_secret_access_key
         )
-        
-        # Initialize Risk Analyzer
-        self.risk_analyzer = RiskAnalyzer()
         
         # Initialize AML Model Inference
         try:
@@ -137,25 +135,25 @@ class PersonRiskAgent:
             return None
             
         prompt = f"""Bạn là một chuyên gia trích xuất thông tin từ văn bản tiếng Việt. 
-Nhiệm vụ của bạn là trích xuất TÊN NGƯỜI từ câu hỏi sau.
+                Nhiệm vụ của bạn là trích xuất TÊN NGƯỜI từ câu hỏi sau.
 
-Câu hỏi: "{query}"
+                Câu hỏi: "{query}"
 
-Hướng dẫn:
-- Chỉ trả về TÊN NGƯỜI duy nhất được đề cập trong câu hỏi
-- Nếu có nhiều tên, chỉ trả về tên chính được hỏi về
-- Không bao gồm danh xưng (ông, bà, anh, chị)
-- Không bao gồm thông tin bổ sung khác
-- Nếu không tìm thấy tên người nào, trả về "KHÔNG_TÌM_THẤY"
-- Định dạng tên theo chuẩn tiếng Việt (viết hoa chữ cái đầu)
+                Hướng dẫn:
+                - Chỉ trả về TÊN NGƯỜI duy nhất được đề cập trong câu hỏi
+                - Nếu có nhiều tên, chỉ trả về tên chính được hỏi về
+                - Không bao gồm danh xưng (ông, bà, anh, chị)
+                - Không bao gồm thông tin bổ sung khác
+                - Nếu không tìm thấy tên người nào, trả về "KHÔNG_TÌM_THẤY"
+                - Định dạng tên theo chuẩn tiếng Việt (viết hoa chữ cái đầu)
 
-Ví dụ:
-- "Võ Tấn Hoàng Văn là ai vậy?" → "Võ Tấn Hoàng Văn"
-- "Cho tôi thông tin về bà Trương Mỹ Lan" → "Trương Mỹ Lan"
-- "Ông Nguyễn Văn A có vi phạm gì không?" → "Nguyễn Văn A"
-- "Thời tiết hôm nay như thế nào?" → "KHÔNG_TÌM_THẤY"
+                Ví dụ:
+                - "Võ Tấn Hoàng Văn là ai vậy?" → "Võ Tấn Hoàng Văn"
+                - "Cho tôi thông tin về bà Trương Mỹ Lan" → "Trương Mỹ Lan"
+                - "Ông Nguyễn Văn A có vi phạm gì không?" → "Nguyễn Văn A"
+                - "Thời tiết hôm nay như thế nào?" → "KHÔNG_TÌM_THẤY"
 
-Tên người:"""
+                Tên người:"""
 
         try:
             response, _ = self.bedrock_manager.generate(
@@ -183,119 +181,156 @@ Tên người:"""
 
     def convert_lookup_to_model_input(self, lookup_result: Dict[str, Any]) -> Dict[str, Any]:
         """
-        Convert person lookup result to AML model input format
+        Convert formatted lookup result to AML model input format
         
         Args:
-            lookup_result: Result from person lookup
+            lookup_result: Formatted result from lookup_person_comprehensive_v2
             
         Returns:
             Dictionary formatted for AML model input
         """
         model_input = {
-            # Initialize all fields with default values
-            "residence_area": "Unknown",
-            "occupation": "Unknown", 
-            "age": 35,  # Default age
-            "per_role": "Unknown",
-            # Personal violation fields (1-5)
-            "per_violation_type_1": "None",
-            "per_legal_status_1": "None",
-            "per_violation_type_2": "None",
-            "per_legal_status_2": "None",
-            "per_violation_type_3": "None",
-            "per_legal_status_3": "None",
-            "per_violation_type_4": "None",
-            "per_legal_status_4": "None",
-            "per_violation_type_5": "None",
-            "per_legal_status_5": "None",
-            # Organization violation fields (1-5)
-            "org_violation_type_1": "None",
-            "org_legal_status_1": "None",
-            "org_violation_type_2": "None",
-            "org_legal_status_2": "None",
-            "org_violation_type_3": "None",
-            "org_legal_status_3": "None",
-            "org_violation_type_4": "None",
-            "org_legal_status_4": "None",
-            "org_violation_type_5": "None",
-            "org_legal_status_5": "None"
+            "residence_area": "Không rõ",
+            "occupation": "Không rõ", 
+            "age": 40,
+            
+            "per_violation_type_1": None,
+            "per_legal_status_1": None,
+            "per_role_1": None,
+
+            "per_violation_type_2": None,
+            "per_legal_status_2": None,
+            "per_role_2": None,
+
+            "per_violation_type_3": None,
+            "per_legal_status_3": None,
+            "per_role_3": None,
+
+            "per_violation_type_4": None,
+            "per_legal_status_4": None,
+            "per_role_4": None,
+
+            "per_violation_type_5": None,
+            "per_legal_status_5": None,
+            "per_role_5": None,
+
+            "org_violation_type_1": None,
+            "org_legal_status_1": None,
+            "org_role_1": None,
+
+            "org_violation_type_2": None,
+            "org_legal_status_2": None,
+            "org_role_2": None,
+
+            "org_violation_type_3": None,
+            "org_legal_status_3": None,
+            "org_role_3": None,
+
+            "org_violation_type_4": None,
+            "org_legal_status_4": None,
+            "org_role_4": None,
+
+            "org_violation_type_5": None,
+            "org_legal_status_5": None,
+            "org_role_5": None
         }
         
         try:
-            # Extract personal information
-            if "personal_info" in lookup_result:
-                personal_info = lookup_result["personal_info"]
-                if personal_info:
-                    # Try to extract residence area from address or other fields
-                    if "address" in personal_info:
-                        model_input["residence_area"] = personal_info["address"]
-                    elif "location" in personal_info:
-                        model_input["residence_area"] = personal_info["location"]
-                    
-                    # Try to extract occupation
-                    if "occupation" in personal_info:
-                        model_input["occupation"] = personal_info["occupation"]
-                    elif "job" in personal_info:
-                        model_input["occupation"] = personal_info["job"]
-                    elif "position" in personal_info:
-                        model_input["occupation"] = personal_info["position"]
-                    
-                    # Try to extract age from birth year or other fields
-                    if "age" in personal_info:
-                        model_input["age"] = int(personal_info["age"])
-                    elif "birth_year" in personal_info:
-                        try:
-                            birth_year = int(personal_info["birth_year"])
-                            current_year = 2024  # or use datetime.now().year
-                            model_input["age"] = current_year - birth_year
-                        except:
-                            pass
+            # Extract personal information from person_info
+            if "person_info" in lookup_result and lookup_result["person_info"]:
+                person_info = lookup_result["person_info"]
+                
+                # Extract residence area
+                residence = person_info.get("hometown_or_residence")
+                if residence:
+                    model_input["residence_area"] = residence
+                
+                # Extract occupation
+                occupation = person_info.get("occupation_or_position")
+                if occupation:
+                    model_input["occupation"] = occupation
+                
+                # Extract age
+                age = person_info.get("age")
+                if age:
+                    try:
+                        model_input["age"] = int(age)
+                    except:
+                        pass
             
-            # Extract violation information from adverse media
-            violation_count = 0
-            org_violation_count = 0
-            
-            if "adverse_media" in lookup_result:
-                adverse_media = lookup_result["adverse_media"]
-                if isinstance(adverse_media, list):
-                    for media in adverse_media:
-                        if violation_count >= 5:  # Max 5 violations
-                            break
-                            
-                        # Extract violation type and legal status
-                        violation_type = self._map_violation_type(media)
-                        legal_status = self._map_legal_status(media)
-                        role = self._map_person_role(media)
+            # Extract personal violations from invidual_AML
+            if "invidual_AML" in lookup_result and lookup_result["invidual_AML"]:
+                individual_aml = lookup_result["invidual_AML"]
+                
+                # Process for the main person (usually first key in the dict)
+                if isinstance(individual_aml, dict) and individual_aml:
+                    person_name = list(individual_aml.keys())[0] if individual_aml else None
+                    if person_name and person_name in individual_aml:
+                        violations = individual_aml[person_name]
                         
-                        if violation_type != "None":
-                            violation_count += 1
-                            model_input[f"per_violation_type_{violation_count}"] = violation_type
-                            model_input[f"per_legal_status_{violation_count}"] = legal_status
-                            
-                            # Set role for first violation
-                            if violation_count == 1 and role != "Unknown":
-                                model_input["per_role"] = role
+                        # Process each violation type
+                        idx = 0
+                        for violation_type, details in violations.items():
+                            if idx >= 5:  # Max 5 violations
+                                break
+                                
+                            idx += 1
+                            model_input[f"per_violation_type_{idx}"] = violation_type
+                            model_input[f"per_legal_status_{idx}"] = details.get("legal_status")
+                            model_input[f"per_role_{idx}"] = details.get("customer_role")
             
-            # Extract organization violations (if any organization info is available)
-            if "organization_info" in lookup_result:
-                org_info = lookup_result["organization_info"]
-                if isinstance(org_info, list):
-                    for org in org_info:
-                        if org_violation_count >= 5:  # Max 5 org violations
-                            break
-                            
-                        org_violation_type = self._map_org_violation_type(org)
-                        org_legal_status = self._map_org_legal_status(org)
-                        
-                        if org_violation_type != "None":
-                            org_violation_count += 1
-                            model_input[f"org_violation_type_{org_violation_count}"] = org_violation_type
-                            model_input[f"org_legal_status_{org_violation_count}"] = org_legal_status
+            # Extract organization violations from organization_AML
+            if "organization_AML" in lookup_result and lookup_result["organization_AML"]:
+                org_aml = lookup_result["organization_AML"]
+                
+                # Process for all organizations
+                if isinstance(org_aml, dict) and org_aml:
+                    idx = 0
+                    for org_name, violations in org_aml.items():
+                        for violation_type, details in violations.items():
+                            if idx >= 5:  # Max 5 violations
+                                break
+                                
+                            idx += 1
+                            model_input[f"org_violation_type_{idx}"] = violation_type
+                            model_input[f"org_legal_status_{idx}"] = details.get("legal_status")
+                            model_input[f"org_role_{idx}"] = details.get("customer_role")
             
         except Exception as e:
             print(f"⚠️ Lỗi khi chuyển đổi dữ liệu cho model: {e}")
+            import traceback
+            print(f"Chi tiết lỗi: {traceback.format_exc()}")
         
         return model_input
+
+    def save_model_input_to_json(self, model_input: Dict[str, Any], person_name: str) -> str:
+        """
+        Save model input to JSON file
+        
+        Args:
+            model_input: Model input data
+            person_name: Person name for filename
+            
+        Returns:
+            Path to saved JSON file
+        """
+        # Create filename with timestamp
+        timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+        safe_name = re.sub(r'[^\w\s-]', '', person_name).strip().replace(' ', '_')
+        filename = f"model_input_{safe_name}_{timestamp}.json"
+        
+        # Save to agents directory
+        agents_dir = os.path.dirname(os.path.abspath(__file__))
+        filepath = os.path.join(agents_dir, filename)
+        
+        try:
+            with open(filepath, 'w', encoding='utf-8') as f:
+                json.dump(model_input, f, ensure_ascii=False, indent=2, default=str)
+            print(f"💾 Model input đã được lưu vào: {filepath}")
+            return filepath
+        except Exception as e:
+            print(f"⚠️ Lỗi khi lưu model input: {e}")
+            return ""
     
     def _map_violation_type(self, media_record: Dict[str, Any]) -> str:
         """Map media record to violation type"""
@@ -320,7 +355,7 @@ Tên người:"""
             if any(keyword in text_to_check for keyword in keywords):
                 return violation_type
         
-        return "None"
+        return None
     
     def _map_legal_status(self, media_record: Dict[str, Any]) -> str:
         """Map media record to legal status"""
@@ -338,7 +373,7 @@ Tên người:"""
             if any(keyword in content for keyword in keywords):
                 return status
         
-        return "None"
+        return "Chưa rõ"
     
     def _map_person_role(self, media_record: Dict[str, Any]) -> str:
         """Map media record to person role"""
@@ -359,7 +394,7 @@ Tên người:"""
             if any(keyword in content for keyword in keywords):
                 return role
         
-        return "Unknown"
+        return "Bị nhắc tên"
     
     def _map_org_violation_type(self, org_record: Dict[str, Any]) -> str:
         """Map organization record to violation type"""
@@ -376,7 +411,7 @@ Tên người:"""
             if any(keyword in content for keyword in keywords):
                 return violation_type
         
-        return "None"
+        return None
     
     def _map_org_legal_status(self, org_record: Dict[str, Any]) -> str:
         """Map organization record to legal status"""
@@ -392,7 +427,214 @@ Tên người:"""
             if any(keyword in content for keyword in keywords):
                 return status
         
-        return "None"
+        return "Chưa rõ"
+
+    def _map_org_role(self, org_record: Dict[str, Any]) -> str:
+        """Map organization record to role"""
+        content = str(org_record.get("content", "")).lower()
+        
+        role_keywords = {
+            "Chủ quản": ["chủ quản", "owner", "sở hữu"],
+            "Quản lý": ["quản lý", "management"],
+            "Điều hành": ["điều hành", "operation"],
+            "Liên quan": ["liên quan", "related"]
+        }
+        
+        for role, keywords in role_keywords.items():
+            if any(keyword in content for keyword in keywords):
+                return role
+        
+        return "Liên quan"
+
+    def calculate_risk_score(self, lookup_result: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Calculate risk score based on lookup result
+        
+        Args:
+            lookup_result: Result from person lookup
+            
+        Returns:
+            Dictionary with risk scores and analysis
+        """
+        risk_analysis = {
+            "total_violations": 0,
+            "total_violation_types": 0,
+            "total_legal_statuses": 0,
+            "total_legal_statuse_types": 0,
+            "total_roles": 0,
+            "total_role_type": 0,
+            "details": {},
+            "result": {},
+            "ml_prediction": None
+        }
+        
+        try:
+            # Count violations from adverse media
+            if "adverse_media" in lookup_result and lookup_result["adverse_media"]:
+                adverse_media = lookup_result["adverse_media"]
+                if isinstance(adverse_media, list):
+                    risk_analysis["total_violations"] = len(adverse_media)
+                    
+                    violation_types = []
+                    legal_statuses = []
+                    roles = []
+                    
+                    for media in adverse_media:
+                        violation_type = self._map_violation_type(media)
+                        legal_status = self._map_legal_status(media)
+                        role = self._map_person_role(media)
+                        
+                        if violation_type:
+                            violation_types.append(violation_type)
+                        legal_statuses.append(legal_status)
+                        roles.append(role)
+                    
+                    risk_analysis["violation_types"] = list(set(violation_types))
+                    risk_analysis["legal_statuses"] = list(set(legal_statuses))
+                    risk_analysis["roles"] = list(set(roles))
+            
+            # Calculate risk score
+            score = 0
+            
+            # Score based on number of violations
+            score += min(risk_analysis["total_violations"] * 2, 20)
+            
+            # Score based on violation severity
+            high_risk_violations = ["Rửa tiền", "Tài trợ khủng bố", "Tham nhũng", "Chiếm đoạt tài sản"]
+            for violation in risk_analysis["violation_types"]:
+                if violation in high_risk_violations:
+                    score += 15
+                else:
+                    score += 5
+            
+            # Score based on legal status
+            if "Đã kết án" in risk_analysis["legal_statuses"]:
+                score += 20
+            elif "Truy tố" in risk_analysis["legal_statuses"]:
+                score += 15
+            elif "Đang điều tra" in risk_analysis["legal_statuses"]:
+                score += 10
+            
+            # Score based on role
+            high_risk_roles = ["Chủ mưu", "Cầm đầu", "Tổ chức thực hiện"]
+            for role in risk_analysis["roles"]:
+                if role in high_risk_roles:
+                    score += 10
+                elif role in ["Tham gia", "Đồng phạm"]:
+                    score += 5
+            
+            risk_analysis["risk_score"] = score
+            
+            # Determine risk level
+            if score >= 50:
+                risk_analysis["risk_level"] = "Rất cao"
+            elif score >= 30:
+                risk_analysis["risk_level"] = "Cao"
+            elif score >= 15:
+                risk_analysis["risk_level"] = "Trung bình"
+            elif score > 0:
+                risk_analysis["risk_level"] = "Thấp"
+            else:
+                risk_analysis["risk_level"] = "Không có"
+            
+        except Exception as e:
+            print(f"⚠️ Lỗi khi tính toán điểm risk: {e}")
+        
+        return risk_analysis
+
+    def calculate_risk_score_v2(self, lookup_result: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Calculate risk score based on lookup result with new format
+        
+        Args:
+            lookup_result: Result from person_lookup_comprehensive_v2
+            
+        Returns:
+            Dictionary with risk scores and analysis
+        """
+        risk_analysis = {
+            "total_violations": 0,
+            "total_violation_types": 0,
+            "total_legal_statuses": 0,
+            "total_legal_statuse_types": 0,
+            "total_roles": 0,
+            "total_role_type": 0,
+            "details": {},
+            "result": {},
+            "ml_prediction": None
+        }
+        
+        try:
+            # Process individual AML data
+            if "invidual_AML" in lookup_result and lookup_result["invidual_AML"]:
+                individual_aml = lookup_result["invidual_AML"]
+                
+                # Get the main person (usually first key in the dict)
+                for person_name, violations in individual_aml.items():
+                    # Count total violations and types
+                    risk_analysis["total_violation_types"] = len(violations)
+                    
+                    violation_types = []
+                    legal_statuses = []
+                    roles = []
+                    
+                    # Process each violation type
+                    for violation_type, details in violations.items():
+                        violation_types.append(violation_type)
+                        legal_statuses.append(details.get("legal_status"))
+                        roles.append(details.get("customer_role"))
+                        
+                        # Count media IDs as total violations
+                        media_ids = details.get("media_ids", [])
+                        risk_analysis["total_violations"] += len(media_ids)
+                    
+                    # Count unique types
+                    risk_analysis["total_legal_statuse_types"] = len(set(legal_statuses))
+                    risk_analysis["total_role_type"] = len(set(roles))
+                    
+                    # Store detailed information
+                    risk_analysis["details"]["violation_types"] = violation_types
+                    risk_analysis["details"]["legal_statuses"] = legal_statuses
+                    risk_analysis["details"]["roles"] = roles
+                    
+                    # Only process the first person (main person)
+                    break
+            
+            # Process organization AML data
+            if "organization_AML" in lookup_result and lookup_result["organization_AML"]:
+                org_aml = lookup_result["organization_AML"]
+                
+                org_violation_types = []
+                org_legal_statuses = []
+                org_roles = []
+                
+                for org_name, violations in org_aml.items():
+                    for violation_type, details in violations.items():
+                        org_violation_types.append(violation_type)
+                        org_legal_statuses.append(details.get("legal_status"))
+                        org_roles.append(details.get("customer_role"))
+                        
+                        # Count media IDs as total violations
+                        media_ids = details.get("media_ids", [])
+                        risk_analysis["total_violations"] += len(media_ids)
+                
+                # Add to details
+                if "details" not in risk_analysis:
+                    risk_analysis["details"] = {}
+                
+                risk_analysis["details"]["org_violation_types"] = org_violation_types
+                risk_analysis["details"]["org_legal_statuses"] = org_legal_statuses
+                risk_analysis["details"]["org_roles"] = org_roles
+            
+            # Add all results to the result field
+            risk_analysis["result"] = lookup_result
+            
+        except Exception as e:
+            print(f"⚠️ Lỗi khi tính toán điểm risk v2: {e}")
+            import traceback
+            print(f"Chi tiết lỗi: {traceback.format_exc()}")
+        
+        return risk_analysis
 
     def process_query(self, query: str) -> str:
         print(f"🔍 Xử lý truy vấn: {query}")
@@ -414,18 +656,24 @@ Tên người:"""
         
         try:
             # Perform person lookup
-            lookup_result = self.person_lookup.lookup_person_comprehensive(person_name)
+            lookup_result = self.person_lookup.lookup_person_comprehensive_v2(person_name)
             
-            # Analyze risk characteristics
-            risk_analysis = self.risk_analyzer.analyze_person_lookup_result(lookup_result)
+            #lookup_result = 
+            print("look up result is: ", lookup_result)
+            
+            # Calculate risk analysis with new scoring system
+            risk_analysis = self.calculate_risk_score(lookup_result)
+            # Convert to model input format
+            model_input = self.convert_lookup_to_model_input(lookup_result)
+            
+            # Save model input to JSON file
+            self.save_model_input_to_json(model_input, person_name)
             
             # Add ML model prediction if available
             ml_prediction = None
             if self.model_enabled and self.aml_model:
                 try:
                     print("🤖 Đang thực hiện dự đoán ML...")
-                    model_input = self.convert_lookup_to_model_input(lookup_result)
-                    
                     # Get prediction and probabilities
                     prediction = self.aml_model.predict(model_input)
                     probabilities = self.aml_model.predict_proba(model_input)
@@ -449,21 +697,13 @@ Tên người:"""
                 risk_analysis["ml_prediction"] = ml_prediction
             
             # Format response in Vietnamese
-            if "error" in risk_analysis:
+            if not lookup_result or "error" in lookup_result:
                 response = f"❌ Không tìm thấy thông tin về '{person_name}' trong hệ thống.\n\n"
-                
-                if risk_analysis.get("suggestions"):
-                    response += "💡 Có thể bạn đang tìm:\n"
-                    for suggestion in risk_analysis["suggestions"]:
-                        response += f"• {suggestion}\n"
-                    response += "\nVui lòng thử lại với tên chính xác."
-                else:
-                    response += "Vui lòng kiểm tra lại tên người hoặc thử với các biến thể khác của tên."
-                
+                response += "Vui lòng kiểm tra lại tên người hoặc thử với các biến thể khác của tên."
                 return response
             
             # Generate comprehensive Vietnamese response
-            response = self.generate_vietnamese_response(person_name, risk_analysis)
+            response = self.generate_vietnamese_response(person_name, risk_analysis, lookup_result)
             return response
             
         except Exception as e:
@@ -474,106 +714,269 @@ Tên người:"""
                 "Vui lòng thử lại sau hoặc liên hệ quản trị viên."
             )
 
-    def generate_vietnamese_response(self, person_name: str, risk_analysis: Dict[str, Any]) -> str:
+    def process_query_v2(self, query: str) -> str:
+        """
+        Process a query with the new format
+        
+        Args:
+            query: Vietnamese query about a person
+            
+        Returns:
+            Formatted Vietnamese response
+        """
+        print(f"🔍 Xử lý truy vấn v2: {query}")
+        
+        # Extract person name from query
+        # person_name = self.extract_person_name_from_query(query)
+        person_name = "Trương Mỹ Lan"
+        if not person_name:
+            return (
+                "❌ Xin lỗi, tôi không thể xác định tên người cần tìm kiếm từ truy vấn của bạn.\n\n"
+                "💡 Vui lòng thử lại với định dạng:\n"
+                "• 'cho tôi thông tin về [Tên người]'\n"
+                "• 'tìm kiếm thông tin [Tên người]'\n"
+                "• 'bà/ông [Tên người] có vi phạm gì không?'\n\n"
+                "Ví dụ: 'cho tôi thông tin về Trương Mỹ Lan'"
+            )
+        
+        print(f"📝 Tên người được trích xuất: {person_name}")
+        
+        try:
+            # Perform person lookup with v2 format
+            lookup_result = self.person_lookup.lookup_person_comprehensive_v2(person_name)
+            print(f"✅ Kết quả lookup v2 nhận được")
+            
+            # Calculate risk analysis with new scoring system
+            risk_analysis = self.calculate_risk_score_v2(lookup_result)
+            
+            # Convert to model input format
+            model_input = self.convert_lookup_to_model_input(lookup_result)
+            
+            # Save model input to JSON file
+            model_input_path = self.save_model_input_to_json(model_input, person_name)
+            print(f"💾 Đã lưu model input vào: {model_input_path}")
+            
+            # Add ML model prediction if available
+            ml_prediction = None
+            if self.model_enabled and self.aml_model:
+                try:
+                    print("🤖 Đang thực hiện dự đoán ML...")
+                    # Get prediction and probabilities
+                    prediction = self.aml_model.predict(model_input)
+                    probabilities = self.aml_model.predict_proba(model_input)
+                    risk_interpretation = self.aml_model.get_risk_interpretation(prediction)
+                    
+                    ml_prediction = {
+                        "prediction": prediction,
+                        "risk_level": risk_interpretation,
+                        "probabilities": probabilities,
+                        "model_input": model_input
+                    }
+                    
+                    print(f"✅ Dự đoán ML: {prediction} ({risk_interpretation})")
+                    
+                    # Add ML prediction to risk analysis
+                    risk_analysis["ml_prediction"] = ml_prediction
+                    
+                except Exception as e:
+                    print(f"⚠️ Lỗi khi thực hiện dự đoán ML: {e}")
+            
+            # Format response in Vietnamese
+            if not lookup_result or "error" in lookup_result:
+                response = f"❌ Không tìm thấy thông tin về '{person_name}' trong hệ thống.\n\n"
+                response += "Vui lòng kiểm tra lại tên người hoặc thử với các biến thể khác của tên."
+                return response
+            
+            # Generate comprehensive Vietnamese response
+            # response = self.generate_vietnamese_response_v2(person_name, risk_analysis, lookup_result)
+            response = risk_analysis
+            return response
+            
+        except Exception as e:
+            print(f"❌ Lỗi khi xử lý truy vấn: {e}")
+            import traceback
+            print(f"Chi tiết lỗi: {traceback.format_exc()}")
+            return (
+                f"❌ Đã xảy ra lỗi khi tìm kiếm thông tin về '{person_name}'.\n\n"
+                f"Chi tiết lỗi: {str(e)}\n\n"
+                "Vui lòng thử lại sau hoặc liên hệ quản trị viên."
+            )
+    
+    def generate_vietnamese_response(self, person_name: str, risk_analysis: Dict[str, Any], lookup_result: Dict[str, Any]) -> str:
         """
         Generate comprehensive Vietnamese response based on risk analysis
         
         Args:
             person_name: Person name that was queried
             risk_analysis: Risk analysis result
+            lookup_result: Original lookup result
             
         Returns:
             Formatted Vietnamese response
         """
-        # Format the risk analysis using the analyzer's Vietnamese formatter
-        formatted_analysis = self.risk_analyzer.format_risk_analysis_vietnamese(risk_analysis)
+        # Build response
+        response = f"📋 THÔNG TIN VỀ {person_name.upper()}\n"
+        response += "=" * 60 + "\n\n"
         
-        # Add introduction
-        intro = f"Đây là thông tin về {person_name} mà hệ thống tìm được:\n\n"
+        # Personal information
+        if "personal_info" in lookup_result and lookup_result["personal_info"]:
+            personal_info = lookup_result["personal_info"]
+            response += "👤 THÔNG TIN CÁ NHÂN:\n"
+            
+            if personal_info.get("name"):
+                response += f"• Tên: {personal_info['name']}\n"
+            if personal_info.get("occupation"):
+                response += f"• Nghề nghiệp: {personal_info['occupation']}\n"
+            if personal_info.get("address"):
+                response += f"• Địa chỉ: {personal_info['address']}\n"
+            if personal_info.get("age"):
+                response += f"• Tuổi: {personal_info['age']}\n"
+            response += "\n"
         
-        # Add ML prediction section if available
-        ml_section = ""
+        # Risk Analysis
+        response += f"🎯 PHÂN TÍCH RỦI RO:\n"
+        response += f"• Tổng số vi phạm: {risk_analysis['total_violations']}\n"
+        response += f"• Điểm rủi ro: {risk_analysis['risk_score']}/100\n"
+        response += f"• Mức độ rủi ro: {risk_analysis['risk_level']}\n\n"
+        
+        if risk_analysis["violation_types"]:
+            response += f"📝 LOẠI VI PHẠM:\n"
+            for violation in risk_analysis["violation_types"]:
+                response += f"• {violation}\n"
+            response += "\n"
+        
+        if risk_analysis["legal_statuses"]:
+            response += f"⚖️ TÌNH TRẠNG PHÁP LÝ:\n"
+            for status in risk_analysis["legal_statuses"]:
+                response += f"• {status}\n"
+            response += "\n"
+        
+        if risk_analysis["roles"]:
+            response += f"👥 VAI TRÒ:\n"
+            for role in risk_analysis["roles"]:
+                response += f"• {role}\n"
+            response += "\n"
+        
+        # ML Prediction section if available
         if "ml_prediction" in risk_analysis:
             ml_pred = risk_analysis["ml_prediction"]
-            ml_section = (
-                f"\n🤖 DỰ ĐOÁN MACHINE LEARNING:\n"
-                f"{'='*50}\n"
-                f"🎯 Mức độ rủi ro dự đoán: {ml_pred['prediction']} - {ml_pred['risk_level']}\n\n"
-                f"📊 Xác suất cho từng mức độ rủi ro:\n"
-            )
+            response += f"🤖 DỰ ĐOÁN MACHINE LEARNING:\n"
+            response += f"• Mức độ rủi ro dự đoán: {ml_pred['prediction']} - {ml_pred['risk_level']}\n\n"
             
-            # Add probability breakdown
+            response += f"📊 Xác suất cho từng mức độ rủi ro:\n"
             for class_name, prob in ml_pred["probabilities"].items():
                 percentage = prob * 100
-                bar_length = int(percentage / 5)  # Scale for visualization
+                bar_length = int(percentage / 5)
                 bar = "█" * bar_length + "░" * (20 - bar_length)
-                ml_section += f"  {class_name}: {percentage:5.1f}% {bar}\n"
+                response += f"  {class_name}: {percentage:5.1f}% {bar}\n"
+            response += "\n"
+        
+        # Generate recommendations
+        max_score = risk_analysis["risk_score"]
+        ml_prediction = risk_analysis.get("ml_prediction")
+        recommendations = self.generate_recommendations(risk_analysis["risk_level"], max_score, ml_prediction)
+        response += recommendations
+        
+        return response
+
+    def generate_vietnamese_response_v2(self, person_name: str, risk_analysis: Dict[str, Any], lookup_result: Dict[str, Any]) -> str:
+        """
+        Generate comprehensive Vietnamese response based on risk analysis with new format
+        
+        Args:
+            person_name: Person name that was queried
+            risk_analysis: Risk analysis result from calculate_risk_score_v2
+            lookup_result: Original lookup result
             
-            ml_section += (
-                f"\n🔧 Dữ liệu đầu vào cho model:\n"
-                f"  • Khu vực cư trú: {ml_pred['model_input']['residence_area']}\n"
-                f"  • Nghề nghiệp: {ml_pred['model_input']['occupation']}\n"
-                f"  • Tuổi: {ml_pred['model_input']['age']}\n"
-                f"  • Vai trò: {ml_pred['model_input']['per_role']}\n"
+        Returns:
+            Formatted Vietnamese response
+        """
+        # Build response
+        response = f"📋 THÔNG TIN VỀ {person_name.upper()}\n"
+        response += "=" * 60 + "\n\n"
+        
+        # Personal information
+        if "person_info" in lookup_result and lookup_result["person_info"]:
+            person_info = lookup_result["person_info"]
+            response += "👤 THÔNG TIN CÁ NHÂN:\n"
+            
+            if person_info.get("full_name"):
+                response += f"• Tên: {person_info['full_name']}\n"
+            if person_info.get("occupation_or_position"):
+                response += f"• Nghề nghiệp: {person_info['occupation_or_position']}\n"
+            if person_info.get("hometown_or_residence"):
+                response += f"• Địa chỉ: {person_info['hometown_or_residence']}\n"
+            if person_info.get("age"):
+                response += f"• Tuổi: {person_info['age']}\n"
+            if person_info.get("organization"):
+                response += f"• Tổ chức: {person_info['organization']}\n"
+            response += "\n"
+        
+        # Individual AML summary
+        if "invidual_AML" in lookup_result and lookup_result["invidual_AML"]:
+            individual_aml = lookup_result["invidual_AML"]
+            response += "🚨 VI PHẠM CÁ NHÂN:\n"
+            
+            for person, violations in individual_aml.items():
+                for violation_type, details in violations.items():
+                    legal_status = details.get("legal_status", "Không rõ")
+                    customer_role = details.get("customer_role", "Không rõ")
+                    media_count = len(details.get("media_ids", []))
+                    
+                    response += f"• {violation_type} ({legal_status})\n"
+                    response += f"  - Vai trò: {customer_role}\n"
+                    response += f"  - Số lượng báo cáo: {media_count}\n"
+            
+            response += "\n"
+        
+        # Organization AML summary
+        if "organization_AML" in lookup_result and lookup_result["organization_AML"]:
+            org_aml = lookup_result["organization_AML"]
+            response += "🏢 VI PHẠM TỔ CHỨC:\n"
+            
+            for org_name, violations in org_aml.items():
+                response += f"Tổ chức: {org_name}\n"
+                
+                for violation_type, details in violations.items():
+                    legal_status = details.get("legal_status", "Không rõ")
+                    customer_role = details.get("customer_role", "Không rõ")
+                    media_count = len(details.get("media_ids", []))
+                    
+                    response += f"• {violation_type} ({legal_status})\n"
+                    response += f"  - Vai trò: {customer_role}\n"
+                    response += f"  - Số lượng báo cáo: {media_count}\n"
+                
+                response += "\n"
+        
+        # ML Prediction section if available
+        if risk_analysis["ml_prediction"]:
+            ml_pred = risk_analysis["ml_prediction"]
+            response += f"🤖 DỰ ĐOÁN MACHINE LEARNING:\n"
+            response += f"• Mức độ rủi ro dự đoán: {ml_pred['prediction']} - {ml_pred['risk_level']}\n\n"
+            
+            response += f"📊 Xác suất cho từng mức độ rủi ro:\n"
+            for class_name, prob in ml_pred["probabilities"].items():
+                percentage = prob * 100
+                bar_length = int(percentage / 5)
+                bar = "█" * bar_length + "░" * (20 - bar_length)
+                response += f"  {class_name}: {percentage:5.1f}% {bar}\n"
+            response += "\n"
+        
+        # Generate recommendations based on ML prediction
+        if risk_analysis["ml_prediction"]:
+            ml_pred = risk_analysis["ml_prediction"]
+            recommendations = self.generate_recommendations(
+                ml_pred["risk_level"], 
+                ml_pred["prediction"] * 25,  # Scale ML score (0-4) to match recommendation thresholds
+                ml_pred
             )
-            
-            # Show violations found
-            violations_found = []
-            for i in range(1, 6):
-                violation_type = ml_pred['model_input'].get(f'per_violation_type_{i}', 'None')
-                legal_status = ml_pred['model_input'].get(f'per_legal_status_{i}', 'None')
-                if violation_type != 'None':
-                    violations_found.append(f"Vi phạm {i}: {violation_type} ({legal_status})")
-            
-            if violations_found:
-                ml_section += "  • Vi phạm cá nhân:\n"
-                for violation in violations_found:
-                    ml_section += f"    - {violation}\n"
-            
-            # Show org violations found
-            org_violations_found = []
-            for i in range(1, 6):
-                org_violation_type = ml_pred['model_input'].get(f'org_violation_type_{i}', 'None')
-                org_legal_status = ml_pred['model_input'].get(f'org_legal_status_{i}', 'None')
-                if org_violation_type != 'None':
-                    org_violations_found.append(f"Vi phạm tổ chức {i}: {org_violation_type} ({org_legal_status})")
-            
-            if org_violations_found:
-                ml_section += "  • Vi phạm tổ chức:\n"
-                for org_violation in org_violations_found:
-                    ml_section += f"    - {org_violation}\n"
-            
-            ml_section += "\n"
+            response += recommendations
+        else:
+            # Generate generic recommendations if no ML prediction
+            recommendations = self.generate_recommendations("Trung bình", 15, None)
+            response += recommendations
         
-        # Add analysis explanation
-        analysis_intro = (
-            "\n🔍 PHÂN TÍCH ĐẶC TRƯNG RỦI RO (QUY TẮC):\n"
-            "Hệ thống đã phân tích các đặc trưng sau theo quy tắc chấm điểm:\n"
-            "1️⃣ Loại hình vi phạm (violation_type)\n"
-            "2️⃣ Vai trò trong vụ việc (customer_role)\n"
-            "3️⃣ Tình trạng pháp lý (legal_status)\n"
-            "4️⃣ Độ tin cậy của nguồn (source_level)\n\n"
-        )
-        
-        # Combine all parts
-        full_response = intro + formatted_analysis + ml_section + analysis_intro
-        
-        # Add recommendations based on risk level
-        overall_metrics = risk_analysis.get("overall_risk_metrics", {})
-        risk_level = overall_metrics.get("overall_risk_level", "Không xác định")
-        max_score = overall_metrics.get("max_risk_score", 0)
-        
-        # Consider ML prediction for recommendations if available
-        ml_score = 0
-        if "ml_prediction" in risk_analysis:
-            ml_score = risk_analysis["ml_prediction"]["prediction"]
-            # Use the higher score between rule-based and ML for recommendations
-            max_score = max(max_score, ml_score * 2.5)  # Scale ML score (0-4) to match rule score scale
-        
-        recommendations = self.generate_recommendations(risk_level, max_score, risk_analysis.get("ml_prediction"))
-        full_response += recommendations
-        
-        return full_response
+        return response
 
     def generate_recommendations(self, risk_level: str, max_score: int, ml_prediction: Optional[Dict[str, Any]] = None) -> str:
         """
@@ -582,20 +985,21 @@ Tên người:"""
         Args:
             risk_level: Overall risk level
             max_score: Maximum risk score found
+            ml_prediction: ML prediction if available
             
         Returns:
             Vietnamese recommendations text
         """
-        recommendations = "\n💼 KHUYẾN NGHỊ:\n"
+        recommendations = "💼 KHUYẾN NGHỊ:\n"
         
         # Add ML prediction context if available
         if ml_prediction:
             ml_risk_level = ml_prediction["risk_level"]
             ml_score = ml_prediction["prediction"]
             recommendations += f"🤖 Dự đoán AI: {ml_risk_level} (Điểm: {ml_score}/4)\n"
-            recommendations += f"📊 Quy tắc: {risk_level} (Điểm tối đa: {max_score})\n\n"
+            recommendations += f"📊 Quy tắc: {risk_level} (Điểm: {max_score}/100)\n\n"
         
-        if max_score >= 10:
+        if max_score >= 50:
             recommendations += (
                 "🔴 RỦI RO RẤT CAO - Cần thực hiện các biện pháp sau:\n"
                 "• Từ chối giao dịch hoặc ngưng hợp tác ngay lập tức\n"
@@ -604,7 +1008,7 @@ Tên người:"""
                 "• Thực hiện due diligence mở rộng nếu cần thiết\n"
                 "• Lưu trữ tài liệu đầy đủ để đối phó với kiểm toán\n"
             )
-        elif max_score >= 7:
+        elif max_score >= 30:
             recommendations += (
                 "🟠 RỦI RO CAO - Thực hiện giám sát chặt chẽ:\n"
                 "• Áp dụng các biện pháp due diligence nâng cao\n"
@@ -613,7 +1017,7 @@ Tên người:"""
                 "• Xin phê duyệt từ cấp quản lý trước khi tiếp tục\n"
                 "• Rà soát định kỳ ít nhất 3 tháng/lần\n"
             )
-        elif max_score >= 4:
+        elif max_score >= 15:
             recommendations += (
                 "🟡 RỦI RO TRUNG BÌNH - Thực hiện các biện pháp phòng ngừa:\n"
                 "• Thực hiện due diligence chuẩn\n"
@@ -622,7 +1026,7 @@ Tên người:"""
                 "• Lưu trữ hồ sơ theo quy định\n"
                 "• Theo dõi cập nhật thông tin mới\n"
             )
-        elif max_score >= 1:
+        elif max_score > 0:
             recommendations += (
                 "🟢 RỦI RO THẤP - Áp dụng quy trình chuẩn:\n"
                 "• Thực hiện due diligence cơ bản\n"
@@ -712,7 +1116,7 @@ def main():
                 person_name = agent.extract_person_name_from_query(args.query)
                 if person_name:
                     lookup_result = agent.person_lookup.lookup_person_comprehensive(person_name)
-                    risk_analysis = agent.risk_analyzer.analyze_person_lookup_result(lookup_result)
+                    risk_analysis = agent.calculate_risk_score(lookup_result)
                     
                     with open(args.output_json, 'w', encoding='utf-8') as f:
                         json.dump(risk_analysis, f, ensure_ascii=False, indent=2, default=str)
