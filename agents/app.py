@@ -60,7 +60,7 @@ class PersonLookupRequest(BaseModel):
 
 class QueryResponse(BaseModel):
     success: bool
-    response: str
+    response: dict
     person_name: Optional[str] = None
     error: Optional[str] = None
 
