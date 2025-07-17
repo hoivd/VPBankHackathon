@@ -100,7 +100,7 @@ class BedrockModelManager(LlmModelManager):
                 else:
                     raise RuntimeError(f"[DeepSeek] Lỗi sau {max_retries + 1} lần thử: {e}")
 
-    def generate(
+    def generate_claude(
         self,
         prompt: str,
         model_name: str = None,
@@ -170,14 +170,51 @@ class BedrockModelManager(LlmModelManager):
             logger.debug(f"[generate] ✅ Đã nhận phản hồi từ mô hình {model_id} mà không có reasoning.")
             return final_text, ""
 
+    def generate(
+        self,
+        prompt: str,
+        model_type: str = "deepseek",  # hoặc "claude"
+        model_name: str = None,
+        max_tokens: int = 12000,
+        temperature: float = 1,
+        top_p: float = 0.9,
+        enable_thinking: bool = False,
+        thinking_budget_tokens: int = 2000
+    ) -> tuple[str, str]:
+        """
+        Gọi mô hình tương ứng theo model_type và trả về (answer, reasoning).
+        """
+        if model_type.lower() == "deepseek":
+            return self.generate_deepseek(
+                prompt=prompt,
+                max_tokens=max_tokens,
+                temperature=temperature,
+                top_p=top_p
+            )
+
+        elif model_type.lower() == "claude":
+            return self.generate_claude(
+                prompt=prompt,
+                model_name=model_name,
+                max_token=max_tokens,
+                temperature=temperature,
+                enable_thinking=enable_thinking,
+                thinking_budget_tokens=thinking_budget_tokens
+            )
+
+        else:
+            raise ValueError(f"Unsupported model_type: {model_type}")
+
+
 if __name__ == "__main__":
     import json
 
     # Cấu hình cố định
     AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
     AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
-    REGION = config.AWS_REGION
-    MODEL_ID = "arn:aws:bedrock:ap-southeast-1:048013208071:inference-profile/apac.anthropic.claude-3-7-sonnet-20250219-v1:0"
+    REGION = config.AWS_VIRGINA_REGION
+    MODEL_ID = config.CLAUDE_30_HAIKU_ON_DEMAND_VIRGINA_MODEL_ID
+
     prompt = "Viết một đoạn văn ngắn về lợi ích của AI trong y tế."
 
     # Khởi tạo manager

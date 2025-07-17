@@ -7,12 +7,13 @@ from boto3.dynamodb.conditions import Attr
 
 
 class TableOrg2Media:
-    def __init__(self, query: DynamoQuery):
+    def __init__(self, query: DynamoQuery, table_config):
         self.query = query
+        self.table_name, _ = list(table_config['o2m_config'].items())[0]
 
     def get_org_ids_by_media(self, media_id: str) -> list:
         results = self.query.scan_by_filter(
-            table_name="org2media",
+            table_name=self.table_name,
             filter_expression=Attr("media_id").eq(media_id)
         )
         return [item["org_id"] for item in results]

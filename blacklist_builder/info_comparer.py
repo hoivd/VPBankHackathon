@@ -23,11 +23,12 @@ class InfoComparer:
         self.query = DynamoQuery(base_dynamo)
 
         # Khởi tạo các bảng DynamoDB
-        self.table_adverse_media = TableAdverseMedia(self.query)
-        self.personal_linker = TablePersonal2Media(self.query)
-        self.personal_info = TablePersonalInfo(self.query)
-        self.org_linker = TableOrg2Media(self.query)
-        self.org_info = TableOrganizationInfo(self.query)
+        self.table_config = config.TABLE_CONFIG
+        self.table_adverse_media = TableAdverseMedia(self.query, self.table_config)
+        self.personal_linker = TablePersonal2Media(self.query, self.table_config)
+        self.personal_info = TablePersonalInfo(self.query, self.table_config)
+        self.org_linker = TableOrg2Media(self.query, self.table_config)
+        self.org_info = TableOrganizationInfo(self.query, self.table_config)
 
         # Service tổng hợp để truy xuất dữ liệu theo media_id
         self.media_service = MediaService(
@@ -80,7 +81,7 @@ class InfoComparer:
 
             logger.debug("Tiến hành gọi LLM COMPARER INFO")
 
-            result, reasoning = self.llm_manager.generate(prompt)
+            result, reasoning = self.llm_manager.generate(prompt, 'claude')
             logger.info(f"📌 Thinking :{reasoning}")
             logger.info(f"📌 Result : {result}")
             logger.info(f"Goi mo hinh so sanh thanh cong")

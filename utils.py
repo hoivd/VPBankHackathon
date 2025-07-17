@@ -9,6 +9,8 @@ from S3.s3_fetcher import S3DataFetcher
 import time
 from decimal import Decimal
 from datetime import datetime, date
+from S3.s3_connector import S3Connector
+
 
 logger = _setup_logger(__name__, config.LOG_LEVEL)
 
@@ -122,52 +124,46 @@ class Utils:
             raise Exception(e)
 
     @staticmethod
-    def fetch_json_from_s3(bucket: str, key: str, region_name: str = "ap-southeast-1") -> Union[Dict, List]:
+    def get_s3_client(aws_access_key: str, aws_secret_key: str, region_name: str):
+        """
+        Tạo đối tượng boto3 S3 client từ thông tin cấu hình bắt buộc.
+        """
+        if not all([aws_access_key, aws_secret_key, region_name]):
+            raise ValueError("⚠️ Cần truyền đủ aws_access_key, aws_secret_key và region_name.")
+
+        return S3Connector(
+            aws_access_key_id=aws_access_key,
+            aws_secret_access_key=aws_secret_key,
+            region_name=region_name
+        ).get_client()
+
+    @staticmethod
+    def fetch_json_from_s3(bucket: str, key: str, aws_access_key: str, aws_secret_key: str, region_name: str) -> Union[Dict, List]:
         """
         Tải và parse file JSON từ S3.
-
-        Args:
-            bucket (str): Tên bucket S3
-            key (str): Đường dẫn tới file JSON
-            region_name (str): Vùng AWS (default: ap-southeast-1)
-
-        Returns:
-            dict hoặc list: Nội dung JSON
         """
-        fetcher = S3DataFetcher(region_name=region_name)
-        return fetcher.read_file(bucket, key, file_type="json")
+        s3_client = Utils.get_s3_client(aws_access_key, aws_secret_key, region_name)
+        fetcher = S3DataFetcher(s3_client)
+        return fetcher.read_file(bucket_name=bucket, object_key=key, file_type="json")
 
     @staticmethod
-    def fetch_csv_from_s3(bucket: str, key: str, region_name: str = "ap-southeast-1") -> pd.DataFrame:
+    def fetch_csv_from_s3(bucket: str, key: str, aws_access_key: str, aws_secret_key: str, region_name: str) -> pd.DataFrame:
         """
         Tải file CSV từ S3 và trả về dưới dạng DataFrame.
-
-        Args:
-            bucket (str): Tên bucket S3
-            key (str): Đường dẫn tới file CSV
-            region_name (str): Vùng AWS (default: ap-southeast-1)
-
-        Returns:
-            pd.DataFrame: Dữ liệu CSV
         """
-        fetcher = S3DataFetcher(region_name=region_name)
-        return fetcher.read_file(bucket, key, file_type="csv")
+        s3_client = Utils.get_s3_client(aws_access_key, aws_secret_key, region_name)
+        fetcher = S3DataFetcher(s3_client)
+        return fetcher.read_file(bucket_name=bucket, object_key=key, file_type="csv")
 
     @staticmethod
-    def fetch_text_from_s3(bucket: str, key: str, region_name: str = "ap-southeast-1") -> str:
+    def fetch_text_from_s3(bucket: str, key: str, aws_access_key: str, aws_secret_key: str, region_name: str) -> str:
         """
-        Tải file văn bản thường từ S3.
-
-        Args:
-            bucket (str): Tên bucket S3
-            key (str): Đường dẫn tới file văn bản
-            region_name (str): Vùng AWS (default: ap-southeast-1)
-
-        Returns:
-            str: Nội dung file dạng text
+        Tải file text từ S3 và trả về dưới dạng chuỗi.
         """
-        fetcher = S3DataFetcher(region_name=region_name)
-        return fetcher.read_file(bucket, key, file_type="text")
+        s3_client = Utils.get_s3_client(aws_access_key, aws_secret_key, region_name)
+        fetcher = S3DataFetcher(s3_client)
+        return fetcher.read_file(bucket_name=bucket, object_key=key, file_type="text")
+
 
     @staticmethod
     def load_text(file_path: str, encoding: str = "utf-8") -> str:

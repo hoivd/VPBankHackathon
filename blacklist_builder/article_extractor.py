@@ -3,7 +3,6 @@ from logger import _setup_logger
 import config
 import time
 from llm_model.model_manager import LlmModelManager
-from llm_model.gemini_manager import GeminiModelManager
 from llm_model.bedrock_manager import BedrockModelManager
 
 logger = _setup_logger(__name__, config.LOG_LEVEL)
@@ -25,7 +24,7 @@ class ArticlePersonExtractor:
         prompt = self._create_prompt(article_text)
         logger.debug("[extract_from_article] Prompt đã được tạo.")
         start = time.time()
-        answer, thinking = self.model_manager.generate_deepseek(prompt=prompt)
+        answer, thinking = self.model_manager.generate(prompt=prompt, model_type='deepseek')
         end = time.time()
         logger.info(f"[extract_from_article] Thời gian gọi mô hình: {end - start:.2f} giây")
         logger.debug("[extract_from_article] Phản hồi đã nhận từ mô hình Gemini.")

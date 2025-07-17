@@ -1,7 +1,10 @@
 from utils import Utils
 import copy
 import json
+from logger import _setup_logger
+import config
 
+logger = _setup_logger(__name__, config.LOG_LEVEL)
 class RebuildItemBuilder:
     @staticmethod
     def create_rebuild_organization_items(organization_duplicated: list, partition_key: str):
@@ -21,8 +24,10 @@ class RebuildItemBuilder:
             item_copy = copy.deepcopy(item)
 
             # Đảm bảo có org_id (partition key)
+            logger.debug(f"Tien hanh kiem tra partition_key")
             if partition_key not in item_copy or not item_copy[partition_key]:
-                raise ValueError(f"Thiếu {partition_key} trong item, không thể tái tạo.")
+                logger.error(f"Thiếu {partition_key} trong item, không thể tái tạo.")
+                continue
 
             # Ghi đè/thiết lập lại created_at
             item_copy["created_at"] = current_time
@@ -55,9 +60,11 @@ class RebuildItemBuilder:
         for item in personal_duplicated:
             item_copy = copy.deepcopy(item)
 
+            logger.debug(f"Tien hanh kiem tra partition_key")
             # Đảm bảo có per_id (partition key)
             if partition_key not in item_copy or not item_copy[partition_key]:
-                raise ValueError(f"Thiếu {partition_key} trong item, không thể tái tạo.")
+                logger.error(f"Thiếu {partition_key} trong item, không thể tái tạo.")
+                continue
 
             # Ghi lại thời gian tái tạo
             item_copy["created_at"] = current_time

@@ -1,13 +1,15 @@
 Mục tiêu:
 
-Sử dụng thông tin từ các danh sách `custom_info` (cho cá nhân) và danh sách tổ chức từ dữ liệu cũ và dữ liệu mới để xác định các cá nhân và tổ chức trùng lặp.
+Sử dụng thông tin từ các danh sách `personal_info` (cho cá nhân) và danh sách tổ chức từ dữ liệu cũ và dữ liệu mới để xác định các cá nhân và tổ chức trùng lặp.
+
 
 1.  **Đối với mỗi cá nhân trùng lặp** được tìm thấy, hãy trả về một đối tượng JSON chứa `personal_id` của họ từ dữ liệu mới, `per_id` của họ từ dữ liệu cũ, và một bản tổng hợp thông tin cá nhân của họ từ cả hai nguồn (kết hợp các trường thông tin một cách đầy đủ và chính xác nhất, ưu tiên thông tin chi tiết hơn nếu có sự khác biệt).
 2.  **Đối với mỗi tổ chức trùng lặp** được tìm thấy, hãy trả về một đối tượng JSON chứa `organizer_id` của họ từ dữ liệu mới, `org_id` của họ từ dữ liệu cũ, và một bản tổng hợp thông tin của tổ chức từ cả hai nguồn (kết hợp các trường thông tin một cách đầy đủ và chính xác nhất, ưu tiên thông tin chi tiết hơn nếu có sự khác biệt).
 
 Dữ liệu đầu vào:
 
-1.  **Nội dung bài báo cũ, custom info cá nhân cũ và organizer info cũ tương ứng**
+1.  **Nội dung bài báo cũ, personal_info cá nhân cũ và organizer info cũ tương ứng**
+
 
     Nội dung bài báo:
 
@@ -21,7 +23,8 @@ Dữ liệu đầu vào:
 
     {old_organizer_info}
 
-2.  **Nội dung bài báo mới và custom info cá nhân tương ứng**
+2.  **Nội dung bài báo mới và personal_info cá nhân tương ứng**
+
 
     Nội dung bài báo:
 
@@ -50,7 +53,9 @@ Format đầu ra:
     ]
 ]
 
-Yêu cầu: Chỉ trả về json theo mẫu dưới và không đưa ra gì thêm 
+Yêu cầu 1: Chỉ thực hiện ghép nối thông tin per_info mới và per_info cũ nếu có xuất hiện trùng lặp, không thì trả về rỗng.
+Yêu cầu 2: Chỉ trả về file json theo mẫu dưới và không đưa ra thêm lời giải thích.
+
 
 Mẫu đầu ra mẫu:
 ```json

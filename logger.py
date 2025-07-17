@@ -1,26 +1,44 @@
 import logging
+import os
+import sys
+from datetime import datetime
+
+def get_current_timestamp():
+    return datetime.now().strftime("%Y-%m-%d_%H-%M-%S")
+
+LOG_FILE_PATH = f'./log/app_{get_current_timestamp()}.txt'
+
 
 def _setup_logger(name: str, level=logging.INFO, log_file=None) -> logging.Logger:
     '''
-         Hàm khởi tạo và trả về logger đã cấu hình
+    Khởi tạo và trả về logger đã cấu hình:
+    - Ghi ra console (hạn chế lỗi Unicode).
+    - Ghi ra file log ./log/app_YYYY-MM-DD_HH-MM-SS.log với UTF-8.
+    - Tự động tạo thư mục log nếu chưa tồn tại.
     '''
     formatter = logging.Formatter('<%(levelname)s-%(name)s> - %(message)s')
 
-    handler = logging.StreamHandler()
-    handler.setFormatter(formatter)
-
     logger = logging.getLogger(name)
     logger.setLevel(level)
+    logger.propagate = False  # Không lặp log nếu dùng root logger
 
-    # Tránh nhân bản handler
     if not logger.handlers:
-        logger.addHandler(handler)
+        # Console handler: dùng stdout
+        console_handler = logging.StreamHandler(sys.stdout)
+        console_handler.setFormatter(formatter)
+        logger.addHandler(console_handler)
 
-        # Nếu muốn ghi vào file log
-        if log_file:
-            file_handler = logging.FileHandler(log_file)
-            file_handler.setFormatter(formatter)
-            logger.addHandler(file_handler)
+        # File log path với timestamp
+
+        # Tạo thư mục nếu chưa có
+        log_dir = os.path.dirname(LOG_FILE_PATH)
+        if log_dir and not os.path.exists(log_dir):
+            os.makedirs(log_dir, exist_ok=True)
+
+        # File handler UTF-8
+        file_handler = logging.FileHandler(LOG_FILE_PATH, encoding='utf-8')
+        file_handler.setFormatter(formatter)
+        logger.addHandler(file_handler)
 
     return logger
 

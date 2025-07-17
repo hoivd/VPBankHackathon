@@ -12,26 +12,54 @@ class DynamoDBDeleter:
     def __init__(self, dynamodb):
         self.dynamodb = dynamodb
 
+    # def delete_item(self, table_config: dict, partition_value, sort_key=None, sort_value=None):
+    #     """
+    #     Xoá một item theo khoá chính (PK hoặc PK + SK).
+    #     :param table_config: dict dạng {table_name: partition_key}
+    #     """
+    #     table_name, partition_key = list(table_config.items())[0]
+    #     table = self.dynamodb.Table(table_name)
+
+    #     key = {partition_key: partition_value}
+    #     if sort_key and sort_value is not None:
+    #         key[sort_key] = sort_value
+
+    #     try:
+    #         response = table.delete_item(Key=key, ReturnValues='ALL_OLD')
+    #         if 'Attributes' in response:
+    #             print(f"✅ Đã xóa item trong bảng '{table_name}':", Utils.json_to_str(response['Attributes']))
+    #         else:
+    #             print(f"⚠️ Item không tồn tại trong bảng '{table_name}'.")
+    #     except ClientError as e:
+    #         print(f"❌ Lỗi khi xoá item trong bảng '{table_name}':", e.response['Error']['Message'])
+
     def delete_item(self, table_config: dict, partition_value, sort_key=None, sort_value=None):
         """
-        Xoá một item theo khoá chính (PK hoặc PK + SK).
+        Xoá một hoặc nhiều item theo partition key (và sort key nếu có).
         :param table_config: dict dạng {table_name: partition_key}
+        :param partition_value: str hoặc list[str] (nhiều khoá chính)
+
         """
         table_name, partition_key = list(table_config.items())[0]
         table = self.dynamodb.Table(table_name)
 
-        key = {partition_key: partition_value}
-        if sort_key and sort_value is not None:
-            key[sort_key] = sort_value
+        # Chuyển sang danh sách nếu chỉ truyền 1 giá trị
+        partition_values = partition_value if isinstance(partition_value, list) else [partition_value]
 
-        try:
-            response = table.delete_item(Key=key, ReturnValues='ALL_OLD')
-            if 'Attributes' in response:
-                print(f"✅ Đã xóa item trong bảng '{table_name}':", Utils.json_to_str(response['Attributes']))
-            else:
-                print(f"⚠️ Item không tồn tại trong bảng '{table_name}'.")
-        except ClientError as e:
-            print(f"❌ Lỗi khi xoá item trong bảng '{table_name}':", e.response['Error']['Message'])
+        for pv in partition_values:
+            key = {partition_key: pv}
+            if sort_key and sort_value is not None:
+                key[sort_key] = sort_value
+
+            try:
+                response = table.delete_item(Key=key, ReturnValues='ALL_OLD')
+                if 'Attributes' in response:
+                    print(f"✅ Đã xóa item [{key}] trong bảng '{table_name}':", Utils.json_to_str(response['Attributes']))
+                else:
+                    print(f"⚠️ Item [{key}] không tồn tại trong bảng '{table_name}'.")
+            except ClientError as e:
+                print(f"❌ Lỗi khi xoá item [{key}] trong bảng '{table_name}':", e.response['Error']['Message'])
+
 
     def delete_all_items(self, table_config: dict, sort_key=None):
         """
@@ -71,8 +99,9 @@ class DynamoDBDeleter:
             )
 
 if __name__ == "__main__":
-    AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
-    AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
+    AWS_ACCESS_KEY = Utils.load_api_key_from_env("NEW_AWS_ACCESS_KEY")
+    AWS_SECRET_KEY = Utils.load_api_key_from_env("NEW_AWS_SECRET_KEY")
+
     REGION = config.AWS_REGION
 
     base_dynamo = BaseDynamoDB(
@@ -83,16 +112,10 @@ if __name__ == "__main__":
 
     deleter = DynamoDBDeleter(base_dynamo.dynamodb)
 
-    table_config = {
-        'media_config': {"adverse_media": "media_id"},
-        'person_config': {"personal_info": "per_id"},
-        'organization_config': {"organization_info": "org_id"},
-        'p2m_config':{"personal2media": "p2m_id"},
-        'o2m_config': {"org2media": "o2m_id"}
-    }
+    table_config = config.TABLE_CONFIG
 
     deleter.delete_multiple_tables_items(table_config)
-    # table_name, partition_key = 'personal_info', 'per_id'
-    # partition_value = 'per_id_1752384018355865'
-    # deleter.delete_item(table_name=table_name, partition_key=partition_key, partition_value=partition_value)
+    # org_embedd2media_config = table_config['org_embedd2media_config']
+    # ids = [100000, 100001]
+    # deleter.delete_item(org_embedd2media_config, partition_value=ids)
 

@@ -5,9 +5,10 @@ import config
 import json
 
 class TableAdverseMedia:
-    def __init__(self, query: DynamoQuery):
+    def __init__(self, query: DynamoQuery, table_config):
         self.query = query
-        self.table_name = "adverse_media"
+        self.table_name, _ = list(table_config['media_config'].items())[0]
+
 
     def get_all_media_ids(self) -> list[str]:
         """

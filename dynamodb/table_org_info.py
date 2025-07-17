@@ -4,12 +4,14 @@ import config
 from dynamodb.base_dynamo import BaseDynamoDB
 
 class TableOrganizationInfo:
-    def __init__(self, query: DynamoQuery):
+    def __init__(self, query: DynamoQuery, table_config):
         self.query = query
+        self.table_name, _ = list(table_config['organization_config'].items())[0]
+
 
     def get_by_org_id(self, org_id: str):
         return self.query.get_item_by_key(
-            table_name="organization_info",
+            table_name=self.table_name,
             key_dict={"org_id": org_id}
         )
 

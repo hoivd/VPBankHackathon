@@ -8,12 +8,6 @@ import time
 from llm_model.bedrock_manager import BedrockModelManager
 from dynamodb.dynamo_table_checker import DynamoDBTableChecker
 from dynamodb.base_dynamo import BaseDynamoDB
-from dynamodb.media_service import MediaService
-from dynamodb.dynamo_query import DynamoQuery
-from dynamodb.table_personal2media import TablePersonal2Media
-from dynamodb.table_personal_info import TablePersonalInfo
-from dynamodb.table_org2media import TableOrg2Media
-from dynamodb.table_org_info import TableOrganizationInfo
 from blacklist_builder.article_risk_matching_extractor import ArticleRiskMatchingExtractor
 
 
@@ -30,14 +24,17 @@ class ArticleBatchRunner:
         self.base_dynamo = base_dynamo
         self.dynamo_checker = DynamoDBTableChecker(dynamodb=self.base_dynamo.dynamodb)
 
-    def is_per_and_org_empty(self) -> bool:
-        person_empty = self.dynamo_checker.is_table_empty("personal_info")
-        org_empty = self.dynamo_checker.is_table_empty("organization_info")
+    def is_per_and_org_empty(self, table_config) -> bool:
+        personal_table_name, _ = list(table_config['person_config'].items())[0]
+        org_table_name, _ = list(table_config['organization_config'].items())[0]
+
+        person_empty = self.dynamo_checker.is_table_empty(personal_table_name)
+        org_empty = self.dynamo_checker.is_table_empty(org_table_name)
         if person_empty == False or org_empty == False:
-            logger.info("✅ Bảng 'personal_info' và 'organization_info' đều có dữ liệu.")
+            logger.info(f"✅ Bảng {personal_table_name} và {org_table_name} đều có dữ liệu.")
             return False
         elif person_empty == True and org_empty == True:
-            logger.info("✅ Bảng 'personal_info' và 'organization_info' đều trống.")
+            logger.info(f"✅ Bảng {personal_table_name} và {org_table_name} đều trống.")
             return True
 
     def run_from_list(self, article_list: list[str], table_config: dict):
@@ -47,16 +44,20 @@ class ArticleBatchRunner:
 
         total_start = time.time()
         for idx, article in enumerate(article_list):
+            logger.info(f"\n {'I' * 100} \n")
             logger.info(f"[Batch] 🔎 Bài báo {idx + 1}/{len(article_list)}")
             try:
                 start = time.time()
-                if self.is_per_and_org_empty():
+                if self.is_per_and_org_empty(table_config):
                     logger.info("Bảng 'personal_info' hoặc 'organization_info' chưa có dữ liệu, Tiến hành trích xuất xử lý bài báo mới.")
                     logger.info("Tiến hành trích xuất thông tin và insert vào DynamoDB...")
                     self.new_processor.process_article(
                         article_text=article,
                         table_config=table_config
                     )
+                    
+
+
                 else:
                     logger.info("Bảng 'personal_info' hoặc 'organization_info' đã có dữ liệu, Tiến hành so sánh ghép nối với bài báo cũ.")
                     self.rebuild_processor.process_article(
@@ -68,11 +69,14 @@ class ArticleBatchRunner:
                 success += 1
                 end = time.time()
                 logger.info(f"[Batch] ✅ Bài báo {idx + 1} xử lý thành công! Thời gian: {end - start:.2f} giây")
+                logger.info(f"\n {'I' * 100} \n")
             except Exception as e:
                 logger.error(f"[Batch] ❌ Lỗi khi xử lý bài báo {idx + 1}: {e}")
                 failure += 1
                 end = time.time()
                 logger.error(f"[Batch] Thời gian xử lý bài báo {idx + 1} thất bại: {end - start:.2f} giây")
+                logger.info(f"\n {'I' * 100} \n")
+
 
         total_end = time.time()
         logger.info(f"[ArticleBatchRunner] ✅ Hoàn tất: {success} thành công, {failure} lỗi. Tong thoi gian {total_end - total_start:.2f} giay")
@@ -134,8 +138,7 @@ if __name__ == "__main__":
     compare_prompt = Utils.load_text(compare_prompt_file)
     logger.info(f"Đã tải prompt từ {compare_prompt_file}")
 
-    COMPARE_INFO_MODEL_ID =  config.CLAUDE_35_HAIKU_MODEL_ID
-
+    COMPARE_INFO_MODEL_ID =  config.CLAUDE_35_HAIKU_CROSS_REGION_MODEL_ID
     llm_compare_info = BedrockModelManager(
         aws_access_key_id=AWS_ACCESS_KEY,
         aws_secret_access_key=AWS_SECRET_KEY,

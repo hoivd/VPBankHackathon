@@ -1,5 +1,6 @@
 import copy
 from utils import Utils
+import time
 
 class NewItemBuilder:
     @staticmethod
@@ -11,6 +12,7 @@ class NewItemBuilder:
         item[partition_key] = partition_key + "_" + str(unix_time)
         item['content'] = context
         item["created_at"] = unix_time
+        time.sleep(0.00001)
 
         return item, item[partition_key]
     
@@ -32,6 +34,9 @@ class NewItemBuilder:
             if item['per_id']:
                 final_personal2media_items.append(item)
             item.pop("entity_id", None)
+
+            time.sleep(0.00001)
+
 
         return final_personal2media_items
     
@@ -64,7 +69,52 @@ class NewItemBuilder:
 
             item.pop("entity_id", None)
 
+            time.sleep(0.00001)
+
+
         return final_org2media_items
+
+    @staticmethod
+    def create_personal_items(person_info: dict, partition_key: str):
+        person_info_copy = copy.deepcopy(person_info)
+
+        batch_unix_time = Utils.get_current_unix_time()
+        per_id_gen_to_per_id = {}
+
+        for item in person_info_copy:
+            unix_time = Utils.get_current_unix_time()
+            item[partition_key] = partition_key + "_" + str(unix_time)
+            item["created_at"] = batch_unix_time
+            
+            per_id_gen_to_per_id[item["personal_id"]] = item[partition_key]
+            item.pop("personal_id", None)
+
+            time.sleep(0.00001)
+
+
+        return person_info_copy, per_id_gen_to_per_id
+
+    @staticmethod
+    def create_organization_items(org_info: dict, partition_key: str):
+        org_info_copy = copy.deepcopy(org_info)
+
+        batch_unix_time = Utils.get_current_unix_time()
+        org_id_gen_to_org_id = {}
+
+        for item in org_info_copy:
+            unix_time = Utils.get_current_unix_time()
+            item[partition_key] = partition_key + "_" + str(unix_time)
+            item["created_at"] = batch_unix_time
+            
+            org_id_gen_to_org_id[item["organizer_id"]] = item[partition_key]
+            item.pop("organizer_id", None)
+
+            time.sleep(0.00001)
+
+
+        return org_info_copy, org_id_gen_to_org_id
+    
+
     
 
 if __name__ == "__main__":
