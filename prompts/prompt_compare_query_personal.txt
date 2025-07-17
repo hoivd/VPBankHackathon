@@ -20,4 +20,7 @@ Per_id:
 per_id_17775215176236373,
 ...
 ]
+Nếu không có kết quả thì trả về:
+Per_id:
+[]
 Yêu cầu: Trả về personal_id nếu trùng hoặc None nếu không trùng và không giải thích gì thêm.
