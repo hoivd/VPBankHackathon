@@ -73,7 +73,8 @@ async def startup_event():
         )
         
         query = DynamoQuery(base_dynamo.dynamodb)
-        media_service = TableAdverseMedia(query)
+        table_config=config.TABLE_CONFIG_DEMO
+        media_service = TableAdverseMedia(query,table_config)
         print("✅ Media Service initialized successfully!")
         
     except Exception as e:
@@ -152,7 +153,7 @@ async def process_query(request: QueryRequest):
         person_name = agent.extract_person_name_from_query(request.query)
         # person_name = "Trương Mỹ Lan"
         # Process the query
-        response = agent.process_query_v2(request.query)
+        response = agent.process_query_v2(person_name)
         
         return QueryResponse(
             success=True,

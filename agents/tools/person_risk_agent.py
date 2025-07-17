@@ -755,7 +755,7 @@ class PersonRiskAgent:
                 "Vui lòng thử lại sau hoặc liên hệ quản trị viên."
             )
 
-    def process_query_v2(self, query: str) -> str:
+    def process_query_v2(self, person_name: str,query:str) -> str:
         """
         Process a query with the new format
         
@@ -765,9 +765,9 @@ class PersonRiskAgent:
         Returns:
             Formatted Vietnamese response
         """
-        print(f"🔍 Xử lý truy vấn v2: {query}")
+        # print(f"🔍 Xử lý truy vấn v2: {query}")
         
-        person_name = self.extract_person_name_from_query(query)
+        # person_name = self.extract_person_name_from_query(query)
         # person_name = "Trương Mỹ Lan"
         if not person_name:
             return (
@@ -783,7 +783,7 @@ class PersonRiskAgent:
         
         try:
             # Perform person lookup with v2 format
-            lookup_result = self.person_lookup.lookup_person_comprehensive_v2(person_name)
+            lookup_result = self.person_lookup.lookup_person_comprehensive_v2(full_name=person_name,query=query)
             # print(f"Kết quả lookup v2 nhận được", lookup_result)
             
             risk_analysis = self.calculate_risk_score_v2(lookup_result)
