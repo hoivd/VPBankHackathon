@@ -1,0 +1,56 @@
+- able to run mcp on code : full workflow -> high accu
+-create sýtem prompt
+- build lang chain agent
+
+
+
+name  -> customer info ->  
+
+AWS_ACCESS_KEY=
+AWS_SECRET_KEY=
+AWS_REGION =
+
+
+1️⃣
+violation_type (Loại hình vi phạm)
+Phân loại mức độ nghiêm trọng của hành vi hoặc sự kiện được báo chí đề cập. Mỗi loại hình vi phạm có một trọng số điểm khác nhau.
+Cá nhân
+Rửa tiền, Tài trợ khủng bố: +6
+Lừa đảo, chiếm đoạt tài sản, tham nhũng, hối lộ: +4
+Vi phạm dân sự, hành chính, tranh chấp nhỏ: +2
+Không có hành vi phạm được đề cập:  0
+Tổ chức
+Đưa vào danh sách trừng phạt +5
+Cấm vận kinh tế tài chính +5
+Trừng phạt ngành lĩnh vực +4
+Hạn chế truy cập vào hệ thống tài chính Hoa Kỳ+4
+Trừng phạt thứ cấp +3
+OFAC 
+2️⃣
+customer_role (Vai trò trong vụ việc)
+Xác định mức độ tham gia trực tiếp của khách hàng trong vụ việc tiêu cực.
+•Chủ mưu, cầm đầu, tổ chức thực hiện hành vi vi phạm: +3
+• Tham gia, đồng phạm, giúp sức hoặc thực hiện một phần: +2
+• Bên liên quan bị động, bị nhắc tên nhưng không trực tiếp: +1
+• Không có liên quan rõ ràng trong bài báo: 0 
+3️⃣
+legal_status (Tình trạng pháp lý)
+Xác định trạng thái pháp lý hiện tại của vụ việc để đánh giá mức độ chắc chắn của rủi ro.
+Đã kết án: +3
+Đang trong quá trình điều tra, truy tố, chưa có phán quyết: +2
+Tin chưa rõ ràng: +1
+Được minh oan: reset điểm violation_type, customer_role về 0
+4️⃣
+source_level (Độ tin cậy của nguồn)
+Đánh giá mức độ xác thực của thông tin. Tin từ nguồn uy tín có trọng số rủi ro cao hơn.
+• Tuổi Trẻ, Dân Trí, Thanh Niên, VNExpress, Cổng thông tin Chính phủ: +1
+• Còn lại: 0
+5
+personal_no
+Tự cá nhân xuất hiện trong bài báo (không phải là đặc trưng output của task 1)
+Quy tắc gán nhãn của 4 đặc trưng là như trên
+6
+personal_in
+Nằm trong tổ chức và đất nước vi phạm (không phải là đặc trưng output của task 1)
+Quy tắc gán nhãn của 4 đặc trưng là như trên - 1
+

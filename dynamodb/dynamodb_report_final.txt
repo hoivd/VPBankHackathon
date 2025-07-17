@@ -1,0 +1,372 @@
+================================================================================
+🔍 DYNAMODB DATABASE EXPLORER REPORT
+================================================================================
+
+📊 OVERVIEW:
+   • Region: ap-southeast-1
+   • Total Tables: 5
+   • Tables: adverse_media, org2media, organization_info, personal2media, personal_info
+
+============================================================
+📋 TABLE 1: ADVERSE_MEDIA
+============================================================
+Status: ACTIVE
+Items: 39
+Size: 180,386 bytes
+Created: 2025-07-12 12:40:18.090000+07:00
+
+🔑 KEY SCHEMA:
+   • Partition Key: media_id
+
+📝 SCHEMA ATTRIBUTES:
+   • media_id (S) - Key attribute
+
+📋 ACTUAL FIELDS (from sample data):
+   • content
+   • created_at
+   • media_id 🔑
+   • news_sentiment_type
+   • recency
+
+🔗 RELATIONSHIPS:
+   • 🔗 Shares key 'media_id' with personal2media
+   • 🔗 Links to personal_info via personal2media
+   • 🔗 Links to organization_info via org2media
+
+📄 SAMPLE DATA:
+   Sample 1: {
+      "content": "Bắt nhóm nghi can trộm cắp tài sản tại Đồng Nai\nNgày 4/2, Công an tỉnh Đồng Nai cho biết, Công an huyện Long Thành đã bắt giữ nhóm đối tượng đột nhập văn phòng, trộm cắp tài sản của một công ty, với trị giá hơn 430 triệu đồng trong ngày mồng 2 Tết.\nThứ Ba, ngày 04/02/2025 - 17:42\nLực lượng Công an huyện Long Thành thu giữ 13 máy hàn tại phòng trọ của Tân.\nTrước đó, theo thông tin người dân trình báo, rạng sáng 30/1 (mồng 2 Tết), tại Phòng giao dịch của Công ty trách nhiệm hữu hạn AUTOWEL VINA, xã Long An, huyện Long Thành, chuyên kinh doanh mua bán thiết bị hàn công nghiệp bị mất trộm nhiều tài sản có giá trị lớn.\nThời điểm này, lợi dụng công ty không có bảo vệ trông coi, một nam thanh niên bịt mặt, trùm đầu, mặc áo khoác đã đột nhập vào văn phòng cạy két sắt lấy trộm tài sản nhưng không thành. Sau đó, đối tượng này đã lấy trộm 13 máy hàn và 1 cuộn dây điện, với trị giá hơn 430 triệu đồng.\nSau khi tiếp nhận thông tin, bằng nhiều biện pháp nghiệp vụ, đến chiều 2/2, lực lượng Công an huyện Long Thành xác định được đối tượng gây ra vụ trộm là Đinh Quang Tân (27 tuổi, ngụ tỉnh Bà Rịa-Vũng Tàu) nên tiến hành truy bắt tại xã Bàu Cạn.\nHơn 120 chiếc đồng hồ đeo tay là tài sản mà các đối tượng thực hiện trong một vụ trộm cắp khác được phát hiện tại phòng trọ của Tân.\nNgoài bắt giữ Tân để điều tra về tội trộm cắp tài sản, Công an huyện Long Thành còn bắt giữ nghi can Hoàng Quốc Việt (41 tuổi, quê tỉnh Quảng Nam) và Phạm Văn Ngọc (27 tuổi, ngụ tỉnh Bà Rịa-Vũng Tàu) để điều tra về hành vi che giấu hành vi phạm tội. Trong đó, Việt được xác định là đối tượng ở cùng dãy trọ đã báo cho Tân biết để tìm cách bỏ trốn; còn Ngọc là người chở Tân đi trốn.\nKhám xét phòng trọ của Việt, Công an huyện Long Thành thu giữ giữ 13 máy hàn. Ngoài ra, phát hiện hơn 120 đồng hồ đeo tay các loại, máy tính cùng nhiều tài sản khác. Số tài sản này được các đối tượng lấy trộm trong một vụ đột nhập trộm cắp tài sản khác tại địa bàn huyện Nhơn Trạch vào giữa tháng 1/2025.\nHiện, vụ việc đang được Công an huyện Long Thành mở rộng điều tra.\nTHIÊN VƯƠNG",
+      "created_at": "1752506947156825",
+      "media_id": "media_id_1752506947156825",
+      "recency": "recent",
+      "news_sentiment_type": "Negative"
+}
+   Sample 2: {
+      "content": "\n    Ngày 4-11, Tòa án nhân dân cấp cao tại TP.HCM mở phiên tòa xét xử phúc thẩm đối với bà Trương Mỹ Lan và 48 bị cáo trong vụ án xảy ra tại Tập đoàn Vạn Thịnh Phát, Ngân hàng TMCP Sài Gòn (SCB) - giai đoạn 1. Hôm nay xử phúc thẩm vụ bà Trương Mỹ Lan tham ô 304.000 tỉ của SCB - Ảnh 1. Bà Trương Mỹ Lan - Ảnh: HỮU HẠNH Bà Trương Mỹ Lan và 48 đồng phạm kháng cáo Vụ án được xử phúc thẩm do có kháng cáo của bà Trương Mỹ Lan (68 tuổi, chủ tịch Tập đoàn Vạn Thịnh Phát) cùng 48 đồng phạm; kháng cáo của bị hại là SCB và kháng cáo của những người có quyền lợi, nghĩa vụ liên quan gồm: Công ty cổ phần Quốc Cường Gia Lai, ông Nguyễn Sơn Hoa, Công ty cổ phần T&H Hạ Long, Công ty TNHH Âu Lạc Quảng Ninh.Bà Trương Mỹ Lan nói gì về bản án sơ thẩm tuyên tử hình đối với bà trong kháng cáo? Phiên tòa dự kiến sẽ kéo dài đến ngày 25-11 với hội đồng xét xử gồm: thẩm phán - chủ tọa phiên tòa Huỳnh Thanh Duyên và các thẩm phán Phạm Công Mười, Lê Thành Long. Đại diện Viện Kiểm sát nhân dân cấp cao tại TP.HCM tham gia phiên tòa có ông Võ Phong Lưu, ông Đặng Quốc Việt và ông Đỗ Phước Trung. Đối với kháng cáo của bà Trương Mỹ Lan, bà Lan cho rằng bản án sơ thẩm tuyên tử hình đối với bà là quá nặng nề và quá nghiêm khắc. Theo đơn kháng cáo, bà Lan trình bày bà cùng người thân và các bạn bè đã giúp Ngân hàng SCB hợp nhất kịp thời vào ngày 1-1-2012 theo lời vận động và kêu gọi của Ngân hàng Nhà nước, nhằm ổn định toàn hệ thống tiền tệ tài chính quốc gia. Vào thời điểm này SCB có tổng tài sản là 145.000 tỉ đồng, trong đó tổng nợ phải trả là 133.000 tỉ đồng với lãi suất 35 - 52% mà SCB không có tài sản đáng giá, áp lực rất lớn. Các cổ đông đã không chia lợi nhuận suốt 11 năm, cho mượn tiền, sổ tiết kiệm, tài sản, SCB đã hoạt động ổn định, không mất thanh khoản, không vay tái cấp vốn, không sử dụng kinh phí của Ngân hàng Nhà nước. Ngày nay SCB đã trở thành một ngân hàng thương mại cổ phần có tổng giá trị tài sản lớn. \"Dù trong hoàn cảnh nào, suốt quá trình điều tra cho tới phiên tòa xét xử sơ thẩm tôi luôn thể hiện sự tự nguyện mang hết tài sản của tôi và tích cực phối hợp cùng SCB giải quyết khắc phục hậu quả, dùng các dự án đang dang dở để thu hồi đúng giá trị cho SCB. SCB là một ngân hàng thương mại cổ phần có hàng nghìn cổ đông và hàng nghìn khách hàng vay tiền gồm các cá nhân, doanh nghiệp lớn, vừa và nhỏ. SCB hoạt động theo luật tổ chức tín dụng dưới sự giám sát của Ngân hàng Nhà nước và các liên ngành suốt 11 năm. SCB không phải là một công ty trách nhiệm hữu hạn mà quy buộc cho một cá nhân chịu trách nhiệm toàn bộ\" - đơn kháng cáo nêu. Từ đó, bà Trương Mỹ Lan xin hội đồng xét xử và các cơ quan tiến hành tố tụng xem xét thấu đáo và có đường lối xử lý phù hợp đối với gia đình bà cùng một số cá nhân khác. Tham ô 304.000 tỉ, bà Trương Mỹ Lan bị tuyên tử hình Trước đó, Tòa án nhân dân TP.HCM xử sơ thẩm vụ án giai đoạn 1 đã tuyên bà Trương Mỹ Lan tử hình về tội tham ô tài sản; 20 năm tù về tội đưa hối lộ và 20 năm tù về tội vi phạm quy định về cho vay trong hoạt động của các tổ chức tín dụng, tổng hợp mức án là tử hình. Về trách nhiệm dân sự, cấp sơ thẩm buộc bà Trương Mỹ Lan phải bồi hoàn cho SCB dư nợ của 1.243 khoản vay còn lại tính đến ngày 17-10-2022, tương đương số tiền 673.849 tỉ đồng. Theo án sơ thẩm, tính đến tháng 10-2022, bà Trương Mỹ Lan đã thâu tóm, nắm giữ đến 91,5% cổ phần Ngân hàng SCB thông qua các cá nhân, pháp nhân đứng tên giùm. Lợi dụng vai trò là cổ đông lớn, quyền lực, nắm giữ trên thực tế số lượng cổ phần gần tuyệt đối của Ngân hàng SCB, bà Trương Mỹ Lan đã truyền đạt ý chí cho các bị cáo Đinh Văn Thành, Bùi Anh Dũng, Võ Tấn Hoàng Văn, Tạ Chiêu Trung, Trương Khánh Hoàng, Trần Thị Mỹ Dung thực hiện việc rút tiền từ SCB nhằm chiếm đoạt số tiền lớn của ngân hàng để sử dụng vào mục đích cá nhân. Các bị cáo Đinh Văn Thành, Bùi Anh Dũng, Võ Tấn Hoàng Văn, Tạ Chiêu Trung, Trương Khánh Hoàng, Trần Thị Mỹ Dung tiếp nhận ý chí của bà Trương Mỹ Lan, bỏ qua các quy định pháp luật, giúp sức tích cực để Trương Mỹ Lan rút tiền của Ngân hàng SCB, gây hậu quả thiệt hại đặc biệt lớn. Hành vi nêu trên của Trương Mỹ Lan và các bị cáo đủ cấu thành tội tham ô tài sản. Tuy nhiên SCB không có vốn nhà nước, các bị cáo này thực hiện hành vi phạm tội trong một thời gian dài, trong khi Bộ luật Hình sự có sự thay đổi cơ bản về đường lối xử lý tại thời điểm trước và sau ngày 1-1-2018. Theo đó, Bộ luật Hình sự 1999 không quy định tội tham ô tài sản đối với các pháp nhân ngoài nhà nước. Nên những hành vi phạm tội xảy ra trước ngày 1-1-2018 bị xử lý theo điều, khoản tương ứng (điều 179) Bộ luật Hình sự năm 1999; những hành vi phạm tội xảy ra sau ngày 1-1-2018 bị xử lý theo các điều, khoản (điều 353, điều 206) Bộ luật Hình sự năm 2015, có xem xét đến nguyên tắc có lợi cho các bị cáo. Liên quan vụ án, 85 bị cáo còn lại trong vụ án nhận các mức hình phạt từ 3 năm tù nhưng cho hưởng án treo đến tù chung thân.\n",
+      "created_at": "1752506342061619",
+      "media_id": "media_id_1752506342061619",
+      "recency": "recent",
+      "news_sentiment_type": "Negative"
+}
+   Sample 3: {
+      "content": "Bị cáo Phú Yên lĩnh 8 năm tù vì lừa đảo chiếm đoạt tài sản\nLừa đảo chiếm đoạt tài sản, một cán bộ ở Phú Yên bị phạt 8 năm tù\nNgày 16/6, Hội đồng xét xử Tòa án Nhân dân tỉnh Phú Yên tuyên phạt bị cáo Lê Hải (sinh năm 1970, trú phường 5, thành phố Tuy Hòa) 8 năm tù giam và Phạm Phú Hoàng Duy (sinh năm 1985, trú xã Xuân Lộc, thị xã Sông Cầu) 7 năm tù giam cùng về tội “Lừa đảo chiếm đoạt tài sản”.\nThứ Hai, ngày 16/06/2025 - 14:40\nQuang cảnh phiên tòa.\nBị cáo Lê Hải từng là Phó trưởng Phòng Nghiệp vụ 1, Ủy ban Kiểm tra Tỉnh ủy Phú Yên. Bị cáo Duy từng bị Tòa án nhân dân thị xã Sông Cầu xử phạt 9 tháng tù cho hưởng án treo, về tội trộm cắp tài sản (12/2008) và bị Tòa án nhân dân quận Gò Vấp, Thành phố Hồ Chí Minh xử phạt 1 năm tù vào tháng 7/2013 cùng tội danh này.\nTừ tháng 1-3/2024, Lê Hải và Phạm Phú Hoàng Duy đã có hành vi đưa ra thông tin gian dối lo cho Lê Thị Xuân Thảo được giảm án khi xét xử phúc thẩm, được hoãn thi hành án, được đặc xá không phải đi tù. Sau đó, hai đối tượng này đã nhận của Thảo 55 triệu đồng và tiếp tục yêu cầu Thảo đưa cho số tiền 600 triệu đồng. Ngày 7/3/2024, Duy đến quán cà phê Trung Nguyên tại phường 7, thành phố Tuy Hòa, tỉnh Phú Yên nhận 600 triệu đồng thì bị bắt quả tang.\nCác bị cáo tại tòa.\nTrước đó, ngày 9/1/2024, Tòa án nhân dân tỉnh Phú Yên xử phạt chị Lê Thị Xuân Thảo (trú phường Hòa Hiệp Bắc, thị xã Đông Hòa) 20 năm tù và chồng là Phú Văn Hùng (trú phường Phú Đông, thành phố Tuy Hòa) tù chung thân về tội mua bán trái phép chất ma túy. Thảo nhờ bạn là Nguyễn Đức Thiên giúp giảm án khi xét xử phúc thẩm. Thiên nhờ Phạm Phú Hoàng Duy và Trần Văn Long, Long nói có quen biết với Lê Hải, là người có mối quan hệ quen biết với nhiều cán bộ ở Viện Kiểm sát cấp cao tại Đà Nẵng nên có thể lo giảm án cho Thảo. Long điện thoại cho Hải hỏi về việc của Thảo, Hải nói có gì ra Phú Yên gặp trực tiếp. Ngày 20/1/2024, Duy, Thiên và Long ra Phú Yên gặp Hải nhờ lo giảm án cho Thảo và Hải đồng ý.\nNguyễn Phương Nam",
+      "created_at": "1752506883320510",
+      "media_id": "media_id_1752506883320510",
+      "recency": "recent",
+      "news_sentiment_type": "Negative"
+}
+
+============================================================
+📋 TABLE 2: ORG2MEDIA
+============================================================
+Status: ACTIVE
+Items: 32
+Size: 9,963 bytes
+Created: 2025-07-12 18:54:27.458000+07:00
+
+🔑 KEY SCHEMA:
+   • Partition Key: o2m_id
+
+📝 SCHEMA ATTRIBUTES:
+   • o2m_id (S) - Key attribute
+
+📋 ACTUAL FIELDS (from sample data):
+   • created_at
+   • customer_role
+   • entity_name
+   • is_individual
+   • legal_status
+   • media_id
+   • o2m_id 🔑
+   • org_id
+   • violation_type
+
+🔗 RELATIONSHIPS:
+   • 🔗 Junction table: Links org ↔ media
+   • 🔗 References adverse_media
+   • 🔗 References organization_info
+   • 🔗 References personal2media
+
+📄 SAMPLE DATA:
+   Sample 1: {
+      "org_id": "org_id_1752506032806508",
+      "customer_role": "Tổ chức thực hiện hành vi vi phạm",
+      "o2m_id": "o2m_id_1752506388451215",
+      "created_at": "1752506388451214",
+      "violation_type": "Tham ô tài sản",
+      "media_id": "media_id_1752506342061619",
+      "entity_name": "Tập đoàn Vạn Thịnh Phát",
+      "is_individual": false,
+      "legal_status": "Đang trong quá trình điều tra"
+}
+   Sample 2: {
+      "org_id": "org_id_1752506032806508",
+      "customer_role": "Giúp sức hoặc thực hiện một phần",
+      "o2m_id": "o2m_id_1752506152331041",
+      "created_at": "1752506152331040",
+      "violation_type": "Rửa tiền",
+      "media_id": "media_id_1752506129101623",
+      "entity_name": "GRUPO UNTER EMPRESARIAL S.A. DE C.V.",
+      "is_individual": false,
+      "legal_status": "Đã kết án"
+}
+   Sample 3: {
+      "org_id": "org_id_1752506032806508",
+      "customer_role": "Tổ chức thực hiện hành vi vi phạm",
+      "o2m_id": "o2m_id_1752506360093878",
+      "created_at": "1752506360093876",
+      "violation_type": "Vi phạm quy định về cho vay",
+      "media_id": "media_id_1752506342061619",
+      "entity_name": "Ngân hàng TMCP Sài Gòn (SCB)",
+      "is_individual": false,
+      "legal_status": "Đang trong quá trình điều tra"
+}
+
+============================================================
+📋 TABLE 3: ORGANIZATION_INFO
+============================================================
+Status: ACTIVE
+Items: 16
+Size: 4,418 bytes
+Created: 2025-07-12 18:53:59.465000+07:00
+
+🔑 KEY SCHEMA:
+   • Partition Key: org_id
+
+📝 SCHEMA ATTRIBUTES:
+   • org_id (S) - Key attribute
+
+📋 ACTUAL FIELDS (from sample data):
+   • birth_year_or_age
+   • created_at
+   • full_name
+   • gender
+   • hometown_or_residence
+   • occupation_or_position
+   • org_id 🔑
+   • organization
+   • personal_relationships
+
+🔗 RELATIONSHIPS:
+   • 🔗 Links to adverse_media via org2media
+
+📄 SAMPLE DATA:
+   Sample 1: {
+      "org_id": "org_id_1752507814849947",
+      "organization": null,
+      "created_at": "1752507814849941",
+      "full_name": "TGR PARTNERS",
+      "occupation_or_position": "Financial and Insurance Activities",
+      "hometown_or_residence": null,
+      "gender": null,
+      "personal_relationships": null,
+      "birth_year_or_age": null
+}
+   Sample 2: {
+      "org_id": "org_id_1752506032806508",
+      "organization": null,
+      "created_at": "1752508379045834",
+      "full_name": "Tập đoàn Vạn Thịnh Phát",
+      "occupation_or_position": null,
+      "hometown_or_residence": null,
+      "gender": null,
+      "personal_relationships": "Nơi Trương Mỹ Lan làm Tổng giám đốc",
+      "birth_year_or_age": null
+}
+   Sample 3: {
+      "org_id": "org_id_1752506165958390",
+      "organization": "BENGUIAT JIMENEZ, Alberto David",
+      "created_at": "1752506165958369",
+      "full_name": "PRODUCTIONS PIPO S. DE R.L. DE C.V.",
+      "occupation_or_position": "Other amusement and recreation activities",
+      "hometown_or_residence": null,
+      "gender": null,
+      "personal_relationships": "Linked To: BENGUIAT JIMENEZ, Alberto David",
+      "birth_year_or_age": null
+}
+
+============================================================
+📋 TABLE 4: PERSONAL2MEDIA
+============================================================
+Status: ACTIVE
+Items: 144
+Size: 40,450 bytes
+Created: 2025-07-12 12:40:00.038000+07:00
+
+🔑 KEY SCHEMA:
+   • Partition Key: p2m_id
+
+📝 SCHEMA ATTRIBUTES:
+   • media_id (S) - Key attribute
+   • p2m_id (S) - Key attribute
+
+📋 ACTUAL FIELDS (from sample data):
+   • created_at
+   • customer_role
+   • entity_name
+   • is_individual
+   • legal_status
+   • media_id 🔑
+   • p2m_id 🔑
+   • per_id
+   • violation_type
+
+🌐 GLOBAL SECONDARY INDEXES:
+   • media_id-index
+     - Partition Key: media_id
+     - Projection: ALL
+
+🔗 RELATIONSHIPS:
+   • 🔗 Junction table: Links personal ↔ media
+   • 🔗 References adverse_media
+   • 🔗 References org2media
+   • 🔗 References personal_info
+
+📄 SAMPLE DATA:
+   Sample 1: {
+      "customer_role": "Tham gia",
+      "created_at": "1752506847217861",
+      "violation_type": "Chiếm đoạt tài sản",
+      "media_id": "media_id_1752506736598630",
+      "entity_name": "Huỳnh Văn Khánh",
+      "per_id": "per_id_1752506097518148",
+      "p2m_id": "p2m_id_1752506847217866",
+      "is_individual": true,
+      "legal_status": "Đang trong quá trình điều tra"
+}
+   Sample 2: {
+      "customer_role": "Chủ mưu",
+      "created_at": "1752507134484828",
+      "violation_type": "Tham ô tài sản/Nhận hối lộ/Vận chuyển trái phép tiền tệ",
+      "media_id": "media_id_1752507113664518",
+      "entity_name": "Trương Mỹ Lan",
+      "per_id": "per_id_1752506406280628",
+      "p2m_id": "p2m_id_1752507134484829",
+      "is_individual": true,
+      "legal_status": "Đã kết án"
+}
+   Sample 3: {
+      "customer_role": "Đồng phạm",
+      "created_at": "1752506524921087",
+      "violation_type": "Tham nhũng",
+      "media_id": "media_id_1752506431325505",
+      "entity_name": "Trương Khánh Hoàng",
+      "per_id": "per_id_1752506524920759",
+      "p2m_id": "p2m_id_1752506524921109",
+      "is_individual": true,
+      "legal_status": "Đã kết án"
+}
+
+============================================================
+📋 TABLE 5: PERSONAL_INFO
+============================================================
+Status: ACTIVE
+Items: 49
+Size: 13,107 bytes
+Created: 2025-07-12 12:39:49.254000+07:00
+
+🔑 KEY SCHEMA:
+   • Partition Key: per_id
+
+📝 SCHEMA ATTRIBUTES:
+   • per_id (S) - Key attribute
+
+📋 ACTUAL FIELDS (from sample data):
+   • birth_year_or_age
+   • created_at
+   • full_name
+   • gender
+   • hometown_or_residence
+   • occupation_or_position
+   • organization
+   • per_id 🔑
+   • personal_relationships
+
+🔗 RELATIONSHIPS:
+   • 🔗 Links to adverse_media via personal2media
+
+📄 SAMPLE DATA:
+   Sample 1: {
+      "organization": null,
+      "created_at": "1752507464141870",
+      "per_id": "per_id_1752506071184819",
+      "full_name": "Ân Thiết",
+      "occupation_or_position": null,
+      "hometown_or_residence": "Thị trấn Mỹ Xuyên, huyện Mỹ Xuyên, tỉnh Sóc Trăng",
+      "gender": "Male",
+      "personal_relationships": null,
+      "birth_year_or_age": "2002"
+}
+   Sample 2: {
+      "organization": "Công ty Cổ phần Đại Nam",
+      "created_at": "1752506827024401",
+      "per_id": "per_id_1752506032806491",
+      "full_name": "Nguyễn Thị Mai Nhi",
+      "occupation_or_position": "Nhân viên",
+      "hometown_or_residence": null,
+      "gender": "Female",
+      "personal_relationships": "Đồng phạm giúp sức",
+      "birth_year_or_age": null
+}
+   Sample 3: {
+      "organization": null,
+      "created_at": "1752506566939790",
+      "per_id": "per_id_1752506524920744",
+      "full_name": "Đinh Văn Thành",
+      "occupation_or_position": null,
+      "hometown_or_residence": null,
+      "gender": "Male",
+      "personal_relationships": "Đồng phạm của Trương Mỹ Lan",
+      "birth_year_or_age": null
+}
+
+============================================================
+🔗 RELATIONSHIP SUMMARY
+============================================================
+
+📋 adverse_media:
+   • 🔗 Shares key 'media_id' with personal2media
+   • 🔗 Links to personal_info via personal2media
+   • 🔗 Links to organization_info via org2media
+
+📋 org2media:
+   • 🔗 Junction table: Links org ↔ media
+   • 🔗 References adverse_media
+   • 🔗 References organization_info
+   • 🔗 References personal2media
+
+📋 organization_info:
+   • 🔗 Links to adverse_media via org2media
+
+📋 personal2media:
+   • 🔗 Junction table: Links personal ↔ media
+   • 🔗 References adverse_media
+   • 🔗 References org2media
+   • 🔗 References personal_info
+
+📋 personal_info:
+   • 🔗 Links to adverse_media via personal2media
+
+============================================================
+🔍 RELATIONSHIP ANALYSIS DEBUG
+============================================================
+
+📋 adverse_media:
+   • Partition Key: media_id
+   • Potential foreign keys: media_id
+
+📋 org2media:
+   • Partition Key: o2m_id
+   • Potential foreign keys: media_id, o2m_id, org_id
+
+📋 organization_info:
+   • Partition Key: org_id
+   • Potential foreign keys: org_id
+
+📋 personal2media:
+   • Partition Key: p2m_id
+   • Potential foreign keys: media_id, p2m_id, per_id
+
+📋 personal_info:
+   • Partition Key: per_id
+   • Potential foreign keys: per_id

@@ -1,0 +1,11 @@
+2025-07-13 13:17:14,665 - INFO - 🆕 Starting new tables migration from DynamoDB to MongoDB
+2025-07-13 13:17:14,665 - INFO - 📍 MongoDB URI: mongodb+srv://hoivd:vinhhoi@cluster0.amxct9l.mongodb.net/
+2025-07-13 13:17:14,665 - INFO - 🗄️ MongoDB Database: vpbank_hackathon
+2025-07-13 13:17:14,666 - DEBUG - [load_api_key_from_env] ✅ Đã load key 'AWS_ACCESS_KEY' từ môi trường
+2025-07-13 13:17:14,666 - DEBUG - [load_api_key_from_env] ✅ Đã load key 'AWS_SECRET_KEY' từ môi trường
+2025-07-13 13:17:19,449 - INFO - 🔗 Connected to DynamoDB region: ap-southeast-1
+2025-07-13 13:17:19,449 - INFO - 🔗 Connected to MongoDB database: vpbank_hackathon
+2025-07-13 13:17:20,025 - INFO - 📋 Found 10 DynamoDB tables
+2025-07-13 13:17:20,417 - INFO - 🔍 Found 0 new tables to migrate: []
+2025-07-13 13:17:20,419 - INFO - ✅ No new tables found - all tables already migrated
+2025-07-13 13:17:20,468 - INFO - 🔌 Database connections closed

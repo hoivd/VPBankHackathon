@@ -1,0 +1,219 @@
+{
+    "news_sentiment_type": "Negative",
+    "recency": "recent",
+    "source_credibility": "High",
+    "list_personal_risks": [
+      {
+        "entity_id": "P001",
+        "entity_name": "Trương Mỹ Lan",
+        "is_individual": true,
+        "role_in_event": "Bị cáo chính",
+        "violation_type": "Chiếm đoạt tài sản, Hối lộ, Vi phạm quy định về cho vay",
+        "customer_role": "Chủ mưu",
+        "legal_status": "Đã kết án",
+        "source_level": "Other"
+      },
+      {
+        "entity_id": "P002",
+        "entity_name": "Đinh Văn Thành",
+        "is_individual": true,
+        "role_in_event": "Đồng phạm",
+        "violation_type": "Chiếm đoạt tài sản",
+        "customer_role": "Đồng phạm",
+        "legal_status": "Đã kết án",
+        "source_level": "Other"
+      },
+      {
+        "entity_id": "P003",
+        "entity_name": "Bùi Anh Dũng",
+        "is_individual": true,
+        "role_in_event": "Đồng phạm",
+        "violation_type": "Chiếm đoạt tài sản",
+        "customer_role": "Đồng phạm",
+        "legal_status": "Đã kết án",
+        "source_level": "Other"
+      },
+      {
+        "entity_id": "P004",
+        "entity_name": "Võ Tấn Hoàng Văn",
+        "is_individual": true,
+        "role_in_event": "Đồng phạm",
+        "violation_type": "Chiếm đoạt tài sản",
+        "customer_role": "Đồng phạm",
+        "legal_status": "Đã kết án",
+        "source_level": "Other"
+      },
+      {
+        "entity_id": "P005",
+        "entity_name": "Tạ Chiêu Trung",
+        "is_individual": true,
+        "role_in_event": "Đồng phạm",
+        "violation_type": "Chiếm đoạt tài sản",
+        "customer_role": "Đồng phạm",
+        "legal_status": "Đã kết án",
+        "source_level": "Other"
+      },
+      {
+        "entity_id": "P006",
+        "entity_name": "Trương Khánh Hoàng",
+        "is_individual": true,
+        "role_in_event": "Đồng phạm",
+        "violation_type": "Chiếm đoạt tài sản",
+        "customer_role": "Đồng phạm",
+        "legal_status": "Đã kết án",
+        "source_level": "Other"
+      },
+      {
+        "entity_id": "P007",
+        "entity_name": "Trần Thị Mỹ Dung",
+        "is_individual": true,
+        "role_in_event": "Đồng phạm",
+        "violation_type": "Chiếm đoạt tài sản",
+        "customer_role": "Đồng phạm",
+        "legal_status": "Đã kết án",
+        "source_level": "Other"
+      },
+      {
+        "entity_id": "P008",
+        "entity_name": "Huỳnh Thanh Duyên",
+        "is_individual": true,
+        "role_in_event": "Thẩm phán chủ tọa",
+        "violation_type": "Không có hành vi phạm được đề cập",
+        "customer_role": "Không có liên quan rõ ràng trong bài báo",
+        "legal_status": "Tin chưa rõ ràng",
+        "source_level": "Other"
+      },
+      {
+        "entity_id": "P009",
+        "entity_name": "Phạm Công Mười",
+        "is_individual": true,
+        "role_in_event": "Thẩm phán",
+        "violation_type": "Không có hành vi phạm được đề cập",
+        "customer_role": "Không có liên quan rõ ràng trong bài báo",
+        "legal_status": "Tin chưa rõ ràng",
+        "source_level": "Other"
+      },
+      {
+        "entity_id": "P010",
+        "entity_name": "Lê Thành Long",
+        "is_individual": true,
+        "role_in_event": "Thẩm phán",
+        "violation_type": "Không có hành vi phạm được đề cập",
+        "customer_role": "Không có liên quan rõ ràng trong bài báo",
+        "legal_status": "Tin chưa rõ ràng",
+        "source_level": "Other"
+      },
+      {
+        "entity_id": "P011",
+        "entity_name": "Võ Phong Lưu",
+        "is_individual": true,
+        "role_in_event": "Kiểm sát viên",
+        "violation_type": "Không có hành vi phạm được đề cập",
+        "customer_role": "Không có liên quan rõ ràng trong bài báo",
+        "legal_status": "Tin chưa rõ ràng",
+        "source_level": "Other"
+      },
+      {
+        "entity_id": "P012",
+        "entity_name": "Đặng Quốc Việt",
+        "is_individual": true,
+        "role_in_event": "Kiểm sát viên",
+        "violation_type": "Không có hành vi phạm được đề cập",
+        "customer_role": "Không có liên quan rõ ràng trong bài báo",
+        "legal_status": "Tin chưa rõ ràng",
+        "source_level": "Other"
+      },
+      {
+        "entity_id": "P013",
+        "entity_name": "Đỗ Phước Trung",
+        "is_individual": true,
+        "role_in_event": "Kiểm sát viên",
+        "violation_type": "Không có hành vi phạm được đề cập",
+        "customer_role": "Không có liên quan rõ ràng trong bài báo",
+        "legal_status": "Tin chưa rõ ràng",
+        "source_level": "Other"
+      },
+      {
+        "entity_id": "P014",
+        "entity_name": "Nguyễn Sơn Hoa",
+        "is_individual": true,
+        "role_in_event": "Người có quyền lợi liên quan",
+        "violation_type": "Không có hành vi phạm được đề cập",
+        "customer_role": "Bên liên quan bị động",
+        "legal_status": "Tin chưa rõ ràng",
+        "source_level": "Other"
+      }
+    ],
+    "list_organizer_risks": [
+      {
+        "entity_id": "O001",
+        "entity_name": "Tập đoàn Vạn Thịnh Phát",
+        "is_individual": false,
+        "role_in_event": "Tổ chức liên quan đến bị cáo Trương Mỹ Lan",
+        "violation_type": "Chiếm đoạt tài sản",
+        "customer_role": "Tổ chức thực hiện hành vi vi phạm",
+        "legal_status": "Đang trong quá trình điều tra",
+        "source_level": "Other"
+      },
+      {
+        "entity_id": "O002",
+        "entity_name": "Ngân hàng SCB",
+        "is_individual": false,
+        "role_in_event": "Nạn nhân bị chiếm đoạt tiền",
+        "violation_type": "Chiếm đoạt tài sản",
+        "customer_role": "Bên liên quan bị động",
+        "legal_status": "Đang trong quá trình điều tra",
+        "source_level": "Other"
+      },
+      {
+        "entity_id": "O003",
+        "entity_name": "Công ty CP Quốc Cường Gia Lai",
+        "is_individual": false,
+        "role_in_event": "Bên có quyền lợi liên quan",
+        "violation_type": "Không có hành vi phạm được đề cập",
+        "customer_role": "Bên liên quan bị động",
+        "legal_status": "Tin chưa rõ ràng",
+        "source_level": "Other"
+      },
+      {
+        "entity_id": "O004",
+        "entity_name": "Công ty CP T&H Hạ Long",
+        "is_individual": false,
+        "role_in_event": "Bên có quyền lợi liên quan",
+        "violation_type": "Không có hành vi phạm được đề cập",
+        "customer_role": "Bên liên quan bị động",
+        "legal_status": "Tin chưa rõ ràng",
+        "source_level": "Other"
+      },
+      {
+        "entity_id": "O005",
+        "entity_name": "Công ty Âu Lạc Quảng Ninh",
+        "is_individual": false,
+        "role_in_event": "Bên có quyền lợi liên quan",
+        "violation_type": "Không có hành vi phạm được đề cập",
+        "customer_role": "Bên liên quan bị động",
+        "legal_status": "Tin chưa rõ ràng",
+        "source_level": "Other"
+      },
+      {
+        "entity_id": "O006",
+        "entity_name": "Tòa án nhân dân cấp cao tại TP.HCM",
+        "is_individual": false,
+        "role_in_event": "Cơ quan xét xử",
+        "violation_type": "Không có hành vi phạm được đề cập",
+        "customer_role": "Không có liên quan rõ ràng trong bài báo",
+        "legal_status": "Tin chưa rõ ràng",
+        "source_level": "Other"
+      },
+      {
+        "entity_id": "O007",
+        "entity_name": "Viện Kiểm sát nhân dân cấp cao tại TP.HCM",
+        "is_individual": false,
+        "role_in_event": "Cơ quan giám sát pháp luật",
+        "violation_type": "Không có hành vi phạm được đề cập",
+        "customer_role": "Không có liên quan rõ ràng trong bài báo",
+        "legal_status": "Tin chưa rõ ràng",
+        "source_level": "Other"
+      }
+    ]
+  }

@@ -1,0 +1,24 @@
+[
+    {
+      "organization": "Ủy ban Pháp luật và Tư pháp của Quốc hội",
+      "created_at": 1752384078640383.0,
+      "per_id": "per_id_1752384078640384",
+      "full_name": "Nguyễn Phương Thủy",
+      "occupation_or_position": "Phó chủ nhiệm Ủy ban Pháp luật và Tư pháp của Quốc hội",
+      "hometown_or_residence": null,
+      "gender": "Female",
+      "personal_relationships": null,
+      "birth_year_or_age": null
+    },
+    {
+      "organization": "Tập đoàn Vạn Thịnh Phát",
+      "created_at": 1752384078640383.0,
+      "per_id": "per_id_1752384078640389",
+      "full_name": "Trương Mỹ Lan",
+      "occupation_or_position": "Chủ tịch Tập đoàn Vạn Thịnh Phát",
+      "hometown_or_residence": null,
+      "gender": "Female",
+      "personal_relationships": "Bị cáo trong vụ án Vạn Thịnh Phát",
+      "birth_year_or_age": null
+    }
+  ]
