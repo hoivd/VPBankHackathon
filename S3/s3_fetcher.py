@@ -55,7 +55,7 @@ class S3DataFetcher:
 
 if __name__ == "__main__":
     # Thông tin cấu hình
-    bucket = "team253"
+    bucket = "team253vpbank"
     key = "models/catboost_aml_model.pkl"  # ví dụ: "data/test.csv"
     file_type = "json"  # hoặc "json", "text"
 

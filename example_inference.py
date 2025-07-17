@@ -113,7 +113,7 @@ def example_3_custom_s3_path():
     # Initialize with custom S3 path
     custom_inference_engine = AMLModelInference(
         model_s3_key="models/custom_model.pkl",  # Custom model path
-        bucket_name="team253"
+        bucket_name="team253vpbank"
     )
     
     print("ℹ️  This example shows how to use a custom S3 path.")

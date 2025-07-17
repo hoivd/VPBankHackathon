@@ -552,15 +552,22 @@ class PersonRiskAgent:
         
         try:
             # Initialize sets to track unique values across all data
-            all_violation_types = set()
-            all_legal_statuses = set()
-            all_roles = set()
+            individual_violation_types = set()
+            individual_legal_statuses = set()
+            individual_roles = set()
             
             # Initialize lists to track all values (including duplicates)
-            violation_types_list = []
-            legal_statuses_list = []
-            roles_list = []
+            individual_violation_types_list = []
+            individual_legal_statuses_list = []
+            individual_roles_list = []
             
+            organization_violation_types = set()
+            organization_legal_statuses = set()
+            organization_roles = set()
+
+            organization_violation_types_list = []
+            organization_legal_statuses_list = []
+            organization_roles_list = []
             # Process individual AML data
             if "invidual_AML" in lookup_result and lookup_result["invidual_AML"]:
                 individual_aml = lookup_result["invidual_AML"]
@@ -570,20 +577,20 @@ class PersonRiskAgent:
                     # Process each violation type
                     for violation_type, details in violations.items():
                         # Add to violation types
-                        all_violation_types.add(violation_type)
-                        violation_types_list.append(violation_type)
+                        individual_violation_types.add(violation_type)
+                        individual_violation_types_list.append(violation_type)
                         
                         # Add legal status
                         legal_status = details.get("legal_status")
                         if legal_status:
-                            all_legal_statuses.add(legal_status)
-                            legal_statuses_list.append(legal_status)
+                            individual_legal_statuses.add(legal_status)
+                            individual_legal_statuses_list.append(legal_status)
                         
                         # Add customer role
                         customer_role = details.get("customer_role")
                         if customer_role:
-                            all_roles.add(customer_role)
-                            roles_list.append(customer_role)
+                            individual_roles.add(customer_role)
+                            individual_roles_list.append(customer_role)
                         
                         # Count media IDs as total violations
                         media_ids = details.get("media_ids", [])
@@ -597,43 +604,58 @@ class PersonRiskAgent:
                 for org_name, violations in org_aml.items():
                     for violation_type, details in violations.items():
                         # Add to violation types
-                        all_violation_types.add(violation_type)
-                        violation_types_list.append(violation_type)
+                        organization_violation_types.add(violation_type)
+                        organization_violation_types_list.append(violation_type)
                         
                         # Add legal status
                         legal_status = details.get("legal_status")
                         if legal_status:
-                            all_legal_statuses.add(legal_status)
-                            legal_statuses_list.append(legal_status)
+                            organization_legal_statuses.add(legal_status)
+                            organization_legal_statuses_list.append(legal_status)
                         
                         # Add customer role
                         customer_role = details.get("customer_role")
                         if customer_role:
-                            all_roles.add(customer_role)
-                            roles_list.append(customer_role)
+                            organization_roles.add(customer_role)
+                            organization_roles_list.append(customer_role)
                         
                         # Count media IDs as total violations
                         media_ids = details.get("media_ids", [])
                         risk_analysis["total_violations"] += len(media_ids)
             
             # Calculate all the totals
-            risk_analysis["total_violation_types"] = len(all_violation_types)
-            risk_analysis["total_legal_statuses"] = len(legal_statuses_list)  # Total count including duplicates
-            risk_analysis["total_legal_statuse_types"] = len(all_legal_statuses)  # Unique count
-            risk_analysis["total_roles"] = len(roles_list)  # Total count including duplicates
-            risk_analysis["total_role_type"] = len(all_roles)  # Unique count
+            risk_analysis["total_violation_types"] = len(individual_violation_types) + len(organization_violation_types)
+            risk_analysis["total_legal_statuses"] = len(individual_legal_statuses_list) + len(organization_legal_statuses_list)
+            risk_analysis["total_legal_statuse_types"] = len(individual_legal_statuses) + len(organization_legal_statuses)
+            risk_analysis["total_roles"] = len(individual_roles) + len(organization_roles)
+            risk_analysis["total_role_type"] = len(individual_roles_list) + len(organization_roles_list)
             
             # Store detailed information
             risk_analysis["details"] = {
-                "violation_types": list(all_violation_types),
-                "violation_types_list": violation_types_list,
-                "legal_statuses": list(all_legal_statuses),
-                "legal_statuses_list": legal_statuses_list,
-                "roles": list(all_roles),
-                "roles_list": roles_list,
-                "unique_violation_types_count": len(all_violation_types),
-                "unique_legal_statuses_count": len(all_legal_statuses),
-                "unique_roles_count": len(all_roles)
+                "violation_types": {
+                    'individual': individual_violation_types,
+                    'organization': organization_violation_types
+                    },
+                "violation_types_list": {
+                    'individual': individual_violation_types_list,
+                    'organization': organization_violation_types_list
+                    },
+                "legal_statuses": {
+                    'individual': individual_legal_statuses,
+                    'organization': organization_legal_statuses
+                    },
+                "legal_statuses_list": {
+                    'individual': individual_legal_statuses_list,
+                    'organization': organization_legal_statuses_list
+                    },
+                "roles": {
+                    'individual': individual_roles,
+                    'organization': organization_roles
+                    },
+                "roles_list": {
+                    'individual': individual_roles_list,
+                    'organization': organization_roles_list
+                    },
             }
             
             # Add all results to the result field

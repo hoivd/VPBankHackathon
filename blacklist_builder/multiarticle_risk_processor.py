@@ -158,7 +158,7 @@ if __name__ == "__main__":
     batch_runner = ArticleBatchRunner(new_article_processor=new_processor, rebuild_article_processor=rebuild_processor, base_dynamo=base_dynamo)
 
     context_file = 'data/contents_old.json'
-    bucket_name = "team253"
+    bucket_name = "team253vpbank"
     key = "adverse_media_data/case1.json"
 
     contents = Utils.fetch_json_from_s3(bucket_name, key)
