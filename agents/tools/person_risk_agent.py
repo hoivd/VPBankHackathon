@@ -727,8 +727,8 @@ class PersonRiskAgent:
         print(f"🔍 Xử lý truy vấn v2: {query}")
         
         # Extract person name from query
-        # person_name = self.extract_person_name_from_query(query)
-        person_name = "Trương Mỹ Lan"
+        person_name = self.extract_person_name_from_query(query)
+        # person_name = "Trương Mỹ Lan"
         if not person_name:
             return (
                 "❌ Xin lỗi, tôi không thể xác định tên người cần tìm kiếm từ truy vấn của bạn.\n\n"

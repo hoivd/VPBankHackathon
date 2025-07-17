@@ -114,8 +114,8 @@ async def process_query(request: QueryRequest):
     
     try:
         # Extract person name first
-        # person_name = agent.extract_person_name_from_query(request.query)
-        person_name = "Trương Mỹ Lan"
+        person_name = agent.extract_person_name_from_query(request.query)
+        # person_name = "Trương Mỹ Lan"
         # Process the query
         response = agent.process_query_v2(request.query)
         
