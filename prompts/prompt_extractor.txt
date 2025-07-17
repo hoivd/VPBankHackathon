@@ -91,7 +91,7 @@ list_personal_risks (key)
 "entity_id": "..." ← Lưu ý personal_id phải trùng với personal_id của cá nhân ở bước 1
 "entity_name": "...", ← tên cá nhân khớp với Bước 1
 "is_individual": true, ← Luôn là true cho cá nhân
-"violation_type": "...", ← Rửa tiền / Tài trợ khủng bố / Lừa đảo / Chiếm đoạt tài sản / Tham nhũng / Hối lộ / Vi phạm dân sự / hành chính / tranh chấp nhỏ / Không có hành vi phạm được đề cập
+"violation_type": "...", ← Rửa tiền / Tài trợ khủng bố / Lừa đảo / Chiếm đoạt tài sản / Tham nhũng / Hối lộ / Vi phạm dân sự / Hành chính / Tranh chấp nhỏ / Không có hành vi phạm được đề cập
 "customer_role": "...", ← Chủ mưu / Cầm đầu / Tổ chức thực hiện hành vi vi phạm / Tham gia / Đồng phạm / Giúp sức hoặc thực hiện một phần / Bên liên quan bị động / Bị nhắc tên nhưng không trực tiếp / Không có liên quan rõ ràng trong bài báo
 "legal_status": "...", ← Đã kết án / Đang trong quá trình điều tra / truy tố / chưa có phán quyết / Tin chưa rõ ràng / Được minh oan
 }},
