@@ -76,7 +76,7 @@ if __name__ == "__main__":
 
     # uploader.upload_file(file_path=file_path, bucket_name=bucket_name, object_key=object_key)
 
-    folder_path = "faiss_indexes/2025-07-17_16-36-59"
+    folder_path = "data/faiss_index"
     bucket_name = "team253vpbank"
     object_key_prefix = "faiss_indexes"
 

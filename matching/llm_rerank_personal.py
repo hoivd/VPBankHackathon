@@ -44,50 +44,44 @@ class LlmRerankerPersonal:
             db_personal=json.dumps(per_item, ensure_ascii=False, indent=2, default=str)
         )
 
-    def rerank(self, query: str, per_items: list[dict]) -> dict:
+    def extract_per_ids(self, answer: str) -> list[str]:
         """
-        Thực hiện rerank các per_item bằng LLM.
-        :return: dict {'per': per_item tốt nhất, 'per_id': ..., 'raw': ..., 'index': ...}
+        Trích danh sách per_id từ chuỗi có định dạng:
+        Per_id:
+        [per_id_..., per_id_..., ...]
         """
-        results = []
-        for i, item in enumerate(per_items, 1):
-            prompt = self.build_prompt(query, item)
-            try:
-                logger.info(f"🤖 Đang đánh giá cá nhân #{i} bằng LLM...")
-                print(prompt)
+        # Tìm đoạn Per_id: [ ... ] kể cả xuống dòng
+        match = re.search(r"Per_id:\s*\[(.*?)\]", answer, re.DOTALL)
+        if not match:
+            return []
 
-                answer = self.llm_manager.generate(
-                    prompt=prompt,
-                    model_type=self.model_type
-                )[0]  # chỉ lấy answer, bỏ reasoning
+        per_id_str = match.group(1)
+        per_ids = [pid.strip() for pid in per_id_str.split(",") if pid.strip()]
+        return per_ids
+    
+    def rerank(self, query: str, per_items: list[dict]) -> list[str]:
+        """
+        Gọi LLM một lần với danh sách per_items và trả về danh sách per_id được trích ra.
+        :return: List các per_id (nếu có)
+        """
+        try:
+            prompt = self.build_prompt(query, per_items)
 
-                print(answer)
+            logger.info("🤖 Đang gọi LLM để đánh giá danh sách...")
+            # print(prompt)
 
-                match = re.search(r"Per_id:\s*(\S+)", answer)
-                per_id = match.group(1) if match else "none"
+            answer = self.llm_manager.generate(
+                prompt=prompt,
+                model_type=self.model_type
+            )[0]
 
-                results.append({
-                    "per": item,
-                    "per_id": per_id,
-                    "raw": answer,
-                    "index": i - 1
-                })
+            print(answer)
+            per_ids = self.extract_per_ids(answer)
+            return per_ids
 
-            except Exception as e:
-                logger.warning(f"⚠️ Lỗi khi gọi LLM cho cá nhân #{i}: {e}")
-                results.append({
-                    "per": item,
-                    "per_id": "none",
-                    "raw": str(e),
-                    "index": i - 1
-                })
-
-        # Trả về cá nhân đầu tiên có per_id khác "none", nếu có
-        for r in results:
-            if r["per_id"].lower() != "none":
-                return r
-
-        return {"per_id": "none"}
+        except Exception as e:
+            logger.warning(f"⚠️ Lỗi khi gọi LLM: {e}")
+            return []
 
 if __name__ == "__main__":
     # ===== Load prompt template từ file =====
@@ -96,11 +90,11 @@ if __name__ == "__main__":
     print(prompt_template)
 
     # ===== AWS Bedrock Model =====
-    AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
-    AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
+    AWS_ACCESS_KEY = Utils.load_api_key_from_env("NEW_AWS_ACCESS_KEY")
+    AWS_SECRET_KEY = Utils.load_api_key_from_env("NEW_AWS_SECRET_KEY")
     REGION = config.AWS_VIRGINA_REGION
     print(REGION)
-    MODEL_ID = config.CLAUDE_30_HAIKU_ON_DEMAND_VIRGINA_MODEL_ID  
+    MODEL_ID = 'arn:aws:bedrock:us-east-1:538830382271:inference-profile/us.deepseek.r1-v1:0'  
 
     llm_manager = BedrockModelManager(
         aws_access_key_id=AWS_ACCESS_KEY,
@@ -110,20 +104,78 @@ if __name__ == "__main__":
     )
 
     # ===== Dữ liệu test =====
-    query = "Một người nữ tên Phương Hằng, 53 tuổi, doanh nhân tại TP.HCM, giữ chức tổng giám đốc."
-    per_item = {
-        "full_name": "Nguyễn Phương Linh",
-        "per_id": "P0001",
-        "birth_year_or_age": "53",
-        "gender": "Female",
-        "occupation_or_position": "Tổng giám đốc",
-        "organization": "Công ty Cổ phần Đại Nam",
-        "hometown_or_residence": None,
-        "personal_relationships": "Chủ mưu vụ án, người tổ chức livestream"
-    }
+    query = """Trương Mỹ Lan, chủ tịch tập đoàn Vạn Thịnh Phát"""
+
+    per_item = [
+                    {
+                    "organization": "Tập đoàn Vạn Thịnh Phát",
+                    "created_at": "1752686701534958",
+                    "per_id": "per_id_1752683428698187",
+                    "full_name": "Trương Mỹ Lan",
+                    "occupation_or_position": "Chủ tịch Tập đoàn Vạn Thịnh Phát",
+                    "hometown_or_residence": None,
+                    "gender": "Female",
+                    "personal_relationships": "Bị cáo chính trong vụ án Vạn Thịnh Phát; Cổ đông lớn, người nắm giữ 91.5% cổ phần SCB; Chỉ đạo các bị cáo Đinh Văn Thành, Bùi Anh Dũng, Võ Tấn Hoàng Văn, Tạ Chiêu Trung, Trương Khánh Hoàng, Trần Thị Mỹ Dung",
+                    "birth_year_or_age": "68"
+                    },
+                    {
+                    "organization": "Tập đoàn Vạn Thịnh Phát",
+                    "created_at": "1752686796606635",
+                    "per_id": "per_id_1752683428701219",
+                    "full_name": "Anh Quân",
+                    "occupation_or_position": "Giảng viên đại học",
+                    "hometown_or_residence": None,
+                    "gender": "Female",
+                    "personal_relationships": "Bị cáo chính trong vụ án Vạn Thịnh Phát; Cổ đông lớn, người nắm giữ 91.5% cổ phần SCB; Chỉ đạo các bị cáo Đinh Văn Thành, Bùi Anh Dũng, Võ Tấn Hoàng Văn, Tạ Chiêu Trung, Trương Khánh Hoàng, Trần Thị Mỹ Dung",
+                    "birth_year_or_age": "68"
+                    },
+                    {
+                    "organization": "Tập đoàn Vạn Thịnh Phát",
+                    "created_at": "1752683993756702",
+                    "per_id": "per_id_1752683967548635",
+                    "full_name": "Trương Mỹ Lan",
+                    "occupation_or_position": "Chủ tịch hội đồng quản trị",
+                    "hometown_or_residence": "TP Hồ Chí Minh",
+                    "gender": "Female",
+                    "personal_relationships": "Cổ đông lớn, nắm giữ gần tuyệt đối cổ phần Ngân hàng SCB; Chỉ đạo các bị cáo Đinh Văn Thành, Bùi Anh Dũng, Võ Tấn Hoàng Văn, Tạ Chiêu Trung, Trương Khánh Hoàng, Trần Thị Mỹ Dung",
+                    "birth_year_or_age": "68"
+                    },
+                    {
+                    "organization": "Tập đoàn Vạn Thịnh Phát",
+                    "created_at": "1752686305988720",
+                    "per_id": "per_id_1752686292652654",
+                    "full_name": "Trương Mỹ Lan",
+                    "occupation_or_position": "Chủ tịch Tập đoàn Vạn Thịnh Phát",
+                    "hometown_or_residence": None,
+                    "gender": "Female",
+                    "personal_relationships": "Cổ đông lớn nắm 91.5% cổ phần SCB; Chỉ đạo các bị cáo Đinh Văn Thành, Bùi Anh Dũng, Võ Tấn Hoàng Văn, Tạ Chiêu Trung, Trương Khánh Hoàng, Trần Thị Mỹ Dung",
+                    "birth_year_or_age": "68"
+                    },
+                    {
+                    "organization": "Trường Đại học Luật TP HCM",
+                    "created_at": "1752685729911490",
+                    "per_id": "per_id_1752683428700044",
+                    "full_name": "Đặng Anh Quân",
+                    "occupation_or_position": "Tiến sĩ luật, Giảng viên",
+                    "hometown_or_residence": None,
+                    "gender": "Male",
+                    "personal_relationships": "Đồng phạm, cố vấn pháp lý trong các buổi livestream của bà Nguyễn Phương Hằng",
+                    "birth_year_or_age": "43"
+                    },
+                    {
+                    "organization": "Ngân hàng SCB",
+                    "created_at": "1752686604600630",
+                    "per_id": "per_id_1752686100029686",
+                    "full_name": "Trần Thị Mỹ Dung",
+                    "occupation_or_position": None,
+                    "hometown_or_residence": "phường Chương Dương, quận Hoàn Kiếm, thành phố Hà Nội",
+                    "gender": "Female",
+                    "personal_relationships": "Đồng phạm giúp sức Trương Mỹ Lan rút tiền trái phép",
+                    "birth_year_or_age": "1967"
+                    }
+    ]
 
     # ===== Khởi tạo reranker và chạy thử =====
-    reranker = LlmRerankerPersonal(llm_manager=llm_manager, model_type="claude", prompt_template=prompt_template)
+    reranker = LlmRerankerPersonal(llm_manager=llm_manager, model_type="deepseek", prompt_template=prompt_template)
     result = reranker.rerank(query=query, per_items=[per_item])
     print(result)
-    print("Per_id được chọn:", result["per_id"])

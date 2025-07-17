@@ -12,7 +12,7 @@ Hướng dẫn so sánh:
 Độ chính xác: Một sự trùng khớp hoàn hảo không bắt buộc. Hãy tìm kiếm sự tương đồng mạnh mẽ, ngay cả khi có sự khác biệt nhỏ về cách diễn đạt hoặc dữ liệu bị thiếu ở một trong hai bên. Ví dụ, "Kỹ sư phần mềm" và "Kỹ sư phát triển" có thể được coi là tương đồng. "Hà Nội" và "TP. Hà Nội" cũng vậy.
 Mức độ nghi ngờ: Nếu bạn cảm thấy và nghi ngờ rằng Khách hàng mới và một mục trong blacklist có thể là cùng một người dựa trên các thông tin có sẵn, hãy coi đó là một sự trùng khớp tiềm năng.
 Các trường bổ sung: Sử dụng position của khách hàng mới để so sánh với occupation_or_position của khách hàng cũ nếu occupation không có hoặc không khớp rõ ràng. Sử dụng personal_relationships của blacklist để cung cấp thêm ngữ cảnh cho quyết định của bạn (nhưng không trực tiếp dùng để so sánh).
-Định dạng đầu ra:
+Định dạng đầu ra:2
 Nếu bạn nghi ngờ Khách hàng mới trùng khớp với một mục trong blacklist, hãy trả về personal_id của mục đó.
 Mẫu đầu ra mẫu bao gồm cả dòng Per_id:
 Per_id: per_id_1752683428700546

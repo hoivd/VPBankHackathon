@@ -65,7 +65,7 @@ class PersonMatcherFAISS:
 if __name__ == "__main__":
     # ==== Bước 1: Cấu hình ====
     model_name = config.EMBEDDING_MODEL_NAME
-    faiss_index_path = 'data/personal_faiss_index'
+    faiss_index_path = 'data/faiss_index/personal_faiss_index'
 
     # ==== Bước 2: Khởi tạo các thành phần chính ====
     base_embedder = ModelEmbedder(model_name=model_name)
@@ -80,7 +80,7 @@ if __name__ == "__main__":
 
     REGION = config.AWS_REGION
     REGION_MODEL = config.AWS_VIRGINA_REGION
-    DEFAULT_MODEL_ID = 'arn:aws:bedrock:us-east-1:538830382271:inference-profile/us.anthropic.claude-3-haiku-20240307-v1:0'
+    DEFAULT_MODEL_ID = 'arn:aws:bedrock:us-east-1:538830382271:inference-profile/us.deepseek.r1-v1:0'
 
     base_dynamo = BaseDynamoDB(region_name=REGION, access_key=AWS_ACCESS_KEY, secret_key=AWS_SECRET_KEY)
     dynamo_query = DynamoQuery(base_dynamo.dynamodb)
@@ -96,11 +96,11 @@ if __name__ == "__main__":
         default_model_id=DEFAULT_MODEL_ID
     )
 
-    prompt_path = './prompts/prompt_compare_query_personal.txt'
+    prompt_path = './prompts/rerank_personal.txt'
     prompt_template = Utils.load_text(prompt_path)
     print(prompt_template)
 
-    reranker = LlmRerankerPersonal(llm_manager=llm_manager, model_type="claude", prompt_template=prompt_template)
+    reranker = LlmRerankerPersonal(llm_manager=llm_manager, model_type="deepseek", prompt_template=prompt_template)
 
 
     # ==== Khởi tạo matcher với thông tin đầy đủ ====
@@ -113,7 +113,7 @@ if __name__ == "__main__":
     )
 
     # ==== Tìm kiếm ====
-    query = """Anh Quân, là người đàn ông 43 tuổi, từng là giảng viên đại học, không phải là chủ tịch"""
+    query = """Trương Mỹ Lan, chủ tịch tập đoàn Vạn Thịnh Phát"""
     results = matcher.match_full_info(query, top_k=10)
 
     print("✅ Kết quả khớp cá nhân đầy đủ:")
@@ -126,4 +126,8 @@ if __name__ == "__main__":
     best_match = matcher.rerank_by_llm(query, results)
 
     print("🎯 Kết quả LLM đánh giá:")
-    print("Per_id:", best_match["per_id"])
+     
+    if best_match:
+        print("Per_id:", best_match[0])
+    else:
+        print("Không tìm thấy kết quả phù hợp nào.")
