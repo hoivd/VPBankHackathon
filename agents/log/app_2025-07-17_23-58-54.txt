@@ -1,0 +1,9 @@
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-embedder.model_embedder> - KHOI TAO MO HINH EMBEDDER THANH CONG ./embedder/models/phobert_base_v2_local. SU DUNG DEVICE cuda
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình Bedrock...None
+<DEBUG-llm_model.bedrock_manager> - Calling Bedrock model anthropic.claude-instant-v1
+<DEBUG-llm_model.bedrock_manager> - Conten [{'type': 'text', 'text': 'Jingwei Dong'}]
+<DEBUG-llm_model.bedrock_manager> - [generate] ✅ Đã nhận phản hồi từ mô hình anthropic.claude-instant-v1 mà không có reasoning.
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<DEBUG-utils> - [load_text] ✅ Đã load file văn bản: ./prompts/rerank_personal.txt
+<INFO-matching.personal_matching> - ⚙️ Đang tạo embedding cho query...

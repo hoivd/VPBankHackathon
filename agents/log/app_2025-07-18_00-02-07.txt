@@ -1,0 +1,36 @@
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-embedder.model_embedder> - KHOI TAO MO HINH EMBEDDER THANH CONG ./embedder/models/phobert_base_v2_local. SU DUNG DEVICE cuda
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình Bedrock...None
+<DEBUG-llm_model.bedrock_manager> - Calling Bedrock model anthropic.claude-instant-v1
+<DEBUG-llm_model.bedrock_manager> - Conten [{'type': 'text', 'text': 'Jingwei Dong'}]
+<DEBUG-llm_model.bedrock_manager> - [generate] ✅ Đã nhận phản hồi từ mô hình anthropic.claude-instant-v1 mà không có reasoning.
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<DEBUG-utils> - [load_text] ✅ Đã load file văn bản: ./prompts/rerank_personal.txt
+<INFO-matching.personal_matching> - ⚙️ Đang tạo embedding cho query...
+<INFO-embedder.personal_embedder> - ⏳ Đang encode cá nhân (1 cá nhân)
+<INFO-embedder.model_embedder> - Thoi gian embedd 0.69 giay
+<INFO-embedder.model_embedder> - Encode THANH CONG
+<INFO-embedder.personal_embedder> - ✅ Đã encode xong các cá nhân
+<INFO-matching.personal_matching> - 🔍 Đang tìm kiếm trong FAISS index...
+<INFO-matching.personal_matching> - 📌 Tìm thấy các FAISS ID: [100398, 100400, 100454, 100450, 100415, 100095, 100453, 100299, 100298, 100375]
+<INFO-matching.personal_matching> - 🔗 Đang ánh xạ personal_embedd_id → per_id...
+<INFO-matching.llm_rerank_personal> - 🤖 Đang gọi LLM để đánh giá danh sách...
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình DeepSeek...us.deepseek.r1-v1:0
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Đã nhận phản hồi: Per_id:
+[]
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Reasoning: Okay, let's see. The new customer is Jingwei Dong from Hong Kong. I need to compare this with the entries in the blacklist.
+
+First, looking at the full name. All the entries in the blacklist have names like Trương Mỹ Lan, Nguyễn Kim Anh, George ROSSI, Đặng Anh Quân. None of these match Jingwei Dong. The name Jingwei Dong seems to be Chinese, while the names in the blacklist are Vietnamese or Western. So the full name doesn't match any entry.
+
+Next, age or birth year. The new customer's age isn't provided, so I can't compare that. The blacklist entries have birth years like 68, 1967, 1974, 43. Without the new customer's age, this field isn't helpful.
+
+Gender isn't specified for the new customer either. The blacklist entries have Female, Male, but since we don't know the new customer's gender, this can't be used for comparison.
+
+Organization and occupation: The new customer's organization isn't mentioned. The blacklist entries have organizations like Tập đoàn Vạn Thịnh Phát, Trường Đại học Luật TP HCM, or null. Since the new customer's details don't include an organization or occupation, there's nothing to match here.
+
+Residence: The new customer is from Hong Kong. The blacklist entries have residences like TP Hồ Chí Minh, Hà Nội, Gorky, Russia. Hong Kong doesn't match any of these locations. Even if there's a slight variation in city names, Hong Kong is a different place altogether.
+
+Personal relationships in the blacklist entries mention various legal cases, associates, or aliases, but the new customer doesn't have any provided information in this area. So this field isn't useful for comparison.
+
+Since none of the key fields (name, location, organization, age, gender) show any similarity, there's no potential match. The only possible overlap could be if there's a name variation, but Jingwei Dong doesn't resemble any names in the blacklist. Therefore, no per_id matches.
+</think>

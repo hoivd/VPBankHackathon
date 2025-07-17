@@ -1,0 +1,6 @@
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình DeepSeek...us.deepseek.r1-v1:0
+<WARNING-llm_model.bedrock_manager> - [DeepSeek] Thử lần 1 thất bại: An error occurred (ValidationException) when calling the InvokeModel operation: The provided model identifier is invalid.
+<WARNING-llm_model.bedrock_manager> - [DeepSeek] Thử lần 2 thất bại: An error occurred (ValidationException) when calling the InvokeModel operation: The provided model identifier is invalid.
+<WARNING-llm_model.bedrock_manager> - [DeepSeek] Thử lần 3 thất bại: An error occurred (ValidationException) when calling the InvokeModel operation: The provided model identifier is invalid.
+<WARNING-llm_model.bedrock_manager> - [DeepSeek] Thử lần 4 thất bại: An error occurred (ValidationException) when calling the InvokeModel operation: The provided model identifier is invalid.

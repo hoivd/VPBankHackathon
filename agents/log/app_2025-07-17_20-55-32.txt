@@ -1,0 +1,40 @@
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình Bedrock...None
+<DEBUG-llm_model.bedrock_manager> - Calling Bedrock model anthropic.claude-instant-v1
+<DEBUG-llm_model.bedrock_manager> - Conten [{'type': 'text', 'text': 'Quân'}]
+<DEBUG-llm_model.bedrock_manager> - [generate] ✅ Đã nhận phản hồi từ mô hình anthropic.claude-instant-v1 mà không có reasoning.
+<INFO-embedder.model_embedder> - KHOI TAO MO HINH EMBEDDER THANH CONG .\embedder\models\phobert_base_v2_local. SU DUNG DEVICE cuda
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<DEBUG-utils> - [load_text] ✅ Đã load file văn bản: ./prompts/rerank_personal.txt
+<INFO-matching.personal_matching> - ⚙️ Đang tạo embedding cho query...
+<INFO-embedder.personal_embedder> - ⏳ Đang encode cá nhân (1 cá nhân)
+<INFO-embedder.model_embedder> - Thoi gian embedd 0.30 giay
+<INFO-embedder.model_embedder> - Encode THANH CONG
+<INFO-embedder.personal_embedder> - ✅ Đã encode xong các cá nhân
+<INFO-matching.personal_matching> - 🔍 Đang tìm kiếm trong FAISS index...
+<INFO-matching.personal_matching> - 📌 Tìm thấy các FAISS ID: [100398, 100400, 100450, 100454, 100095, 100415, 100375, 100453, 100437, 100457]
+<INFO-matching.personal_matching> - 🔗 Đang ánh xạ personal_embedd_id → per_id...
+<INFO-matching.llm_rerank_personal> - 🤖 Đang gọi LLM để đánh giá danh sách...
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình DeepSeek...us.deepseek.r1-v1:0
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Đã nhận phản hồi: Per_id:
+[per_id_1752683428700044]
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Reasoning: Okay, let's tackle this problem. So, I need to compare the new customer information with the entries in the blacklist to see if there's a potential match. The new customer is Anh Quân, who is a lecturer at a university. 
+
+First, I'll look at the key fields: full name, age, gender, organization, occupation, and residence. The new customer's full name is "Anh Quân". In the blacklist, there's an entry with the full name "Đặng Anh Quân". The first name "Quân" matches, but the last name is "Đặng" in the blacklist versus just "Anh" in the new customer. Wait, actually, in Vietnamese names, "Anh Quân" could be the given name, and the surname might be different. The blacklist entry has "Đặng Anh Quân", so the full name is Đặng as the surname and Anh Quân as the given name. The new customer's name is listed as "Anh Quân", which might be missing the surname or perhaps it's a different structure. But since Vietnamese names can sometimes be written with the surname first or last, but typically surname comes first. So "Anh Quân" might be the given name, and the surname is missing. However, the blacklist entry has "Đặng Anh Quân", so the given name part is "Anh Quân", which matches the new customer's full name. That's a possible match, but the surname is different. Hmm, maybe the new customer's full name is written without the surname, or maybe it's a different person.
+
+Next, occupation: the new customer is a "giảng viên trường đại học" (university lecturer). The blacklist entry for Đặng Anh Quân has the occupation as "Tiến sĩ luật, Giảng viên" (PhD in Law, Lecturer). So the occupation matches exactly. The organization for the blacklist entry is "Trường Đại học Luật TP HCM" (Ho Chi Minh City University of Law). The new customer's organization is just "trường đại học" (university), which is a general term. Since the blacklist entry specifies a particular university, but the new customer's organization is more generic, but the occupation matches. 
+
+Age: The new customer's age isn't provided, but the blacklist entry for Đặng Anh Quân has a birth year or age of "43". If the new customer's age isn't given, we can't compare, but since the instructions say to consider even if data is missing on one side, this might not be a problem.
+
+Gender: The new customer's gender isn't specified, but the blacklist entry for Đặng Anh Quân is "Male". If the new customer's gender isn't provided, we can't compare, but again, missing data is allowed.
+
+Residence: The new customer doesn't have a residence listed, and the blacklist entry for Đặng Anh Quân has hometown_or_residence as null. So no conflict there.
+
+Other entries in the blacklist: The other entries are mostly about Trương Mỹ Lan and others involved in the Vạn Thịnh Phát case, which don't match the name or occupation. The other entry for Nguyễn Kim Anh is a female with a different occupation. Trần Thị Mỹ Dung and Võ Tấn Hoàng Văn are also different names and occupations.
+
+So the main potential match is with Đặng Anh Quân. The full name is similar but not exact. The given name "Anh Quân" matches, but the surname "Đặng" is present in the blacklist entry. However, in Vietnamese, it's possible that the new customer's full name is written without the surname, or perhaps it's a different surname. But given that the occupation is a perfect match (both are lecturers at a university), and the name is very similar, this could be a potential match. The personal relationships field for Đặng Anh Quân mentions being an accomplice and legal advisor in livestreams by Nguyễn Phương Hằng. The new customer's info doesn't mention this, but the instructions say to use personal_relationships for context but not to compare directly. 
+
+Therefore, based on the name similarity (partial match) and exact occupation match, even though the surname differs, it's possible that "Anh Quân" is a shortened or alternative form of "Đặng Anh Quân". The organization is a university, which aligns with the blacklist entry's specific law university. Given the instructions to consider even minor differences and prioritize potential matches, this seems like a possible match. 
+
+Other entries don't have matching names or occupations. So the per_id for Đặng Anh Quân is per_id_1752683428700044. That's the only possible match.
+</think>

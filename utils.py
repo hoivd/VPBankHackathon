@@ -98,7 +98,7 @@ class Utils:
         if not api_key:
             raise EnvironmentError(f"⚠️ Không tìm thấy biến môi trường: {key_name}")
         
-        logger.debug(f"[load_api_key_from_env] ✅ Đã load key '{key_name}' từ môi trường")
+        # logger.debug(f"[load_api_key_from_env] ✅ Đã load key '{key_name}' từ môi trường")
         return api_key
     
     @staticmethod

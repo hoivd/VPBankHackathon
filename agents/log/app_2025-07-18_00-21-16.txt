@@ -1,0 +1,81 @@
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-embedder.model_embedder> - KHOI TAO MO HINH EMBEDDER THANH CONG D:\VPBankHackathon\embedder\models\phobert_base_v2_local. SU DUNG DEVICE cuda
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình Bedrock...None
+<DEBUG-llm_model.bedrock_manager> - Calling Bedrock model anthropic.claude-instant-v1
+<DEBUG-llm_model.bedrock_manager> - Conten [{'type': 'text', 'text': 'Võ Quang Nhật'}]
+<DEBUG-llm_model.bedrock_manager> - [generate] ✅ Đã nhận phản hồi từ mô hình anthropic.claude-instant-v1 mà không có reasoning.
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<DEBUG-utils> - [load_text] ✅ Đã load file văn bản: D:/VPBankHackathon/prompts/rerank_personal.txt
+<INFO-matching.personal_matching> - ⚙️ Đang tạo embedding cho Võ Quang Nhật, là người đàn ông ở Quận Thuận Hóa, TP Huế...
+<INFO-embedder.personal_embedder> - ⏳ Đang encode cá nhân (1 cá nhân)
+<INFO-embedder.model_embedder> - Thoi gian embedd 0.41 giay
+<INFO-embedder.model_embedder> - Encode THANH CONG
+<INFO-embedder.personal_embedder> - ✅ Đã encode xong các cá nhân
+<INFO-matching.personal_matching> - 🔍 Đang tìm kiếm trong FAISS index...
+<INFO-matching.personal_matching> - 📌 Tìm thấy các FAISS ID: [100398, 100400, 100450, 100454, 100095, 100415, 100453, 100375, 100437, 100407]
+<INFO-matching.personal_matching> - 🔗 Đang ánh xạ personal_embedd_id → per_id...
+<INFO-matching.llm_rerank_personal> - 🤖 Đang gọi LLM để đánh giá danh sách...
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình DeepSeek...us.deepseek.r1-v1:0
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Đã nhận phản hồi: Per_id:
+[]
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Reasoning: Okay, let's tackle this problem. So, I need to compare the new customer's information with the entries in the blacklist to see if there's a potential match. The new customer is Võ Quang Nhật, a man from Quận Thuận Hóa, TP Huế. 
+
+First, I'll look at the key fields mentioned: full name, age/birth year, gender, organization, occupation/position, and residence. The new customer's name is Võ Quang Nhật. Let me check each entry in the blacklist to see if any names are similar. Scanning through the list, all the entries have names like Trương Mỹ Lan, Nguyễn Kim Anh, Đặng Anh Quân, Trần Thị Mỹ Dung, Nguyễn Đức Thiên. None of these names match Võ Quang Nhật. The first names and surnames are different.
+
+Next, gender: the new customer is male. In the blacklist, most entries are female except for Đặng Anh Quân and Nguyễn Đức Thiên. So maybe those two could be candidates. Let's check them. 
+
+For Đặng Anh Quân: his residence is null, organization is a university in TP HCM. The new customer is from Huế. No overlap there. Occupation is a lecturer and legal advisor. The new customer's occupation isn't provided, so not much to compare. 
+
+Nguyễn Đức Thiên: male, but no residence info. His personal relationships mention connections to other people, but nothing related to Huế or similar details. 
+
+Residence area: the new customer is in Quận Thuận Hóa, TP Huế. Looking at the blacklist entries, Trần Thị Mỹ Dung and Nguyễn Kim Anh have residence in Hà Nội. Others are in TP HCM or null. No one is listed from Huế. 
+
+Age or birth year: the new customer's age isn't provided. The blacklist entries have birth years like 68 (which would be around 1955-1956 if current year is 2023), 1967, 43, etc. Since the new customer's age is unknown, this field can't be used to confirm or rule out a match.
+
+Organization and occupation: The new customer's organization isn't mentioned. The blacklist entries have various organizations, but without info on the new customer's job, this is hard to compare. 
+
+Personal relationships: The instructions say to use this for context but not directly compare. The new customer doesn't have any provided relationships here. 
+
+So, considering all factors: the name doesn't match any in the blacklist. The gender matches two entries, but their other details (residence, organization) don't align. There's no strong similarity in any of the key fields. Therefore, no potential matches found.
+</think>
+<INFO-embedder.model_embedder> - KHOI TAO MO HINH EMBEDDER THANH CONG D:\VPBankHackathon\embedder\models\phobert_base_v2_local. SU DUNG DEVICE cuda
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình Bedrock...None
+<DEBUG-llm_model.bedrock_manager> - Calling Bedrock model anthropic.claude-instant-v1
+<DEBUG-llm_model.bedrock_manager> - Conten [{'type': 'text', 'text': 'Vĩnh Hội'}]
+<DEBUG-llm_model.bedrock_manager> - [generate] ✅ Đã nhận phản hồi từ mô hình anthropic.claude-instant-v1 mà không có reasoning.
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<DEBUG-utils> - [load_text] ✅ Đã load file văn bản: D:/VPBankHackathon/prompts/rerank_personal.txt
+<INFO-matching.personal_matching> - ⚙️ Đang tạo embedding cho Vĩnh Hội, là người đàn ông ở Quận Thuận Hóa, TP Huế...
+<INFO-embedder.personal_embedder> - ⏳ Đang encode cá nhân (1 cá nhân)
+<INFO-embedder.model_embedder> - Thoi gian embedd 0.04 giay
+<INFO-embedder.model_embedder> - Encode THANH CONG
+<INFO-embedder.personal_embedder> - ✅ Đã encode xong các cá nhân
+<INFO-matching.personal_matching> - 🔍 Đang tìm kiếm trong FAISS index...
+<INFO-matching.personal_matching> - 📌 Tìm thấy các FAISS ID: [100398, 100400, 100450, 100454, 100095, 100415, 100453, 100375, 100437, 100406]
+<INFO-matching.personal_matching> - 🔗 Đang ánh xạ personal_embedd_id → per_id...
+<INFO-matching.llm_rerank_personal> - 🤖 Đang gọi LLM để đánh giá danh sách...
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình DeepSeek...us.deepseek.r1-v1:0
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Đã nhận phản hồi: Per_id:
+[]
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Reasoning: Okay, let's tackle this problem. So, I need to compare the new customer's information with the entries in the blacklist to see if there's a potential match. The new customer is Vĩnh Hội, a man living in Quận Thuận Hóa, TP Huế. 
+
+First, I'll look at the key fields mentioned in the guidelines: full name, age/birth year, gender, organization, occupation/position, and residence. The new customer's name is Vĩnh Hội, male, from Thuận Hóa district, Huế. 
+
+Looking through the blacklist entries:
+
+1. The first four entries are all Trương Mỹ Lan, female, from TP HCM or unspecified, age 68. The gender and name don't match. So no match here.
+
+2. Next is Nguyễn Kim Anh, female, from Hanoi. Gender and name don't match. Residence is different too. Not a match.
+
+3. Đặng Anh Quân, male, works at a university in HCM City. Name doesn't match, and residence isn't provided. Probably not a match.
+
+4. Trần Thị Mỹ Dung, female, from Hanoi. Name and gender don't match.
+
+5. Trần Văn Long, male. Name doesn't match, and no residence info. 
+
+So none of the entries have the name Vĩnh Hội. The gender is male, which matches some entries, but the names are all different. The residence of the new customer is in Huế, but the blacklist entries have residences in HCM City, Hanoi, or none. No overlap there. 
+
+No matches in terms of name, age isn't provided for the new customer, so can't compare that. Occupation isn't given for the new customer either. 
+
+Therefore, there's no strong similarity or potential match found. The answer should be an empty list.
+</think>

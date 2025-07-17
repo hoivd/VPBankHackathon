@@ -1,0 +1,32 @@
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình Bedrock...None
+<DEBUG-llm_model.bedrock_manager> - Calling Bedrock model anthropic.claude-instant-v1
+<DEBUG-llm_model.bedrock_manager> - Conten [{'type': 'text', 'text': 'Jingwei Dong'}]
+<DEBUG-llm_model.bedrock_manager> - [generate] ✅ Đã nhận phản hồi từ mô hình anthropic.claude-instant-v1 mà không có reasoning.
+<INFO-embedder.model_embedder> - KHOI TAO MO HINH EMBEDDER THANH CONG embedder\models\phobert_base_v2_local. SU DUNG DEVICE cuda
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<DEBUG-utils> - [load_text] ✅ Đã load file văn bản: ./prompts/rerank_personal.txt
+<INFO-matching.personal_matching> - ⚙️ Đang tạo embedding cho query...
+<INFO-embedder.personal_embedder> - ⏳ Đang encode cá nhân (1 cá nhân)
+<INFO-embedder.model_embedder> - Thoi gian embedd 0.39 giay
+<INFO-embedder.model_embedder> - Encode THANH CONG
+<INFO-embedder.personal_embedder> - ✅ Đã encode xong các cá nhân
+<INFO-matching.personal_matching> - 🔍 Đang tìm kiếm trong FAISS index...
+<INFO-matching.personal_matching> - 📌 Tìm thấy các FAISS ID: [100450, 100400, 100398, 100454, 100095, 100415, 100453, 100375, 100406, 100437]
+<INFO-matching.personal_matching> - 🔗 Đang ánh xạ personal_embedd_id → per_id...
+<INFO-matching.llm_rerank_personal> - 🤖 Đang gọi LLM để đánh giá danh sách...
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình DeepSeek...us.deepseek.r1-v1:0
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Đã nhận phản hồi: Per_id:
+[]
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Reasoning: Okay, let's see. I need to compare the new customer information with the entries in the blacklist. The new customer is Jingwei Dong, from Hanoi. First, I'll check the full names in the blacklist. All the entries have Vietnamese names like Trương Mỹ Lan, Nguyễn Kim Anh, Đặng Anh Quân, Trần Văn Long, Trần Thị Mỹ Dung. The new customer's name is Jingwei Dong, which sounds Chinese. So the full names don't match any in the list.
+
+Next, check the hometown or residence. The new customer is from Hanoi. Looking at the blacklist, Trần Thị Mỹ Dung has a residence in "phường Chương Dương, quận Hoàn Kiếm, thành phố Hà Nội", which is Hanoi. Nguyễn Kim Anh also has a hometown in the same area. But their names are different from Jingwei Dong. The others either have no hometown info or are from HCM City. 
+
+Gender: The new customer's gender isn't provided, but the two entries in Hanoi are female. However, the name Jingwei Dong could be male or female, but without gender info, it's hard to use that as a factor.
+
+Age or birth year: The new customer doesn't have age info. The entries in Hanoi (Nguyễn Kim Anh and Trần Thị Mỹ Dung) have birth years around 1967, making them around 57 years old now (assuming current year is 2024). But without the new customer's age, this can't be compared.
+
+Occupation or organization: The new customer's occupation isn't given. The Hanoi entries have different organizations or none. 
+
+Since the name is completely different (Chinese vs. Vietnamese) and the only commonality is the residence in Hanoi, but that's not enough to consider a match. The personal relationships in the blacklist entries don't link to any Jingwei Dong. So no strong similarities. Therefore, no match.
+</think>

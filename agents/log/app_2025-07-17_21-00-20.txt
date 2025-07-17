@@ -1,0 +1,30 @@
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình Bedrock...None
+<DEBUG-llm_model.bedrock_manager> - Calling Bedrock model anthropic.claude-instant-v1
+<DEBUG-llm_model.bedrock_manager> - Conten [{'type': 'text', 'text': 'Quân'}]
+<DEBUG-llm_model.bedrock_manager> - [generate] ✅ Đã nhận phản hồi từ mô hình anthropic.claude-instant-v1 mà không có reasoning.
+<INFO-embedder.model_embedder> - KHOI TAO MO HINH EMBEDDER THANH CONG .\embedder\models\phobert_base_v2_local. SU DUNG DEVICE cuda
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<DEBUG-utils> - [load_text] ✅ Đã load file văn bản: ./prompts/rerank_personal.txt
+<INFO-matching.personal_matching> - ⚙️ Đang tạo embedding cho query...
+<INFO-embedder.personal_embedder> - ⏳ Đang encode cá nhân (1 cá nhân)
+<INFO-embedder.model_embedder> - Thoi gian embedd 0.32 giay
+<INFO-embedder.model_embedder> - Encode THANH CONG
+<INFO-embedder.personal_embedder> - ✅ Đã encode xong các cá nhân
+<INFO-matching.personal_matching> - 🔍 Đang tìm kiếm trong FAISS index...
+<INFO-matching.personal_matching> - 📌 Tìm thấy các FAISS ID: [100398, 100400, 100450, 100454, 100095, 100415, 100375, 100453, 100437, 100457]
+<INFO-matching.personal_matching> - 🔗 Đang ánh xạ personal_embedd_id → per_id...
+<INFO-matching.llm_rerank_personal> - 🤖 Đang gọi LLM để đánh giá danh sách...
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình DeepSeek...us.deepseek.r1-v1:0
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Đã nhận phản hồi: Per_id:
+[per_id_1752683428700044]
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Reasoning: Okay, let's tackle this problem. So, I need to compare the new customer information with the existing blacklist to see if there's a potential match. The new customer is Anh Quân, a university lecturer. Let's look at the blacklist entries one by one.
+
+First, the majority of the entries are about Trương Mỹ Lan and others related to the Vạn Thịnh Phát scandal. Their names don't match Anh Quân, and their occupations are things like Chairman of the corporation, which is different from a university lecturer. The gender for those entries is female, while Anh Quân is a male name. So those are probably not matches.
+
+Looking further down, there's an entry for Đặng Anh Quân. The full name here is Đặng Anh Quân, which includes the first name Quân, same as the new customer. The occupation is "Tiến sĩ luật, Giảng viên" which translates to Doctor of Law, Lecturer. The new customer's occupation is "giảng viên trường đại học" (university lecturer). That's a strong match in both name and occupation. The gender is male, which matches. The organization is "Trường Đại học Luật TP HCM" (Ho Chi Minh City University of Law), which aligns with being a university lecturer. The birth year or age is 43, but the new customer doesn't provide an age, so that's not a conflicting point. 
+
+Other entries like Nguyễn Kim Anh or Trần Thị Mỹ Dung have different names and occupations that don't relate to being a lecturer. The personal relationships field for Đặng Anh Quân mentions being an accomplice and legal advisor in livestreams with Nguyễn Phương Hằng, but that's additional context and not part of the direct comparison. 
+
+Since the name, occupation, and gender all align closely, even though the full name is Đặng Anh Quân versus just Anh Quân, the similarity is strong enough to consider a potential match. The middle name might be omitted or not provided in the new customer's info. Therefore, the per_id for Đặng Anh Quân is per_id_1752683428700044.
+</think>

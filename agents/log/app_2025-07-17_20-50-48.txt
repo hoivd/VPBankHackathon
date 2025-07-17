@@ -1,0 +1,40 @@
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình Bedrock...None
+<DEBUG-llm_model.bedrock_manager> - Calling Bedrock model anthropic.claude-instant-v1
+<DEBUG-llm_model.bedrock_manager> - Conten [{'type': 'text', 'text': 'Quân'}]
+<DEBUG-llm_model.bedrock_manager> - [generate] ✅ Đã nhận phản hồi từ mô hình anthropic.claude-instant-v1 mà không có reasoning.
+<INFO-embedder.model_embedder> - KHOI TAO MO HINH EMBEDDER THANH CONG .\embedder\models\phobert_base_v2_local. SU DUNG DEVICE cuda
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<DEBUG-utils> - [load_text] ✅ Đã load file văn bản: ./prompts/rerank_personal.txt
+<INFO-matching.personal_matching> - ⚙️ Đang tạo embedding cho query...
+<INFO-embedder.personal_embedder> - ⏳ Đang encode cá nhân (1 cá nhân)
+<INFO-embedder.model_embedder> - Thoi gian embedd 0.31 giay
+<INFO-embedder.model_embedder> - Encode THANH CONG
+<INFO-embedder.personal_embedder> - ✅ Đã encode xong các cá nhân
+<INFO-matching.personal_matching> - 🔍 Đang tìm kiếm trong FAISS index...
+<INFO-matching.personal_matching> - 📌 Tìm thấy các FAISS ID: [100398, 100400, 100450, 100454, 100095, 100415, 100375, 100453, 100437, 100457]
+<INFO-matching.personal_matching> - 🔗 Đang ánh xạ personal_embedd_id → per_id...
+<INFO-matching.llm_rerank_personal> - 🤖 Đang gọi LLM để đánh giá danh sách...
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình DeepSeek...us.deepseek.r1-v1:0
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Đã nhận phản hồi: Per_id:
+[per_id_1752683428700044]
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Reasoning: Okay, let's tackle this problem. So, the task is to compare the new customer information with the existing blacklist to see if there's a potential match. The new customer is Anh Quân, a university lecturer. 
+
+First, I need to look through each entry in the blacklist and check the key fields: full name, age, gender, organization, occupation, and residence. 
+
+Looking at the blacklist entries, most of them are related to Trương Mỹ Lan and others involved in the Vạn Thịnh Phát case. But there's one entry that stands out: the fifth entry with full name Đặng Anh Quân. The new customer's name is Anh Quân. The full name here is Đặng Anh Quân, which includes both the first and middle names. The new customer's name is just Anh Quân, which could be a shorter version or missing the surname. However, in Vietnamese names, the order is surname first, so Anh could be the middle name and Quân the given name. But without the surname, it's a bit tricky.
+
+Next, the occupation: the new customer is a "giảng viên trường đại học" (university lecturer), and the blacklist entry for Đặng Anh Quân has "Tiến sĩ luật, Giảng viên" (PhD in Law, Lecturer). The occupation matches exactly as both are lecturers. The organization for the blacklist entry is "Trường Đại học Luật TP HCM" (Ho Chi Minh City University of Law), which is a university, aligning with the new customer's organization being a university. 
+
+Gender: The new customer is referred to as "Anh" which is a male title in Vietnamese, and the blacklist entry's gender is Male. So that matches. 
+
+Age: The new customer's age isn't provided, but the blacklist entry has a birth year/age of 43. If the new customer's age is around that, it could be a match, but since age isn't given, we can't confirm. However, the instructions say to consider even if data is missing on one side. 
+
+Other fields: The personal_relationships for Đặng Anh Quân mention being an accomplice and legal advisor in livestreams by Nguyễn Phương Hằng. The new customer's info doesn't mention any relationships, but the instructions say to use personal_relationships for context but not directly compare. 
+
+There's another entry with the surname Nguyễn Kim Anh, but the name doesn't match. The other entries are Trần Thị Mỹ Dung, Võ Tấn Hoàng Văn, etc., which don't match the name Anh Quân. 
+
+So the closest match is Đặng Anh Quân. The name is similar (Anh Quân vs. Đặng Anh Quân), occupation matches, organization is a university, gender matches. Even though the full name isn't exact, the instructions allow for minor differences. Since the new customer's name could be a shorter form, and other details align, this is a potential match. 
+
+Therefore, the per_id for Đặng Anh Quân is per_id_1752683428700044. I should return that.
+</think>

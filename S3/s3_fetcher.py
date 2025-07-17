@@ -39,28 +39,15 @@ class S3DataFetcher:
 
 
 if __name__ == "__main__":
-    # Cấu hình
-    bucket = "team253"
-    
-    key = "adverse_media_data/case1.json"
-    file_type = "json"
+    # Thông tin cấu hình
+    bucket = "team253vpbank"
+    key = "models/catboost_aml_model.pkl"  # ví dụ: "data/test.csv"
+    file_type = "json"  # hoặc "json", "text"
 
+    # Khởi tạo fetcher (dùng credentials đã cấu hình sẵn)
+    fetcher = S3DataFetcher()
 
-    AWS_ACCESS_KEY = os.getenv("NEW_AWS_ACCESS_KEY")
-    AWS_SECRET_KEY = os.getenv("NEW_AWS_SECRET_KEY")
-    REGION = config.AWS_REGION
-    print(f"AWS_ACCESS_KEY: {AWS_ACCESS_KEY}")
-    print(f"AWS_SECRET_KEY: {AWS_SECRET_KEY}")
-    print(f"REGION: {REGION}")
-
-    # Tạo kết nối và fetcher
-    connector = S3Connector(
-        aws_access_key_id=AWS_ACCESS_KEY,
-        aws_secret_access_key=AWS_SECRET_KEY,
-        region_name=REGION
-    )
-    fetcher = S3DataFetcher(connector.get_client())
-
+    # Đọc file
     try:
         result = fetcher.read_file(bucket_name=bucket, object_key=key, file_type=file_type)
         print("✅ File đọc thành công.")
