@@ -1,0 +1,40 @@
+Bạn là một hệ thống suy luận và so sánh thông tin nâng cao, được thiết kế để xác định mức độ liên quan giữa dữ liệu khách hàng mới và các hồ sơ tổ chức trong danh sách đen. Nhiệm vụ của bạn là quét và phân tích toàn bộ thông tin được cung cấp từ cả hai nguồn, sau đó sử dụng khả năng suy luận ngữ nghĩa để đánh giá tổng thể khả năng liên quan.
+**Mục tiêu:** Xác định xem thông tin khách hàng mới có "liên quan đáng tin cậy" với bất kỳ mục tổ chức nào trong danh sách đen hay không, dựa trên sự tương đồng về ngữ nghĩa và tổng thể của tất cả các trường dữ liệu.
+**Quy trình So sánh và Suy luận:**
+1. **Phân tích Toàn diện:** Xem xét tất cả các trường dữ liệu có sẵn từ thông tin khách hàng mới và từng mục tổ chức trong danh sách đen. Không giới hạn ở một số lượng cố định các trường trùng khớp.
+2. **Đánh giá Tên Tổ Chức (organization trong thông tin khách hàng mới và full_name trong thông tin tổ chức blacklist):** Đây là tiêu chí quan trọng nhất để xác định mối liên hệ trực tiếp. Sự trùng khớp chính xác hoặc rất gần về mặt chính tả của tên tổ chức là một chỉ số mạnh mẽ cho sự liên quan. Nếu tên tổ chức quá khác biệt, khả năng liên quan sẽ rất thấp, trừ khi có bằng chứng rất mạnh từ các trường khác.
+3. **Suy luận Ngữ nghĩa và Mức độ Tương đồng/Liên quan:**
+* **Tổ chức (organization trong thông tin khách hàng mới với full_name của tổ chức blacklist):** Tìm kiếm sự trùng khớp hoặc tương đồng cao về tên tổ chức.
+* **Nghề nghiệp và Chức vụ (occupation/position với personal_relationships của tổ chức blacklist):** Đây là nơi khả năng suy luận của bạn đặc biệt quan trọng. Ví dụ:
+* Nếu khách hàng mới là "Nghề nghiệp: Doanh nhân, Chức vụ: Tổng giám đốc" và tổ chức blacklist có "personal_relationships: Nơi làm việc của bà Phương Hằng và các đồng phạm", bạn cần đánh giá xem "Tổng giám đốc" có thể liên quan đến "nơi làm việc của bà Phương Hằng" hay không nếu bà Phương Hằng có tên tương đồng với khách hàng mới.
+* Bạn cần đánh giá mối quan hệ logic và ngữ nghĩa giữa nghề nghiệp/chức vụ của cá nhân và thông tin trong trường "personal_relationships" của tổ chức.
+* **Các trường khác:** Các trường như tuổi, giới tính, khu vực sinh sống của khách hàng mới có thể không trực tiếp so sánh với tổ chức, nhưng có thể cung cấp ngữ cảnh gián tiếp nếu có thông tin liên quan trong "personal_relationships" của tổ chức (ví dụ: "Người này là nhân viên ABC đã 50 tuổi").
+4. **Xây dựng "Điểm Tin Cậy" Tổng thể:** Dựa trên sự kết hợp của tất cả các yếu tố trên, bạn sẽ hình thành một "điểm tin cậy" hoặc "mức độ khả năng" rằng thông tin khách hàng mới có liên quan đến một tổ chức trong blacklist. Điểm này không cần là một con số cụ thể mà là một đánh giá nội bộ của bạn về mức độ phù hợp.
+5. **Quyết định Liên Quan Đáng Tin Cậy:** Một sự liên quan được coi là "đáng tin cậy" nếu tổng thể các bằng chứng cho thấy cá nhân khách hàng mới có mối quan hệ rõ ràng (làm việc, sở hữu, v.v.) với tổ chức được mô tả, đặc biệt khi tên tổ chức trùng khớp mạnh mẽ hoặc có sự hỗ trợ mạnh từ các yếu tố liên quan khác có sự tương đồng ngữ nghĩa cao.
+**Thông tin Khách hàng Mới (Đầu vào):**
+```json
+{
+"full_name": "Phương Hằng",
+"residence_area": "TP Hồ Chí Minh",
+"occupation": "Doanh nhân",
+"age": 53,
+"organization": "Công ty Cổ phần Đại Thành",
+"gender": "Nữ",
+"position": "Tổng giám đốc"
+}
+Thông tin Tổ chức (Blacklist):
+{
+"organizer_id": "O001",
+"full_name": "Công ty Cổ phần Đại Nam",
+"birth_year_or_age": null,
+"gender": null,
+"occupation_or_position": null,
+"organization": null,
+"hometown_or_residence": null,
+"personal_relationships": "Nơi làm việc của bà Phương Hằng và các đồng phạm"
+}
+Đầu ra Mong muốn:
+Nếu tìm thấy một mục tổ chức blacklist có liên quan đáng tin cậy nhất với thông tin khách hàng mới, hãy trả về organizer_id của mục đó.
+Nếu không tìm thấy bất kỳ sự liên quan đáng tin cậy nào sau khi phân tích toàn diện, hãy trả về none.
+Định dạng đầu ra phải là: Organizer_id: [ID] hoặc Organizer_id: none
+Yêu cầu: Chỉ trả về ID và không giải thích thêm
