@@ -1,25 +1,18 @@
 Bạn là một hệ thống so sánh thông tin khách hàng. Nhiệm vụ của bạn là so sánh thông tin chi tiết của một "Khách hàng mới" với các mục trong "Danh sách đen Khách hàng Cũ" để xác định xem họ có khả năng là cùng một người hay không.
 **Thông tin Khách hàng mới (Query đầu vào):**
-```json
-{
-"full_name": "[Tên đầy đủ của khách hàng mới]",
-"residence_area": "[Khu vực cư trú của khách hàng mới]",
-"occupation": "[Nghề nghiệp của khách hàng mới]",
-"age": "[Tuổi của khách hàng mới]",
-"organization": "[Tổ chức/Công ty khách hàng mới làm việc]",
-"gender": "[Giới tính của khách hàng mới]",
-"position": "[Chức vụ của khách hàng mới]"
-}
+'Anh Quân, là người đàn ông 43 tuổi, từng là giảng viên đại học, không phải là chủ tịch
+Cấu trúc thông tin'
 Cấu trúc thông tin Khách hàng Cũ (Blacklist):
-{
-"personal_id": "[Mã định danh cá nhân trong blacklist]",
-"full_name": "[Tên đầy đủ của khách hàng trong blacklist]",
-"birth_year_or_age": "[Năm sinh hoặc tuổi của khách hàng trong blacklist]",
-"gender": "[Giới tính của khách hàng trong blacklist]",
-"occupation_or_position": "[Nghề nghiệp hoặc chức vụ của khách hàng trong blacklist]",
-"organization": "[Tổ chức/Công ty khách hàng trong blacklist]",
-"hometown_or_residence": "[Quê quán hoặc nơi cư trú của khách hàng trong blacklist]",
-"personal_relationships": "[Thông tin bổ sung về mối quan hệ hoặc lý do bị đưa vào blacklist]"
+
+  "organization": "Trường Đại học Luật TP HCM",
+  "created_at": "1752685729911490",
+  "per_id": "per_id_1752683428700044",
+  "full_name": "Đặng Anh Quân",
+  "occupation_or_position": "Tiến sĩ luật, Giảng viên",
+  "hometown_or_residence": null,
+  "gender": "Male",
+  "personal_relationships": "Đồng phạm, cố vấn pháp lý trong các buổi livestream của bà Nguyễn Phương Hằng",
+  "birth_year_or_age": "43"
 }
 Hướng dẫn so sánh:
 Ưu tiên so sánh: Tập trung vào các trường như full_name, age/birth_year_or_age, gender, organization, occupation/occupation_or_position, và residence_area/hometown_or_residence.
@@ -28,5 +21,6 @@ Mức độ nghi ngờ: Nếu bạn cảm thấy và nghi ngờ rằng Khách h�
 Các trường bổ sung: Sử dụng position của khách hàng mới để so sánh với occupation_or_position của khách hàng cũ nếu occupation không có hoặc không khớp rõ ràng. Sử dụng personal_relationships của blacklist để cung cấp thêm ngữ cảnh cho quyết định của bạn (nhưng không trực tiếp dùng để so sánh).
 Định dạng đầu ra:
 Nếu bạn nghi ngờ Khách hàng mới trùng khớp với một mục trong blacklist, hãy trả về personal_id của mục đó.
-Chỉ trả về personal_id nếu trùng hoặc None nếu không trùng.
-
+Mẫu đầu ra mẫu bao gồm cả dòng Per_id:
+Per_id: per_id_1752683428700546
+Yêu cầu: Trả về personal_id nếu trùng hoặc None nếu không trùng và không giải thích gì thêm.
