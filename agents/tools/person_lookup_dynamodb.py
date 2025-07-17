@@ -33,34 +33,28 @@ class PersonLookupDynamoDB:
         
         try:
             
-            aws_access_key_id = os.getenv("AWS_ACCESS_KEY")
-            aws_secret_access_key = os.getenv("AWS_SECRET_KEY")
-            if aws_access_key_id and aws_secret_access_key:
-                self.dynamodb = boto3.resource(
-                    'dynamodb',
-                    region_name=self.region_name,
-                    aws_access_key_id=aws_access_key_id,
-                    aws_secret_access_key=aws_secret_access_key
-                )
-                self.client = boto3.client(
-                    'dynamodb',
-                    region_name=self.region_name,
-                    aws_access_key_id=aws_access_key_id,
-                    aws_secret_access_key=aws_secret_access_key
-                )
-            else:
-                self.dynamodb = boto3.resource('dynamodb', region_name=self.region_name)
-                self.client = boto3.client('dynamodb', region_name=self.region_name)
-            
-            # Test DynamoDB connection
+            aws_access_key_id = 'AKIAQWLOPNIDXAC4BJWD'
+            aws_secret_access_key = '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'
+            self.dynamodb = boto3.resource(
+                'dynamodb',
+                region_name=self.region_name,
+                aws_access_key_id=aws_access_key_id,
+                aws_secret_access_key=aws_secret_access_key
+            )
+            self.client = boto3.client(
+                'dynamodb',
+                region_name=self.region_name,
+                aws_access_key_id=aws_access_key_id,
+                aws_secret_access_key=aws_secret_access_key
+            )
+
             self.client.list_tables(Limit=1)
-            print(f"🔗 Successfully connected to DynamoDB region: {self.region_name}")
+            print(f"Successfully connected to DynamoDB region: {self.region_name}")
             
         except Exception as e:
-            print(f"❌ Failed to connect to DynamoDB: {e}")
+            print(f"Failed to connect to DynamoDB: {e}")
             raise
 
-        # Get table references
         self.personal_info_table = self.dynamodb.Table('personal_info')
         self.personal2media_table = self.dynamodb.Table('personal2media')
         self.org2media_table = self.dynamodb.Table('org2media')
@@ -68,44 +62,29 @@ class PersonLookupDynamoDB:
         self.adverse_media_table = self.dynamodb.Table('adverse_media')
 
     def find_person_by_name(self, full_name: str) -> Optional[Dict]:
-        """
-        Find person in personal_info table by full name
-        
-        Args:
-            full_name: Full name of the person to search for
-            
-        Returns:
-            Person document or None if not found
-        """
         try:
-            # Since we can't directly query by full_name (it's not the partition key),
-            # we need to scan the table
             response = self.personal_info_table.scan(
                 FilterExpression=Attr('full_name').eq(full_name)
             )
             
             items = response.get('Items', [])
             if items:
-                return items[0]  # Return first match
+                return items[0]
             
-            # Try case-insensitive search by scanning all records
             response = self.personal_info_table.scan()
             all_items = response.get('Items', [])
             
-            # Handle pagination if needed
             while 'LastEvaluatedKey' in response:
                 response = self.personal_info_table.scan(
                     ExclusiveStartKey=response['LastEvaluatedKey']
                 )
                 all_items.extend(response.get('Items', []))
             
-            # Case-insensitive and partial matching
             for item in all_items:
                 item_name = item.get('full_name', '')
                 if item_name.lower() == full_name.lower():
                     return item
             
-            # Partial match
             for item in all_items:
                 item_name = item.get('full_name', '')
                 if full_name.lower() in item_name.lower() or item_name.lower() in full_name.lower():
@@ -320,10 +299,13 @@ class PersonLookupDynamoDB:
         media_details = {}
         for media_id in all_media_ids:
             media_details[media_id] = self.get_media_details(media_id)
-        if int(person.get("birth_year_or_age"))>100:
-            age = 2025 - int(person.get("birth_year_or_age"))
+        if person.get("birth_year_or_age") is not None:
+            if int(person.get("birth_year_or_age"))>100:
+                age = 2025 - int(person.get("birth_year_or_age"))
+            else:
+                age = person.get("birth_year_or_age")
         else:
-            age = person.get("birth_year_or_age")
+            age = None
         result = {
             "person_info": {
                 "per_id": person.get('per_id'),

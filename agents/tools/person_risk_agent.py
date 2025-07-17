@@ -47,7 +47,7 @@ class PersonRiskAgent:
                 aws_access_key_id=aws_access_key_id or Utils.load_api_key_from_env("AWS_ACCESS_KEY"),
                 aws_secret_access_key=aws_secret_access_key or Utils.load_api_key_from_env("AWS_SECRET_KEY"),
                 region_name=region_name or "ap-southeast-1",
-                default_model_id="anthropic.claude-3-haiku-20240307-v1:0"
+                default_model_id="anthropic.claude-instant-v1"
             )
             self.llm_enabled = True
         except Exception as e:
@@ -59,30 +59,20 @@ class PersonRiskAgent:
         print("✅ Agent đã sẵn sàng!")
 
     def extract_person_name_from_query(self, query: str) -> Optional[str]:
-        print(f"🔍 Trích xuất tên từ query: {query}")
+        print(f"Trích xuất tên từ query: {query}")
         if self.llm_enabled:
-            print("🧠 Regex không thành công, đang thử LLM...")
+            print("Regex không thành công, đang thử LLM...")
             extracted_name = self.extract_person_name_with_llm(query)
             if extracted_name:
-                print(f"✅ LLM đã trích xuất được: {extracted_name}")
+                print(f"LLM đã trích xuất được: {extracted_name}")
                 return extracted_name
             else:
-                print("❌ LLM cũng không trích xuất được tên")
+                print("LLM không trích xuất được tên")
         
-        print("❌ Không thể trích xuất tên người từ query")
+        print("Không thể trích xuất tên người từ query")
         return None
 
     def _extract_name_with_regex(self, query: str) -> Optional[str]:
-        """
-        Extract person name using regex patterns (original implementation)
-        
-        Args:
-            query: Vietnamese query string
-            
-        Returns:
-            Extracted person name or None
-        """
-        # Common patterns in Vietnamese queries
         patterns = [
             r"thông tin về\s+(.+?)(?:\s|$)",
             r"tìm kiếm\s+(.+?)(?:\s|$)",  
@@ -94,21 +84,17 @@ class PersonRiskAgent:
         
         query_lower = query.lower().strip()
         
-        # Remove common question words
         query_clean = re.sub(r'\b(cho tôi|hãy|xin|làm ơn|vui lòng|giúp tôi|tìm|kiếm|thông tin|về|của|có|là|gì|như thế nào|ra sao)\b', '', query_lower)
         query_clean = query_clean.strip()
         
-        # Try to match patterns
         for pattern in patterns:
             match = re.search(pattern, query_lower)
             if match:
                 name = match.group(1).strip()
-                # Clean up the name
                 name = re.sub(r'\b(có|là|gì|như thế nào|ra sao|của|ở|tại)\b.*', '', name).strip()
-                if len(name) > 2 and len(name) < 50:  # Reasonable name length
-                    return name.title()  # Capitalize properly
+                if len(name) > 2 and len(name) < 50: 
+                    return name.title() 
         
-        # If no pattern matches, try to extract proper nouns (capitalized words)
         words = query_clean.split()
         name_candidates = []
         for word in words:
@@ -323,14 +309,14 @@ class PersonRiskAgent:
         agents_dir = os.path.dirname(os.path.abspath(__file__))
         filepath = os.path.join(agents_dir, filename)
         
-        try:
-            with open(filepath, 'w', encoding='utf-8') as f:
-                json.dump(model_input, f, ensure_ascii=False, indent=2, default=str)
-            print(f"💾 Model input đã được lưu vào: {filepath}")
-            return filepath
-        except Exception as e:
-            print(f"⚠️ Lỗi khi lưu model input: {e}")
-            return ""
+        # try:
+        #     with open(filepath, 'w', encoding='utf-8') as f:
+        #         json.dump(model_input, f, ensure_ascii=False, indent=2, default=str)
+        #     print(f"💾 Model input đã được lưu vào: {filepath}")
+        #     return filepath
+        # except Exception as e:
+        #     print(f"⚠️ Lỗi khi lưu model input: {e}")
+        #     return ""
     
     def _map_violation_type(self, media_record: Dict[str, Any]) -> str:
         """Map media record to violation type"""
@@ -565,69 +551,102 @@ class PersonRiskAgent:
         }
         
         try:
+            # Initialize sets to track unique values across all data
+            all_violation_types = set()
+            all_legal_statuses = set()
+            all_roles = set()
+            
+            # Initialize lists to track all values (including duplicates)
+            violation_types_list = []
+            legal_statuses_list = []
+            roles_list = []
+            
             # Process individual AML data
             if "invidual_AML" in lookup_result and lookup_result["invidual_AML"]:
                 individual_aml = lookup_result["invidual_AML"]
                 
-                # Get the main person (usually first key in the dict)
+                # Process all persons in individual AML data
                 for person_name, violations in individual_aml.items():
-                    # Count total violations and types
-                    risk_analysis["total_violation_types"] = len(violations)
-                    
-                    violation_types = []
-                    legal_statuses = []
-                    roles = []
-                    
                     # Process each violation type
                     for violation_type, details in violations.items():
-                        violation_types.append(violation_type)
-                        legal_statuses.append(details.get("legal_status"))
-                        roles.append(details.get("customer_role"))
+                        # Add to violation types
+                        all_violation_types.add(violation_type)
+                        violation_types_list.append(violation_type)
+                        
+                        # Add legal status
+                        legal_status = details.get("legal_status")
+                        if legal_status:
+                            all_legal_statuses.add(legal_status)
+                            legal_statuses_list.append(legal_status)
+                        
+                        # Add customer role
+                        customer_role = details.get("customer_role")
+                        if customer_role:
+                            all_roles.add(customer_role)
+                            roles_list.append(customer_role)
                         
                         # Count media IDs as total violations
                         media_ids = details.get("media_ids", [])
                         risk_analysis["total_violations"] += len(media_ids)
-                    
-                    # Count unique types
-                    risk_analysis["total_legal_statuse_types"] = len(set(legal_statuses))
-                    risk_analysis["total_role_type"] = len(set(roles))
-                    
-                    # Store detailed information
-                    risk_analysis["details"]["violation_types"] = violation_types
-                    risk_analysis["details"]["legal_statuses"] = legal_statuses
-                    risk_analysis["details"]["roles"] = roles
-                    
-                    # Only process the first person (main person)
-                    break
             
             # Process organization AML data
             if "organization_AML" in lookup_result and lookup_result["organization_AML"]:
                 org_aml = lookup_result["organization_AML"]
                 
-                org_violation_types = []
-                org_legal_statuses = []
-                org_roles = []
-                
+                # Process all organizations in organization AML data
                 for org_name, violations in org_aml.items():
                     for violation_type, details in violations.items():
-                        org_violation_types.append(violation_type)
-                        org_legal_statuses.append(details.get("legal_status"))
-                        org_roles.append(details.get("customer_role"))
+                        # Add to violation types
+                        all_violation_types.add(violation_type)
+                        violation_types_list.append(violation_type)
+                        
+                        # Add legal status
+                        legal_status = details.get("legal_status")
+                        if legal_status:
+                            all_legal_statuses.add(legal_status)
+                            legal_statuses_list.append(legal_status)
+                        
+                        # Add customer role
+                        customer_role = details.get("customer_role")
+                        if customer_role:
+                            all_roles.add(customer_role)
+                            roles_list.append(customer_role)
                         
                         # Count media IDs as total violations
                         media_ids = details.get("media_ids", [])
                         risk_analysis["total_violations"] += len(media_ids)
-                
-                # Add to details
-                if "details" not in risk_analysis:
-                    risk_analysis["details"] = {}
-                
-                risk_analysis["details"]["org_violation_types"] = org_violation_types
-                risk_analysis["details"]["org_legal_statuses"] = org_legal_statuses
-                risk_analysis["details"]["org_roles"] = org_roles
+            
+            # Calculate all the totals
+            risk_analysis["total_violation_types"] = len(all_violation_types)
+            risk_analysis["total_legal_statuses"] = len(legal_statuses_list)  # Total count including duplicates
+            risk_analysis["total_legal_statuse_types"] = len(all_legal_statuses)  # Unique count
+            risk_analysis["total_roles"] = len(roles_list)  # Total count including duplicates
+            risk_analysis["total_role_type"] = len(all_roles)  # Unique count
+            
+            # Store detailed information
+            risk_analysis["details"] = {
+                "violation_types": list(all_violation_types),
+                "violation_types_list": violation_types_list,
+                "legal_statuses": list(all_legal_statuses),
+                "legal_statuses_list": legal_statuses_list,
+                "roles": list(all_roles),
+                "roles_list": roles_list,
+                "unique_violation_types_count": len(all_violation_types),
+                "unique_legal_statuses_count": len(all_legal_statuses),
+                "unique_roles_count": len(all_roles)
+            }
             
             # Add all results to the result field
             risk_analysis["result"] = lookup_result
+            
+            # Try to get ML prediction if available
+            try:
+                if hasattr(self, 'ml_inference') and self.ml_inference:
+                    ml_prediction = self.ml_inference.predict_from_lookup_result(lookup_result)
+                    risk_analysis["ml_prediction"] = ml_prediction
+            except Exception as ml_e:
+                print(f"⚠️ Lỗi khi tính toán ML prediction: {ml_e}")
+                risk_analysis["ml_prediction"] = None
             
         except Exception as e:
             print(f"⚠️ Lỗi khi tính toán điểm risk v2: {e}")
@@ -667,7 +686,7 @@ class PersonRiskAgent:
             model_input = self.convert_lookup_to_model_input(lookup_result)
             
             # Save model input to JSON file
-            self.save_model_input_to_json(model_input, person_name)
+            # self.save_model_input_to_json(model_input, person_name)
             
             # Add ML model prediction if available
             ml_prediction = None
@@ -726,7 +745,6 @@ class PersonRiskAgent:
         """
         print(f"🔍 Xử lý truy vấn v2: {query}")
         
-        # Extract person name from query
         person_name = self.extract_person_name_from_query(query)
         # person_name = "Trương Mỹ Lan"
         if not person_name:
@@ -744,19 +762,15 @@ class PersonRiskAgent:
         try:
             # Perform person lookup with v2 format
             lookup_result = self.person_lookup.lookup_person_comprehensive_v2(person_name)
-            print(f"✅ Kết quả lookup v2 nhận được")
+            # print(f"Kết quả lookup v2 nhận được", lookup_result)
             
-            # Calculate risk analysis with new scoring system
             risk_analysis = self.calculate_risk_score_v2(lookup_result)
-            
-            # Convert to model input format
+            # print("ket qua analys nhan duoc", risk_analysis)
             model_input = self.convert_lookup_to_model_input(lookup_result)
             
-            # Save model input to JSON file
-            model_input_path = self.save_model_input_to_json(model_input, person_name)
-            print(f"💾 Đã lưu model input vào: {model_input_path}")
+            # model_input_path = self.save_model_input_to_json(model_input, person_name)
+            # print(f"💾 Đã lưu model input vào: {model_input_path}")
             
-            # Add ML model prediction if available
             ml_prediction = None
             if self.model_enabled and self.aml_model:
                 try:

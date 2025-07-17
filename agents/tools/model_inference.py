@@ -22,7 +22,7 @@ try:
     from config import S3_BUCKET_NAME, AWS_REGION
 except ImportError:
     # Fallback values if config import fails
-    S3_BUCKET_NAME = "team253"
+    S3_BUCKET_NAME = "team253vpbank"
     AWS_REGION = "ap-southeast-1"
     print("⚠️  Warning: Could not import config. Using default values.")
 
@@ -164,9 +164,9 @@ class AMLModelInference:
         # Fill missing categorical features with "Unknown"
         for col in self.categorical_features:
             if col in df.columns:
-                df[col] = df[col].fillna("Unknown")
+                df[col] = df[col].fillna("None")
                 # Replace "None" string with "Unknown"
-                df[col] = df[col].replace("None", "Unknown")
+                df[col] = df[col].replace("None", "None")
         
         return df
     
@@ -239,31 +239,40 @@ class AMLModelInference:
 def create_sample_input() -> Dict[str, Any]:
     """Create a sample input for testing"""
     return {
-        "residence_area": "TP Hồ Chí Minh",
-        "occupation": "Giám đốc",
-        "age": 45,
-        "per_role": "Chủ mưu",
-        "per_violation_type_1": "Rửa tiền",
+        "residence_area": "Không rõ",
+        "occupation": "Chủ tịch Tập đoàn Vạn Thịnh Phát",
+        "age": 68,
+        "per_violation_type_1": "Tham ô tài sản",
         "per_legal_status_1": "Đã kết án",
-        "per_violation_type_2": "Vi phạm hành chính",
-        "per_legal_status_2": "Chưa rõ",
-        "per_violation_type_3": "None",
-        "per_legal_status_3": "None",
-        "per_violation_type_4": "None",
-        "per_legal_status_4": "None",
-        "per_violation_type_5": "None",
-        "per_legal_status_5": "None",
-        "org_violation_type_1": "Trừng phạt tài chính",
+        "per_role_1": "Chủ mưu",
+        "per_violation_type_2": "Đưa hối lộ",
+        "per_legal_status_2": "Đã kết án",
+        "per_role_2": "Chủ mưu",
+        "per_violation_type_3": "Lừa đảo chiếm đoạt tài sản",
+        "per_legal_status_3": "Đã kết án",
+        "per_role_3": "Chủ mưu",
+        "per_violation_type_4": "Rửa tiền",
+        "per_legal_status_4": "Đã kết án",
+        "per_role_4": "Chủ mưu",
+        "per_violation_type_5": "Vận chuyển trái phép tiền tệ qua biên giới",
+        "per_legal_status_5": "Đã kết án",
+        "per_role_5": "Chủ mưu",
+        "org_violation_type_1": "Tham ô tài sản",
         "org_legal_status_1": "Đã kết án",
-        "org_violation_type_2": "None",
-        "org_legal_status_2": "None",
-        "org_violation_type_3": "None",
-        "org_legal_status_3": "None",
-        "org_violation_type_4": "None",
-        "org_legal_status_4": "None",
-        "org_violation_type_5": "None",
-        "org_legal_status_5": "None"
-    }
+        "org_role_1": "Tổ chức thực hiện hành vi vi phạm",
+        "org_violation_type_2": "Rửa tiền",
+        "org_legal_status_2": "Đã kết án",
+        "org_role_2": "Tổ chức thực hiện hành vi vi phạm",
+        "org_violation_type_3": "Vi phạm quy định về cho vay",
+        "org_legal_status_3": "Đang trong quá trình điều tra",
+        "org_role_3": "Tổ chức thực hiện hành vi vi phạm",
+        "org_violation_type_4": "Chiếm đoạt tài sản",
+        "org_legal_status_4": "Đang trong quá trình điều tra",
+        "org_role_4": "Tổ chức thực hiện hành vi vi phạm",
+        "org_violation_type_5": "Vi phạm dân sự",
+        "org_legal_status_5": "Đang trong quá trình điều tra / truy tố / chưa có phán quyết",
+        "org_role_5": "Tổ chức thực hiện hành vi vi phạm"
+        }
 
 
 def main():
