@@ -1,0 +1,48 @@
+<INFO-embedder.model_embedder> - KHOI TAO MO HINH EMBEDDER THANH CONG D:\VPBankHackathon\embedder\models\phobert_base_v2_local. SU DUNG DEVICE cuda
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình Bedrock...None
+<DEBUG-llm_model.bedrock_manager> - Calling Bedrock model anthropic.claude-instant-v1
+<DEBUG-llm_model.bedrock_manager> - Conten [{'type': 'text', 'text': 'Anh Quân'}]
+<DEBUG-llm_model.bedrock_manager> - [generate] ✅ Đã nhận phản hồi từ mô hình anthropic.claude-instant-v1 mà không có reasoning.
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<DEBUG-utils> - [load_text] ✅ Đã load file văn bản: D:/VPBankHackathon/prompts/rerank_personal.txt
+<INFO-matching.personal_matching> - ⚙️ Đang tạo embedding cho Tìm kiếm thông tin về Anh Quân, giảng viên trường Kinh Tế Luật...
+<INFO-embedder.personal_embedder> - ⏳ Đang encode cá nhân (1 cá nhân)
+<INFO-embedder.model_embedder> - Thoi gian embedd 0.31 giay
+<INFO-embedder.model_embedder> - Encode THANH CONG
+<INFO-embedder.personal_embedder> - ✅ Đã encode xong các cá nhân
+<INFO-matching.personal_matching> - 🔍 Đang tìm kiếm trong FAISS index...
+<INFO-matching.personal_matching> - 📌 Tìm thấy các FAISS ID: [100400, 100398, 100450, 100454, 100095, 100415, 100375, 100453, 100437, 100397]
+<INFO-matching.personal_matching> - 🔗 Đang ánh xạ personal_embedd_id → per_id...
+<INFO-matching.llm_rerank_personal> - 🤖 Đang gọi LLM để đánh giá danh sách...
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình DeepSeek...us.deepseek.r1-v1:0
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Đã nhận phản hồi: Per_id:
+[per_id_1752683428700044]
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Reasoning: Okay, let's tackle this problem. So, the task is to compare the new customer's information with the entries in the blacklist to see if there's a potential match. The new customer is Anh Quân, a lecturer at the University of Economics and Law. 
+
+First, I need to look through each entry in the blacklist and check the key fields: full name, age, gender, organization, occupation, and residence. The instructions say to prioritize these fields and look for strong similarities even if there are minor differences.
+
+Looking at the blacklist entries:
+
+1. The first four entries are all Trương Mỹ Lan, female, age 68, associated with Tập đoàn Vạn Thịnh Phát. The name doesn't match Anh Quân, and the gender is different (female vs. male in the query). So these are out.
+
+2. The fifth entry is Đặng Anh Quân, male, age 43, works at Trường Đại học Luật TP HCM as a Tiến sĩ luật, Giảng viên. The full name here is Đặng Anh Quân, which is more specific than just "Anh Quân". However, the occupation is a lecturer in law, which matches the new customer's job as a lecturer at the University of Economics and Law. The organization here is the Ho Chi Minh City University of Law, which is similar but not exactly the same as the new customer's organization (Kinh Tế Luật might be a different school, but maybe they're related or the same). The age is 43, but the new customer's age isn't provided. The gender matches (male). 
+
+3. The sixth entry is Nguyễn Kim Anh, female, age 1967 (which would make her around 57 now if the current year is 2024). Name doesn't match, gender is different. Not a match.
+
+4. The seventh entry is Trần Thị Mỹ Dung, female, age 1967. Name and gender don't match.
+
+So the only possible match is the fifth entry, Đặng Anh Quân. The full name is Đặng Anh Quân vs. the query's Anh Quân. In Vietnamese names, it's common to refer to someone by their given name (Quân) with an honorific (Anh). So "Anh Quân" could be a way to refer to Đặng Anh Quân, especially if the full name is longer. The occupation and organization are both in the law field, which is a strong similarity. The age isn't provided in the query, so we can't compare that, but the other fields are matching enough. 
+
+The personal_relationships field for Đặng Anh Quân mentions being an accomplice and legal advisor in livestreams by Nguyễn Phương Hằng. The new customer's info doesn't mention this, but the instructions say to use personal_relationships for context but not to compare directly. 
+
+So based on the name similarity (possible partial match), occupation (lecturer in law), and organization (law university), this seems like a potential match. Therefore, the per_id for this entry is per_id_1752683428700044.
+</think>
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1

@@ -552,11 +552,13 @@ class PersonLookupDynamoDB:
             per_id = None
 
         # Get comprehensive data first
-        comprehensive_data = self.lookup_person_comprehensive(per_id,full_name)
+        comprehensive_data = self.lookup_person_comprehensive(per_id, full_name)
         
         if "error" in comprehensive_data:
             return comprehensive_data
         
+        
+
         person_info = comprehensive_data.get('person_info', {})
         personal2media_info = comprehensive_data.get('personal2media_info', [])
         org2media_info = comprehensive_data.get('org2media_info', [])

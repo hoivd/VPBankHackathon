@@ -329,7 +329,7 @@ async def get_media_content(media_id: str = Path(..., description="The media ID 
         )
 
         query = DynamoQuery(base_dynamo.dynamodb)
-        table_adverse_media = TableAdverseMedia(query)
+        table_adverse_media = TableAdverseMedia(query, config.TABLE_CONFIG_DEMO)
         media_content = table_adverse_media.get_document_by_media_id(media_id)
         if not media_content:
             return MediaContentResponse(
