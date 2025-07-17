@@ -1,4 +1,3 @@
-prompt = f"""
 🧭 BƯỚC 1: TRÍCH XUẤT THÔNG TIN CÁ NHÂN
 
 Hãy đọc kỹ bài báo dưới đây và xác định tất cả các cá nhân được đề cập trong nội dung **có liên quan đến các yếu tố rủi ro hoặc vi phạm theo định nghĩa ở BƯỚC 3 (tức là `violation_type` khác 'Không có hành vi phạm được đề cập' và `customer_role` khác 'Không có liên quan rõ ràng trong bài báo').**
@@ -260,7 +259,5 @@ Mẫu đầu ra mẫu 2 (Nếu không có người hoặc tổ chức có rủi 
 "list_organizer_risks": []
 }}
 ]
-<<<<<<< HEAD
-=======
-"""
->>>>>>> bfccedc58fc341100b66b4b855683ee1bb861e02
+
+

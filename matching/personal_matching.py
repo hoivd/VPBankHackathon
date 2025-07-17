@@ -75,9 +75,12 @@ if __name__ == "__main__":
     # ==== DynamoDB ====
     AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
     AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
+    NEW_AWS_ACCESS_KEY = Utils.load_api_key_from_env("NEW_AWS_ACCESS_KEY")
+    NEW_AWS_SECRET_KEY = Utils.load_api_key_from_env("NEW_AWS_SECRET_KEY")
+
     REGION = config.AWS_REGION
     REGION_MODEL = config.AWS_VIRGINA_REGION
-    DEFAULT_MODEL_ID = config.CLAUDE_35_HAIKU_CROSS_REGION_VIRGINA_MODEL_ID
+    DEFAULT_MODEL_ID = 'arn:aws:bedrock:us-east-1:538830382271:inference-profile/us.anthropic.claude-3-5-haiku-20241022-v1:0'
 
     base_dynamo = BaseDynamoDB(region_name=REGION, access_key=AWS_ACCESS_KEY, secret_key=AWS_SECRET_KEY)
     dynamo_query = DynamoQuery(base_dynamo.dynamodb)
@@ -87,8 +90,8 @@ if __name__ == "__main__":
 
 
     llm_manager = BedrockModelManager(
-        aws_access_key_id=AWS_ACCESS_KEY,
-        aws_secret_access_key=AWS_SECRET_KEY,
+        aws_access_key_id=NEW_AWS_ACCESS_KEY,
+        aws_secret_access_key=NEW_AWS_SECRET_KEY,
         region_name=REGION_MODEL,
         default_model_id=DEFAULT_MODEL_ID
     )

@@ -131,35 +131,20 @@ class BlacklistBuilderApp:
             org_faiss_manager=self.org_faiss_manager
         )
 
-    def save_article_faiss_index(self, article_index_path: str, s3_uploader=None, s3_bucket=None, s3_key=None):
+    def save_article_faiss_index(self, article_index_path: str):
         logger.info(f"💾 Đang lưu FAISS index bài viết tại {article_index_path}...")
         self.article_faiss_manager.save_index(article_index_path)
         logger.info("✅ Đã lưu FAISS index bài viết thành công.")
 
-        if s3_uploader and s3_bucket and s3_key:
-            logger.info(f"☁️ Đang upload FAISS index bài viết lên S3: s3://{s3_bucket}/{s3_key} ...")
-            s3_uploader.upload_file(article_index_path, s3_bucket, s3_key, content_type="application/octet-stream")
-            logger.info("✅ Đã upload FAISS index bài viết lên S3 thành công.")
-
-    def save_personal_faiss_index(self, personal_index_path: str, s3_uploader=None, s3_bucket=None, s3_key=None):
+    def save_personal_faiss_index(self, personal_index_path: str):
         logger.info(f"💾 Đang lưu FAISS index cá nhân tại {personal_index_path}...")
         self.personal_faiss_manager.save_index(personal_index_path)
         logger.info("✅ Đã lưu FAISS index cá nhân thành công.")
 
-        if s3_uploader and s3_bucket and s3_key:
-            logger.info(f"☁️ Đang upload FAISS index cá nhân lên S3: s3://{s3_bucket}/{s3_key} ...")
-            s3_uploader.upload_file(personal_index_path, s3_bucket, s3_key, content_type="application/octet-stream")
-            logger.info("✅ Đã upload FAISS index cá nhân lên S3 thành công.")
-
-    def save_org_faiss_index(self, org_index_path: str, s3_uploader=None, s3_bucket=None, s3_key=None):
+    def save_org_faiss_index(self, org_index_path: str):
         logger.info(f"💾 Đang lưu FAISS index tổ chức tại {org_index_path}...")
         self.org_faiss_manager.save_index(org_index_path)
         logger.info("✅ Đã lưu FAISS index tổ chức thành công.")
-
-        if s3_uploader and s3_bucket and s3_key:
-            logger.info(f"☁️ Đang upload FAISS index tổ chức lên S3: s3://{s3_bucket}/{s3_key} ...")
-            s3_uploader.upload_file(org_index_path, s3_bucket, s3_key, content_type="application/octet-stream")
-            logger.info("✅ Đã upload FAISS index tổ chức lên S3 thành công.")
 
     def save_all_faiss_indexes(
         self,
@@ -191,30 +176,17 @@ class BlacklistBuilderApp:
 
         logger.info(f"💾 Đang lưu tất cả FAISS indexes vào thư mục: {local_dir}")
 
-        self.save_article_faiss_index(
-            article_index_path,
-            s3_uploader=s3_uploader,
-            s3_bucket=s3_bucket,
-            s3_key=f"{s3_prefix}article.index" if s3_bucket else None
-        )
+        self.save_article_faiss_index(article_index_path)
 
-        self.save_personal_faiss_index(
-            personal_index_path,
-            s3_uploader=s3_uploader,
-            s3_bucket=s3_bucket,
-            s3_key=f"{s3_prefix}personal.index" if s3_bucket else None
-        )
+        self.save_personal_faiss_index(personal_index_path)
 
-        self.save_org_faiss_index(
-            org_index_path,
-            s3_uploader=s3_uploader,
-            s3_bucket=s3_bucket,
-            s3_key=f"{s3_prefix}org.index" if s3_bucket else None
-        )
+        self.save_org_faiss_index(org_index_path)
 
         logger.info("✅ Đã lưu tất cả FAISS indexes thành công.")
         logger.info(f"📂 Đường dẫn local: {local_dir}")
         if s3_bucket:
+            logger.info(f"Đang upload thu muc {local_dir} lên S3...")
+            uploader.upload_folder(folder_path=local_dir, bucket_name=bucket_name, object_key_prefix=base_dir)
             logger.info(f"☁️ Đã đẩy lên S3: s3://{s3_bucket}/{s3_prefix}")
 
     def run_from_s3(self, bucket_name: str, key: str):
