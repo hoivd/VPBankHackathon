@@ -15,10 +15,27 @@ from botocore.exceptions import ClientError
 from typing import Dict, List, Any, Optional
 import dotenv
 dotenv.load_dotenv()
-
+from config import TABLE_CONFIG_DEMO
+from matching.llm_rerank_personal import LlmRerankerPersonal
+from matching.personal_matching import PersonMatcherFAISS
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 from utils import Utils
+from config import TABLE_CONFIG_DEMO
+import config
+import os
+import numpy as np
+from embedder.model_embedder import ModelEmbedder
+from logger import _setup_logger
+import config
 
+from embedder.personal_embedder import PersonalEmbedder
+from faiss_manager.faiss_searcher import FaissSearcher
+from dynamodb.table_personal_embedd2personal import TablePersonalEmbedd2Personal
+from dynamodb.dynamo_query import DynamoQuery
+from dynamodb.base_dynamo import BaseDynamoDB
+from dynamodb.table_personal_info import TablePersonalInfo
+import json
+from llm_model.bedrock_manager import BedrockModelManager
 class PersonLookupDynamoDB:
     def __init__(self, region_name: str = None, aws_access_key_id: str = None, aws_secret_access_key: str = None):
         """
@@ -32,80 +49,70 @@ class PersonLookupDynamoDB:
         self.region_name = region_name or os.getenv("AWS_REGION", "ap-southeast-1")
         
         try:
-            aws_access_key_id = aws_access_key_id or Utils.load_api_key_from_env("AWS_ACCESS_KEY")
-            aws_secret_access_key = aws_secret_access_key or Utils.load_api_key_from_env("AWS_SECRET_KEY")
             
-            if aws_access_key_id and aws_secret_access_key:
-                self.dynamodb = boto3.resource(
-                    'dynamodb',
-                    region_name=self.region_name,
-                    aws_access_key_id=aws_access_key_id,
-                    aws_secret_access_key=aws_secret_access_key
-                )
-                self.client = boto3.client(
-                    'dynamodb',
-                    region_name=self.region_name,
-                    aws_access_key_id=aws_access_key_id,
-                    aws_secret_access_key=aws_secret_access_key
-                )
-            else:
-                self.dynamodb = boto3.resource('dynamodb', region_name=self.region_name)
-                self.client = boto3.client('dynamodb', region_name=self.region_name)
-            
-            # Test DynamoDB connection
+            aws_access_key_id = 'AKIAQWLOPNIDXAC4BJWD'
+            aws_secret_access_key = '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'
+            self.dynamodb = boto3.resource(
+                'dynamodb',
+                region_name=self.region_name,
+                aws_access_key_id=aws_access_key_id,
+                aws_secret_access_key=aws_secret_access_key
+            )
+            self.client = boto3.client(
+                'dynamodb',
+                region_name=self.region_name,
+                aws_access_key_id=aws_access_key_id,
+                aws_secret_access_key=aws_secret_access_key
+            )
+
             self.client.list_tables(Limit=1)
-            print(f"🔗 Successfully connected to DynamoDB region: {self.region_name}")
+            print(f"Successfully connected to DynamoDB region: {self.region_name}")
             
         except Exception as e:
-            print(f"❌ Failed to connect to DynamoDB: {e}")
+            print(f"Failed to connect to DynamoDB: {e}")
             raise
-
-        # Get table references
-        self.personal_info_table = self.dynamodb.Table('personal_info')
-        self.personal2media_table = self.dynamodb.Table('personal2media')
-        self.org2media_table = self.dynamodb.Table('org2media')
-        self.organization_info_table = self.dynamodb.Table('organization_info')
-        self.adverse_media_table = self.dynamodb.Table('adverse_media')
-
-    def find_person_by_name(self, full_name: str) -> Optional[Dict]:
-        """
-        Find person in personal_info table by full name
+        personal_table_name, _ = list(TABLE_CONFIG_DEMO['person_config'].items())[0]
+        p2m_table_name, _ = list(TABLE_CONFIG_DEMO['p2m_config'].items())[0]
+        o2m_table_name, _ = list(TABLE_CONFIG_DEMO['o2m_config'].items())[0]
+        org_table_name, _ = list(TABLE_CONFIG_DEMO['organization_config'].items())[0]
+        media_table_name, _ = list(TABLE_CONFIG_DEMO['media_config'].items())[0]
+        self.personal_info_table = self.dynamodb.Table(personal_table_name)
+        self.personal2media_table = self.dynamodb.Table(p2m_table_name)
+        self.org2media_table = self.dynamodb.Table(o2m_table_name)
+        self.organization_info_table = self.dynamodb.Table(org_table_name)
+        self.adverse_media_table = self.dynamodb.Table(media_table_name)
         
-        Args:
-            full_name: Full name of the person to search for
-            
-        Returns:
-            Person document or None if not found
-        """
+    def find_person_by_id(self, per_id: str) -> Optional[Dict]:
         try:
-            # Since we can't directly query by full_name (it's not the partition key),
-            # we need to scan the table
+            response = self.personal_info_table.get_item(Key={'per_id': per_id})
+            return response.get('Item')
+        except Exception as e:
+            print(f"❌ Error searching for person: {e}")
+            return None
+    def find_person_by_name(self, full_name: str) -> Optional[Dict]:
+        try:
             response = self.personal_info_table.scan(
                 FilterExpression=Attr('full_name').eq(full_name)
             )
             
             items = response.get('Items', [])
             if items:
-                return items[0]  # Return first match
+                return items[0]
             
-            # Try case-insensitive search by scanning all records
             response = self.personal_info_table.scan()
             all_items = response.get('Items', [])
             
-            # Handle pagination if needed
             while 'LastEvaluatedKey' in response:
                 response = self.personal_info_table.scan(
                     ExclusiveStartKey=response['LastEvaluatedKey']
                 )
                 all_items.extend(response.get('Items', []))
             
-            # Case-insensitive and partial matching
             for item in all_items:
                 item_name = item.get('full_name', '')
                 if item_name.lower() == full_name.lower():
                     return item
             
-            # Partial match
             for item in all_items:
                 item_name = item.get('full_name', '')
                 if full_name.lower() in item_name.lower() or item_name.lower() in full_name.lower():
@@ -116,7 +123,71 @@ class PersonLookupDynamoDB:
         except Exception as e:
             print(f"❌ Error searching for person: {e}")
             return None
+        
+    def find_person_id_by_query(self, query: str) -> str:
+        model_name = config.EMBEDDING_MODEL_NAME
+        faiss_index_path = 'data/personal_faiss_index'
 
+        # ==== Bước 2: Khởi tạo các thành phần chính ====
+        base_embedder = ModelEmbedder(model_name=model_name)
+        personal_embedder = PersonalEmbedder(base_embedder=base_embedder)
+        faiss_searcher = FaissSearcher(index_dir=faiss_index_path)
+
+        # ==== DynamoDB ====
+        AWS_ACCESS_KEY='AKIAQWLOPNIDXAC4BJWD'
+        AWS_SECRET_KEY='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'
+        NEW_AWS_ACCESS_KEY = Utils.load_api_key_from_env("NEW_AWS_ACCESS_KEY")
+        NEW_AWS_SECRET_KEY = Utils.load_api_key_from_env("NEW_AWS_SECRET_KEY")
+
+        REGION = config.AWS_REGION
+        REGION_MODEL = config.AWS_VIRGINA_REGION
+        DEFAULT_MODEL_ID = 'arn:aws:bedrock:us-east-1:538830382271:inference-profile/us.anthropic.claude-3-5-haiku-20241022-v1:0'
+
+        base_dynamo = BaseDynamoDB(region_name=REGION, access_key=AWS_ACCESS_KEY, secret_key=AWS_SECRET_KEY)
+        dynamo_query = DynamoQuery(base_dynamo.dynamodb)
+
+        personal_embedd_table = TablePersonalEmbedd2Personal(query=dynamo_query, table_config=config.TABLE_CONFIG_DEMO)
+        personal_info_table = TablePersonalInfo(query=dynamo_query, table_config=config.TABLE_CONFIG_DEMO)
+
+
+        llm_manager = BedrockModelManager(
+            aws_access_key_id=NEW_AWS_ACCESS_KEY,
+            aws_secret_access_key=NEW_AWS_SECRET_KEY,
+            region_name=REGION_MODEL,
+            default_model_id=DEFAULT_MODEL_ID
+        )
+
+        prompt_path = './prompts/rerank_personal.txt'
+        prompt_template = Utils.load_text(prompt_path)
+        print(prompt_template)
+
+        reranker = LlmRerankerPersonal(llm_manager=llm_manager, model_type="claude", prompt_template=prompt_template)
+
+
+        # ==== Khởi tạo matcher với thông tin đầy đủ ====
+        matcher = PersonMatcherFAISS(
+            personal_embedder,
+            faiss_searcher,
+            personal_embedd_table,
+            personal_info_table,
+            reranker
+        )
+
+        # ==== Tìm kiếm ====
+        results = matcher.match_full_info(query, top_k=10)
+
+        print("✅ Kết quả khớp cá nhân đầy đủ:")
+        for i, item in enumerate(results, 1):
+            print(f"\n🔹 Kết quả #{i}")
+            for k, v in item.items():
+                print(f"{k}: {v}")
+
+        print("✅ Đang đánh giá lại bằng LLM...")
+        best_match = matcher.rerank_by_llm(query, results)
+
+        print("🎯 Kết quả LLM đánh giá:")
+        print("Per_id:", best_match["per_id"])
+        return best_match["per_id"]
     def get_personal2media_info(self, per_id: str) -> List[Dict]:
         """
         Get personal2media information for a person
@@ -278,7 +349,7 @@ class PersonLookupDynamoDB:
             print(f"❌ Error getting media details: {e}")
             return None
 
-    def lookup_person_comprehensive(self, full_name: str) -> Dict[str, Any]:
+    def lookup_person_comprehensive(self, per_id: str = None,full_name :str = None) -> Dict[str, Any]:
         """
         Comprehensive lookup for a person including all related information
         
@@ -288,10 +359,20 @@ class PersonLookupDynamoDB:
         Returns:
             Dictionary with all related information
         """
-        print(f"🔍 Looking up information for: {full_name}")
+        print(f"🔍 Looking up information for: {per_id}")
         
         # 1. Find the person
-        person = self.find_person_by_name(full_name)
+        # person = self.find_person_by_name(full_name)
+        if per_id is not None:
+            person = self.find_person_by_id(per_id)
+        else:
+            person = self.find_person_by_name(full_name)
+        full_name_from_db = person.get('full_name')
+        if(full_name!=full_name_from_db):
+            return {
+                "error": f"Person '{full_name}' not found in personal_info table",
+                "suggestions": self.get_similar_names(full_name)
+            }
         if not person:
             return {
                 "error": f"Person '{full_name}' not found in personal_info table",
@@ -320,13 +401,20 @@ class PersonLookupDynamoDB:
         media_details = {}
         for media_id in all_media_ids:
             media_details[media_id] = self.get_media_details(media_id)
-        
-        # 5. Compile comprehensive result
+        if person.get("birth_year_or_age") is not None:
+            if int(person.get("birth_year_or_age"))>100:
+                age = 2025 - int(person.get("birth_year_or_age"))
+            else:
+                age = person.get("birth_year_or_age")
+        else:
+            age = None
         result = {
             "person_info": {
                 "per_id": person.get('per_id'),
                 "full_name": person.get('full_name'),
+                "age": age,
                 "gender": person.get('gender'),
+                "hometown_or_residence": person.get('hometown_or_residence'),
                 "occupation_or_position": person.get('occupation_or_position'),
                 "organization": person.get('organization'),
                 "personal_relationships": person.get('personal_relationships')
@@ -343,6 +431,163 @@ class PersonLookupDynamoDB:
         }
         
         return result
+    
+    def lookup_person_comprehensive_v2(self, full_name: str, query: str) -> Dict[str, Any]:
+        """
+        Comprehensive lookup for a person with formatted output according to expected format
+        
+        Args:
+            full_name: Full name of the person
+            
+        Returns:
+            Dictionary with formatted information according to expected_result.txt
+        """
+        try:
+            # Import the formatter functions
+            import sys
+            import os
+            sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+            
+            from agents.data_formatter import (
+                get_most_frequent_violation_type,
+                get_most_frequent_customer_role, 
+                get_highest_legal_status,
+                group_violations_by_media
+            )
+        except ImportError:
+            # Fallback implementation if import fails
+            from collections import Counter, defaultdict
+            
+            def get_most_frequent_violation_type(entries):
+                violation_counts = Counter()
+                for entry in entries:
+                    violation_type = entry.get('violation_type', '')
+                    if violation_type:
+                        violations = violation_type.split('/')
+                        for v in violations:
+                            v_clean = v.strip()
+                            if v_clean:
+                                violation_counts[v_clean] += 1
+                return violation_counts.most_common(1)[0][0] if violation_counts else "Không có hành vi phạm được đề cập"
+            
+            def get_most_frequent_customer_role(entries):
+                role_counts = Counter()
+                for entry in entries:
+                    customer_role = entry.get('customer_role', '')
+                    if customer_role:
+                        role_counts[customer_role] += 1
+                return role_counts.most_common(1)[0][0] if role_counts else "Không có liên quan rõ ràng trong bài báo"
+            
+            def get_highest_legal_status(entries):
+                status_priority = {
+                    "Đã kết án": 1,
+                    "Đang trong quá trình điều tra": 2,
+                    "Đang trong quá trình điều tra / truy tố / chưa có phán quyết": 2,
+                    "Tin chưa rõ ràng": 3,
+                    "Được minh oan": 4
+                }
+                statuses = [entry.get('legal_status', '') for entry in entries]
+                for status in statuses:
+                    if status == "Đã kết án":
+                        return status
+                valid_statuses = [s for s in statuses if s in status_priority]
+                if valid_statuses:
+                    return min(valid_statuses, key=lambda x: status_priority[x])
+                return "Tin chưa rõ ràng"
+            
+            def group_violations_by_media(entries):
+                # Group by violation type first, then analyze
+                violation_groups = defaultdict(list)
+                
+                # Group all entries by violation type
+                for entry in entries:
+                    violation_type = entry.get('violation_type', '')
+                    if violation_type:
+                        # Handle multiple violation types separated by '/'
+                        violations = violation_type.split('/')
+                        for v in violations:
+                            v_clean = v.strip()
+                            if v_clean:
+                                violation_groups[v_clean].append(entry)
+                
+                violation_summary = {}
+                for violation_type, violation_entries in violation_groups.items():
+                    # Get the most frequent customer_role for this violation type
+                    customer_role = get_most_frequent_customer_role(violation_entries)
+                    # Get the highest priority legal status for this violation type
+                    legal_status = get_highest_legal_status(violation_entries)
+                    # Get all media_ids for this violation type
+                    media_ids = list(set([entry.get('media_id', '') for entry in violation_entries if entry.get('media_id')]))
+                    
+                    violation_summary[violation_type] = {
+                        'customer_role': customer_role,
+                        'legal_status': legal_status,
+                        'media_ids': media_ids
+                    }
+                
+                return violation_summary
+        
+        print(f"🔍 Looking up formatted information for: {full_name}")
+        if config.USE_MATCHING_METHOD:
+            per_id = self.find_person_id_by_query(query)
+        else:
+            per_id = None
+        # Get comprehensive data first
+        comprehensive_data = self.lookup_person_comprehensive(per_id,full_name)
+        
+        if "error" in comprehensive_data:
+            return comprehensive_data
+        
+        person_info = comprehensive_data.get('person_info', {})
+        personal2media_info = comprehensive_data.get('personal2media_info', [])
+        org2media_info = comprehensive_data.get('org2media_info', [])
+        
+        # Get entries for the main person only
+        main_person_entries = [
+            entry for entry in personal2media_info 
+            if entry.get('entity_name') == full_name
+        ]
+        
+        # Create individual crime summary
+        individual_crime_summary = {}
+        if main_person_entries:
+            violation_summary = group_violations_by_media(main_person_entries)
+            individual_crime_summary[full_name] = violation_summary
+        
+        # Create organizational crime summary
+        org_groups = defaultdict(list)
+        for entry in org2media_info:
+            org_name = entry.get('organization_name', '')
+            if org_name:
+                org_groups[org_name].append(entry)
+        
+        organizational_crime_summary = {}
+        for org_name, org_entries in org_groups.items():
+            violation_summary = group_violations_by_media(org_entries)
+            organizational_crime_summary[org_name] = violation_summary
+        
+        # For personal_risk_analysis, return all individual entries with customer_role
+        # This matches the format in formatted_lookup_result_v2.json
+        
+        # For organizer_risk_analysis, return all organization entries with customer_role
+        # This matches the format in formatted_lookup_result_v2.json
+        
+        # Create final formatted result matching the expected format
+        formatted_result = {
+            "person_info": person_info,
+            "invidual_AML": individual_crime_summary,
+            "organization_AML": organizational_crime_summary,
+            "personal_risk_analysis": personal2media_info,  # Return all detailed entries
+            "organizer_risk_analysis": org2media_info       # Return all detailed entries
+        }
+        
+        print(f"✅ Formatted result created for: {full_name}")
+        print(f"📊 Individual crimes: {len(individual_crime_summary)}")
+        print(f"🏢 Organizational crimes: {len(organizational_crime_summary)}")
+        print(f"👤 Personal risks: {len(personal2media_info)}")
+        print(f"🏛️ Organizer risks: {len(org2media_info)}")
+        
+        return formatted_result
 
     def get_similar_names(self, full_name: str, limit: int = 5) -> List[str]:
         """

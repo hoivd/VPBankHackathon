@@ -1,0 +1,54 @@
+Hãy trả về cho tôi file json có format sau : 
+
+Chi tiét tội cá nhân:
+Tóm tắt 
+- Tội a:  |  legal_status |customer_role| media_id1 2 3 4
+- Tội b: | legal_status | customer_role|media_id
+Chi tiết tội tổ chức
+Tổ chức 1: 
+- Tội a:  |  legal_status |customer_role| media_id1 2 3 4
+- Tội b: | legal_status | customer_role|media_id
+Tổ chức 2: 
+
+
+
+Tội a: tội có nhiều bài báo đề cập tới nhất 
+violate_type :sẽ trả về nhiều bài báo với nhiều violate type, giúp tôi lấy violate_type xuất hiện trong nhiều bài báo nhất
+Hãy chắn chắn các thông tin có trong danh sách này, legal_status: nếu có 1 bài báo "đã kết án" thì kết luận tội đó đã kết án, nếu kgông lấy tội cao nhất theo danh sách trên
+customer_role  : lấy customer_role xuất hiện trong nhiều bài báo nhất (được tính trong tội đó )
+
+
+
+✅ 3. Đặc trưng rủi ro theo từng cá nhân (mỗi cá nhân là một phần tử trong danh sách):
+
+list_personal_risks (key)
+
+[
+{{
+"entity_id": "..." ← Lưu ý personal_id phải trùng với personal_id của cá nhân ở bước 1
+"entity_name": "...", ← tên cá nhân khớp với Bước 1
+"is_individual": true, ← Luôn là true cho cá nhân
+"violation_type": "...", ← Rửa tiền / Tài trợ khủng bố / Lừa đảo / Chiếm đoạt tài sản / Tham nhũng / Hối lộ / Vi phạm dân sự / hành chính / tranh chấp nhỏ / Đưa vào danh sách trừng phạt / Cấm vận kinh tế tài chính / Trừng phạt ngành lĩnh vực / Hạn chế truy cập vào hệ thống tài chính Hoa Kỳ / Trừng phạt thứ cấp / Không có hành vi phạm được đề cập
+"customer_role": "...", ← Chủ mưu / Cầm đầu / Tổ chức thực hiện hành vi vi phạm / Tham gia / Đồng phạm / Giúp sức hoặc thực hiện một phần / Bên liên quan bị động / Bị nhắc tên nhưng không trực tiếp / Không có liên quan rõ ràng trong bài báo
+"legal_status": "...", ← Đã kết án / Đang trong quá trình điều tra / truy tố / chưa có phán quyết / Tin chưa rõ ràng / Được minh oan
+}},
+...
+]
+
+✅ 5. Đặc trưng rủi ro theo từng tổ chức (mỗi tổ chức là một phần tử trong danh sách):
+
+list_organizer_risks (key)
+
+[
+{{
+"entity_id": "..." ← Lưu ý organizer_id phải trùng với organizer_id của tổ chức ở bước 2
+"entity_name": "...", ← tên tổ chức khớp với Bước 2
+"is_individual": false, ← Luôn là false cho tổ chức
+"violation_type": "...", ← Rửa tiền / Tài trợ khủng bố / Lừa đảo / Chiếm đoạt tài sản / Tham nhũng / Hối lộ / Vi phạm dân sự / hành chính / tranh chấp nhỏ / Đưa vào danh sách trừng phạt / Cấm vận kinh tế tài chính / Trừng phạt ngành lĩnh vực / Hạn chế truy cập vào hệ thống tài chính Hoa Kỳ / Trừng phạt thứ cấp / Không có hành vi phạm được đề cập
+"customer_role": "...", ← Chủ mưu / Cầm đầu / Tổ chức thực hiện hành vi vi phạm / Tham gia / Đồng phạm / Giúp sức hoặc thực hiện một phần / Bên liên quan bị động / Bị nhắc tên nhưng không trực tiếp / Không có liên quan rõ ràng trong bài báo
+"legal_status": "...", ← Đã kết án / Đang trong quá trình điều tra / truy tố / chưa có phán quyết / Tin chưa rõ ràng / Được minh oan
+}},
+...
+]
+
+

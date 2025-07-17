@@ -5,7 +5,7 @@ import config
 import json
 
 class TableAdverseMedia:
-    def __init__(self, query: DynamoQuery, table_config):
+    def __init__(self, query: DynamoQuery, table_config = None):
         self.query = query
         self.table_name, _ = list(table_config['media_config'].items())[0]
 
@@ -37,8 +37,8 @@ class TableAdverseMedia:
             return {}
 
 if __name__ == "__main__":
-    AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
-    AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
+    AWS_ACCESS_KEY='AKIAQWLOPNIDXAC4BJWD'
+    AWS_SECRET_KEY='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'
     REGION = config.AWS_REGION
 
     base_dynamo = BaseDynamoDB(

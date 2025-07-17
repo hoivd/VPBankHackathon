@@ -44,7 +44,7 @@ class ArticlePersonExtractor:
     
 if __name__ == "__main__":
     context_file = 'data/contents_old.json'
-    bucket_name = "team253"
+    bucket_name = "team253vpbank"
     key = "adverse_media_data/case1.json"
 
     json = Utils.fetch_json_from_s3(bucket_name, key)

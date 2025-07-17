@@ -2,7 +2,7 @@ import logging
 
 LOG_LEVEL = logging.DEBUG  # Mức độ log mặc định
 AWS_REGION = "ap-southeast-1"  # Khu vực AWS mặc định
-S3_BUCKET_NAME = "team253"  # Tên bucket S3 mặc định
+S3_BUCKET_NAME = "team253vpbank"  # Tên bucket S3 mặc định
 PROMPT_EXTRACTOR_FILE = "prompts/prompt_extractor.txt"  # Đường dẫn tới file prompt extractor
 PROMPT_COMPARE_INFO_FILE = "./prompts/promt_compare_info.txt"  # Đường dẫn tới file prompt so sánh thông tin
 TABLE_CONFIG = {
@@ -37,4 +37,6 @@ CLAUDE_35_HAIKU_CROSS_REGION_VIRGINA_MODEL_ID = 'arn:aws:bedrock:us-east-1:04801
 CLAUDE_35_HAIKU_ON_DEMAND_VIRGINA_MODEL_ID = 'anthropic.claude-3-5-haiku-20241022-v1:0'
 CLAUDE_30_HAIKU_ON_DEMAND_VIRGINA_MODEL_ID = 'anthropic.claude-3-haiku-20240307-v1:0'
 CLAUDE_37_HAIKU_CROSS_REGION_MODEL_ID = ""
+
+USE_MATCHING_METHOD = True
 

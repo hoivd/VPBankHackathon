@@ -8,7 +8,7 @@ import os
 import sys
 import json
 from typing import Dict, Any, Optional
-from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi import FastAPI, HTTPException, BackgroundTasks, Path
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from dotenv import load_dotenv
@@ -16,9 +16,23 @@ import uvicorn
 
 load_dotenv()
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-from agents.tools.person_risk_agent import PersonRiskAgent
+try:
+    from agents.tools.person_risk_agent import PersonRiskAgent
+    from dynamodb.table_adverse_media import TableAdverseMedia
+    from dynamodb.dynamo_query import DynamoQuery
+    from dynamodb.base_dynamo import BaseDynamoDB
+    from utils import Utils
+    import config
+except ImportError:
+    from tools.person_risk_agent import PersonRiskAgent
+    sys.path.append('..')
+    from dynamodb.table_adverse_media import TableAdverseMedia
+    from dynamodb.dynamo_query import DynamoQuery
+    from dynamodb.base_dynamo import BaseDynamoDB
+    from utils import Utils
+    import config
 
 app = FastAPI(
     title="VP Bank Person Risk Analysis API",
@@ -35,17 +49,36 @@ app.add_middleware(
 )
 
 agent = None
+media_service = None
 
 @app.on_event("startup")
 async def startup_event():
-    """Initialize the agent on startup"""
-    global agent
+    """Initialize the agent and media service on startup"""
+    global agent, media_service
     try:
         print("🚀 Initializing Person Risk Agent...")
         agent = PersonRiskAgent()
         print("✅ Agent initialized successfully!")
+        
+        print("🚀 Initializing Media Service...")
+        # Initialize DynamoDB components for media service
+        AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
+        AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
+        REGION = config.AWS_REGION
+
+        base_dynamo = BaseDynamoDB(
+            region_name=REGION,
+            access_key=AWS_ACCESS_KEY,
+            secret_key=AWS_SECRET_KEY
+        )
+        
+        query = DynamoQuery(base_dynamo.dynamodb)
+        table_config=config.TABLE_CONFIG_DEMO
+        media_service = TableAdverseMedia(query,table_config)
+        print("✅ Media Service initialized successfully!")
+        
     except Exception as e:
-        print(f"❌ Failed to initialize agent: {e}")
+        print(f"❌ Failed to initialize services: {e}")
         raise e
 
 # Request/Response models
@@ -57,7 +90,7 @@ class PersonLookupRequest(BaseModel):
 
 class QueryResponse(BaseModel):
     success: bool
-    response: str
+    response: dict
     person_name: Optional[str] = None
     error: Optional[str] = None
 
@@ -67,6 +100,12 @@ class DetailedAnalysisResponse(BaseModel):
     risk_analysis: Optional[Dict[str, Any]] = None
     lookup_result: Optional[Dict[str, Any]] = None
     formatted_response: Optional[str] = None
+    error: Optional[str] = None
+
+class MediaContentResponse(BaseModel):
+    success: bool
+    media_id: Optional[str] = None
+    content: Optional[Dict[str, Any]] = None
     error: Optional[str] = None
 
 class HealthResponse(BaseModel):
@@ -112,9 +151,9 @@ async def process_query(request: QueryRequest):
     try:
         # Extract person name first
         person_name = agent.extract_person_name_from_query(request.query)
-        
+        # person_name = "Trương Mỹ Lan"
         # Process the query
-        response = agent.process_query(request.query)
+        response = agent.process_query_v2(person_name)
         
         return QueryResponse(
             success=True,
@@ -146,14 +185,14 @@ async def detailed_analysis(request: PersonLookupRequest):
     
     try:
         # Perform person lookup
-        lookup_result = agent.person_lookup.lookup_person_comprehensive(request.person_name)
+        lookup_result = agent.person_lookup.lookup_person_comprehensive_v2(request.person_name)
         
         # Analyze risk characteristics
-        risk_analysis = agent.risk_analyzer.analyze_person_lookup_result(lookup_result)
+        risk_analysis = agent.calculate_risk_score_v2(lookup_result)
         
         # Generate formatted response
         if "error" not in risk_analysis:
-            formatted_response = agent.generate_vietnamese_response(request.person_name, risk_analysis)
+            formatted_response = agent.generate_vietnamese_response_v2(request.person_name, risk_analysis)
         else:
             formatted_response = f"❌ Không tìm thấy thông tin về '{request.person_name}' trong hệ thống."
             if risk_analysis.get("suggestions"):
@@ -190,24 +229,18 @@ async def extract_name(request: QueryRequest):
     if agent is None:
         raise HTTPException(status_code=503, detail="Agent not initialized")
     
-    try:
-        # Try regex first
-        regex_name = agent._extract_name_with_regex(request.query)
-        llm_name = None
-        
+    try:  
         # Try LLM if regex fails
-        if not regex_name and agent.llm_enabled:
-            llm_name = agent.extract_person_name_with_llm(request.query)
+        llm_name = agent.extract_person_name_with_llm(request.query)
         
         # Final result
-        final_name = regex_name or llm_name
+        final_name = llm_name
         
         return {
             "success": True,
             "person_name": final_name,
-            "regex_result": regex_name,
             "llm_result": llm_name,
-            "method_used": "regex" if regex_name else ("llm" if llm_name else "none"),
+            "method_used": "llm" if llm_name else "none",
             "llm_enabled": agent.llm_enabled,
             "original_query": request.query
         }
@@ -252,6 +285,52 @@ async def extract_name_llm_only(request: QueryRequest):
             "error": f"Error with LLM extraction: {str(e)}"
         }
 
+@app.get("/media/{media_id}", response_model=MediaContentResponse)
+async def get_media_content(media_id: str = Path(..., description="The media ID to retrieve content for")):
+    """
+    Get news content from adverse_media table by media_id
+    
+    Args:
+        media_id: The media ID to look up in the adverse_media table
+        
+    Returns:
+        MediaContentResponse with the full media document content
+    """
+    try:
+        # Get media content from DynamoDB
+        AWS_ACCESS_KEY='AKIAQWLOPNIDXAC4BJWD'
+        AWS_SECRET_KEY='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'
+        REGION = config.AWS_REGION
+
+        base_dynamo = BaseDynamoDB(
+            region_name=REGION,
+            access_key=AWS_ACCESS_KEY,
+            secret_key=AWS_SECRET_KEY
+        )
+
+        query = DynamoQuery(base_dynamo.dynamodb)
+        table_adverse_media = TableAdverseMedia(query)
+        media_content = table_adverse_media.get_document_by_media_id(media_id)
+        if not media_content:
+            return MediaContentResponse(
+                success=False,
+                media_id=media_id,
+                error=f"No media content found for media_id: {media_id}"
+            )
+        
+        return MediaContentResponse(
+            success=True,
+            media_id=media_id,
+            content=media_content
+        )
+        
+    except Exception as e:
+        return MediaContentResponse(
+            success=False,
+            media_id=media_id,
+            error=f"Error retrieving media content: {str(e)}"
+        )
+
 @app.get("/api-docs")
 async def get_api_docs():
     """Get API documentation and usage examples"""
@@ -263,7 +342,8 @@ async def get_api_docs():
             "/health": "Detailed health check",
             "/query": "Process Vietnamese natural language query",
             "/analyze": "Get detailed risk analysis for a person",
-            "/extract-name": "Extract person name from Vietnamese text"
+            "/extract-name": "Extract person name from Vietnamese text",
+            "/media/{media_id}": "Get news content from adverse_media table by media_id"
         },
         "examples": {
             "query": {
@@ -279,6 +359,11 @@ async def get_api_docs():
                 "body": {
                     "person_name": "Trương Mỹ Lan"
                 }
+            },
+            "media": {
+                "endpoint": "/media/{media_id}",
+                "method": "GET",
+                "description": "Replace {media_id} with actual media ID, e.g., /media/123"
             }
         }
     }

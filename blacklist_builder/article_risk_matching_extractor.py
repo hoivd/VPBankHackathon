@@ -470,8 +470,8 @@ if __name__ == "__main__":
     )
 
     context_file = 'data/contents_old.json'
-    bucket_name = "team253"
-    key = "adverse_media_data/case2.json"
+    bucket_name = "team253vpbank"
+    key = "adverse_media_data/case1.json"
 
     contents = Utils.fetch_json_from_s3(bucket_name, key)
     logger.info(f"Đã load {len(contents)} bài báo từ file {context_file}")
