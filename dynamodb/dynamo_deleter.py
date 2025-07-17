@@ -38,6 +38,7 @@ class DynamoDBDeleter:
         Xoá một hoặc nhiều item theo partition key (và sort key nếu có).
         :param table_config: dict dạng {table_name: partition_key}
         :param partition_value: str hoặc list[str] (nhiều khoá chính)
+
         """
         table_name, partition_key = list(table_config.items())[0]
         table = self.dynamodb.Table(table_name)
@@ -58,6 +59,7 @@ class DynamoDBDeleter:
                     print(f"⚠️ Item [{key}] không tồn tại trong bảng '{table_name}'.")
             except ClientError as e:
                 print(f"❌ Lỗi khi xoá item [{key}] trong bảng '{table_name}':", e.response['Error']['Message'])
+
 
     def delete_all_items(self, table_config: dict, sort_key=None):
         """
@@ -99,6 +101,7 @@ class DynamoDBDeleter:
 if __name__ == "__main__":
     AWS_ACCESS_KEY = Utils.load_api_key_from_env("NEW_AWS_ACCESS_KEY")
     AWS_SECRET_KEY = Utils.load_api_key_from_env("NEW_AWS_SECRET_KEY")
+
     REGION = config.AWS_REGION
 
     base_dynamo = BaseDynamoDB(

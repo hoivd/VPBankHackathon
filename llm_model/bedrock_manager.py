@@ -205,6 +205,7 @@ class BedrockModelManager(LlmModelManager):
         else:
             raise ValueError(f"Unsupported model_type: {model_type}")
 
+
 if __name__ == "__main__":
     import json
 
@@ -213,6 +214,7 @@ if __name__ == "__main__":
     AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
     REGION = config.AWS_VIRGINA_REGION
     MODEL_ID = config.CLAUDE_30_HAIKU_ON_DEMAND_VIRGINA_MODEL_ID
+
     prompt = "Viết một đoạn văn ngắn về lợi ích của AI trong y tế."
 
     # Khởi tạo manager

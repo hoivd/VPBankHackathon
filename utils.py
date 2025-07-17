@@ -11,6 +11,7 @@ from decimal import Decimal
 from datetime import datetime, date
 from S3.s3_connector import S3Connector
 
+
 logger = _setup_logger(__name__, config.LOG_LEVEL)
 
 class Utils:
@@ -162,6 +163,7 @@ class Utils:
         s3_client = Utils.get_s3_client(aws_access_key, aws_secret_key, region_name)
         fetcher = S3DataFetcher(s3_client)
         return fetcher.read_file(bucket_name=bucket, object_key=key, file_type="text")
+
 
     @staticmethod
     def load_text(file_path: str, encoding: str = "utf-8") -> str:

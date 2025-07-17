@@ -9,6 +9,7 @@ class TableAdverseMedia:
         self.query = query
         self.table_name, _ = list(table_config['media_config'].items())[0]
 
+
     def get_all_media_ids(self) -> list[str]:
         """
         Scan toàn bộ bảng adverse_media và trả về danh sách media_id.

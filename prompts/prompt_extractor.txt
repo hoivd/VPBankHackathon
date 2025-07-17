@@ -260,3 +260,7 @@ Mẫu đầu ra mẫu 2 (Nếu không có người hoặc tổ chức có rủi 
 "list_organizer_risks": []
 }}
 ]
+<<<<<<< HEAD
+=======
+"""
+>>>>>>> bfccedc58fc341100b66b4b855683ee1bb861e02
