@@ -1,7 +1,7 @@
 
 # 🧠 Intelligent Risk Analyzer for AML Case Review
 
-Hệ thống hỗ trợ tự động thu thập, phân tích và truy vấn thông tin tiêu cực từ các nguồn mở (adverse media) nhằm xây dựng danh sách cá nhân/tổ chức tiềm ẩn rủi ro rửa tiền (AML). Giải pháp này ứng dụng AI/LLM, Neo4j, FAISS, MongoDB, DynamoDB và giao diện Web để hỗ trợ chuyên viên đánh giá và ra quyết định nhanh chóng, chính xác.
+Hệ thống hỗ trợ tự động thu thập, phân tích và truy vấn thông tin tiêu cực từ các nguồn mở (adverse media) nhằm xây dựng danh sách cá nhân/tổ chức tiềm ẩn rủi ro rửa tiền (AML). Giải pháp này ứng dụng AI/LLM, FAISS, MongoDB, DynamoDB và giao diện Web để hỗ trợ chuyên viên đánh giá và ra quyết định nhanh chóng, chính xác.
 
 ---
 
