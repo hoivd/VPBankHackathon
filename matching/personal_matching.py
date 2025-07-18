@@ -30,7 +30,7 @@ class PersonMatcherFAISS:
         self.llm_reranker = llm_reranker
 
     def match(self, query: str, top_k: int = 1) -> list[str]:
-        logger.info("⚙️ Đang tạo embedding cho query...")
+        logger.info(f"⚙️ Đang tạo embedding cho {query}...")
         query_embedding = self.embedder.embed_personal(query)
 
         logger.info("🔍 Đang tìm kiếm trong FAISS index...")
@@ -39,7 +39,7 @@ class PersonMatcherFAISS:
         faiss_ids = [item["id"] for item in results]
         logger.info(f"📌 Tìm thấy các FAISS ID: {faiss_ids}")
 
-        personal_embedd_ids = [int(faiss_id) for faiss_id in faiss_ids]
+        personal_embedd_ids = [str(faiss_id) for faiss_id in faiss_ids]
         logger.info("🔗 Đang ánh xạ personal_embedd_id → per_id...")
         embedd_to_per = self.personal_embedd_table.map_embedd_ids_to_per_ids(personal_embedd_ids)
 
@@ -65,7 +65,7 @@ class PersonMatcherFAISS:
 if __name__ == "__main__":
     # ==== Bước 1: Cấu hình ====
     model_name = config.EMBEDDING_MODEL_NAME
-    faiss_index_path = 'data/faiss_index/personal_faiss_index'
+    faiss_index_path = './faiss_indexes/new_table/personal_faiss_index'
 
     # ==== Bước 2: Khởi tạo các thành phần chính ====
     base_embedder = ModelEmbedder(model_name=model_name)
@@ -73,8 +73,8 @@ if __name__ == "__main__":
     faiss_searcher = FaissSearcher(index_dir=faiss_index_path)
 
     # ==== DynamoDB ====
-    AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
-    AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
+    AWS_ACCESS_KEY = Utils.load_api_key_from_env("OLD_AWS_ACCESS_KEY")
+    AWS_SECRET_KEY = Utils.load_api_key_from_env("OLD_AWS_SECRET_KEY")
     NEW_AWS_ACCESS_KEY = Utils.load_api_key_from_env("NEW_AWS_ACCESS_KEY")
     NEW_AWS_SECRET_KEY = Utils.load_api_key_from_env("NEW_AWS_SECRET_KEY")
 
@@ -82,11 +82,11 @@ if __name__ == "__main__":
     REGION_MODEL = config.AWS_VIRGINA_REGION
     DEFAULT_MODEL_ID = 'arn:aws:bedrock:us-east-1:538830382271:inference-profile/us.deepseek.r1-v1:0'
 
-    base_dynamo = BaseDynamoDB(region_name=REGION, access_key=AWS_ACCESS_KEY, secret_key=AWS_SECRET_KEY)
+    base_dynamo = BaseDynamoDB(region_name=REGION, access_key=NEW_AWS_ACCESS_KEY, secret_key=NEW_AWS_SECRET_KEY)
     dynamo_query = DynamoQuery(base_dynamo.dynamodb)
 
-    personal_embedd_table = TablePersonalEmbedd2Personal(query=dynamo_query, table_config=config.TABLE_CONFIG_DEMO)
-    personal_info_table = TablePersonalInfo(query=dynamo_query, table_config=config.TABLE_CONFIG_DEMO)
+    personal_embedd_table = TablePersonalEmbedd2Personal(query=dynamo_query, table_config=config.TABLE_CONFIG)
+    personal_info_table = TablePersonalInfo(query=dynamo_query, table_config=config.TABLE_CONFIG)
 
 
     llm_manager = BedrockModelManager(
@@ -113,7 +113,7 @@ if __name__ == "__main__":
     )
 
     # ==== Tìm kiếm ====
-    query = """Trương Mỹ Lan, chủ tịch tập đoàn Vạn Thịnh Phát"""
+    query = """Alan Viramontes Sesteaga, sống ở Sonora, Mexico"""
     results = matcher.match_full_info(query, top_k=10)
 
     print("✅ Kết quả khớp cá nhân đầy đủ:")

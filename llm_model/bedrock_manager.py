@@ -173,7 +173,7 @@ class BedrockModelManager(LlmModelManager):
     def generate(
         self,
         prompt: str,
-        model_type: str = "deepseek",  # hoặc "claude"
+        model_type: str,  # hoặc "claude"
         model_name: str = None,
         max_tokens: int = 12000,
         temperature: float = 1,

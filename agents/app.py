@@ -65,7 +65,7 @@ async def startup_event():
     try:
         
         model_name = config.EMBEDDING_MODEL_NAME
-        faiss_index_path = 'D:/VPBankHackathon/data/faiss_index/personal_faiss_index'
+        faiss_index_path = 'D:/VPBankHackathon/faiss_indexes/new_table/personal_faiss_index'
 
         # ==== Bước 2: Khởi tạo các thành phần chính ====
         base_embedder = ModelEmbedder(model_name=model_name)
@@ -88,7 +88,7 @@ async def startup_event():
         )
         
         query = DynamoQuery(base_dynamo.dynamodb)
-        table_config=config.TABLE_CONFIG_DEMO
+        table_config=config.TABLE_CONFIG
         media_service = TableAdverseMedia(query,table_config)
         print("✅ Media Service initialized successfully!")
         
@@ -318,8 +318,10 @@ async def get_media_content(media_id: str = Path(..., description="The media ID 
     """
     try:
         # Get media content from DynamoDB
-        AWS_ACCESS_KEY='AKIAQWLOPNIDXAC4BJWD'
-        AWS_SECRET_KEY='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'
+        # AWS_ACCESS_KEY='AKIAQWLOPNIDXAC4BJWD'
+        # AWS_SECRET_KEY='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'
+        AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
+        AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
         REGION = config.AWS_REGION
 
         base_dynamo = BaseDynamoDB(
@@ -329,7 +331,7 @@ async def get_media_content(media_id: str = Path(..., description="The media ID 
         )
 
         query = DynamoQuery(base_dynamo.dynamodb)
-        table_adverse_media = TableAdverseMedia(query, config.TABLE_CONFIG_DEMO)
+        table_adverse_media = TableAdverseMedia(query, config.TABLE_CONFIG)
         media_content = table_adverse_media.get_document_by_media_id(media_id)
         if not media_content:
             return MediaContentResponse(

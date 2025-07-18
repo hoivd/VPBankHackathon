@@ -16,11 +16,10 @@ from typing import Dict, List, Any, Optional
 import dotenv
 dotenv.load_dotenv()
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from config import TABLE_CONFIG_DEMO
+from config import TABLE_CONFIG
 from matching.llm_rerank_personal import LlmRerankerPersonal
 from matching.personal_matching import PersonMatcherFAISS
 from utils import Utils
-from config import TABLE_CONFIG_DEMO
 import config
 import os
 import numpy as np
@@ -52,8 +51,11 @@ class PersonLookupDynamoDB:
         
         try:
             
-            aws_access_key_id = 'AKIAQWLOPNIDXAC4BJWD'
-            aws_secret_access_key = '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'
+            # aws_access_key_id = 'AKIAQWLOPNIDXAC4BJWD'
+            # aws_secret_access_key = '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'
+            aws_access_key_id = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
+            aws_secret_access_key = Utils.load_api_key_from_env("AWS_SECRET_KEY")
+
             self.dynamodb = boto3.resource(
                 'dynamodb',
                 region_name=self.region_name,
@@ -73,11 +75,11 @@ class PersonLookupDynamoDB:
         except Exception as e:
             print(f"Failed to connect to DynamoDB: {e}")
             raise
-        personal_table_name, _ = list(TABLE_CONFIG_DEMO['person_config'].items())[0]
-        p2m_table_name, _ = list(TABLE_CONFIG_DEMO['p2m_config'].items())[0]
-        o2m_table_name, _ = list(TABLE_CONFIG_DEMO['o2m_config'].items())[0]
-        org_table_name, _ = list(TABLE_CONFIG_DEMO['organization_config'].items())[0]
-        media_table_name, _ = list(TABLE_CONFIG_DEMO['media_config'].items())[0]
+        personal_table_name, _ = list(TABLE_CONFIG['person_config'].items())[0]
+        p2m_table_name, _ = list(TABLE_CONFIG['p2m_config'].items())[0]
+        o2m_table_name, _ = list(TABLE_CONFIG['o2m_config'].items())[0]
+        org_table_name, _ = list(TABLE_CONFIG['organization_config'].items())[0]
+        media_table_name, _ = list(TABLE_CONFIG['media_config'].items())[0]
         self.personal_info_table = self.dynamodb.Table(personal_table_name)
         self.personal2media_table = self.dynamodb.Table(p2m_table_name)
         self.org2media_table = self.dynamodb.Table(o2m_table_name)
@@ -150,11 +152,11 @@ class PersonLookupDynamoDB:
 
         print("DEFAULT_MODEL_ID:", DEFAULT_MODEL_ID)
 
-        base_dynamo = BaseDynamoDB(region_name=REGION, access_key=AWS_ACCESS_KEY, secret_key=AWS_SECRET_KEY)
+        base_dynamo = BaseDynamoDB(region_name=REGION, access_key=NEW_AWS_ACCESS_KEY, secret_key=NEW_AWS_SECRET_KEY)
         dynamo_query = DynamoQuery(base_dynamo.dynamodb)
 
-        personal_embedd_table = TablePersonalEmbedd2Personal(query=dynamo_query, table_config=config.TABLE_CONFIG_DEMO)
-        personal_info_table = TablePersonalInfo(query=dynamo_query, table_config=config.TABLE_CONFIG_DEMO)
+        personal_embedd_table = TablePersonalEmbedd2Personal(query=dynamo_query, table_config=config.TABLE_CONFIG)
+        personal_info_table = TablePersonalInfo(query=dynamo_query, table_config=config.TABLE_CONFIG)
 
         llm_manager = BedrockModelManager(
             aws_access_key_id=NEW_AWS_ACCESS_KEY,
@@ -557,7 +559,7 @@ class PersonLookupDynamoDB:
         if "error" in comprehensive_data:
             return comprehensive_data
         
-        
+
 
         person_info = comprehensive_data.get('person_info', {})
         personal2media_info = comprehensive_data.get('personal2media_info', [])

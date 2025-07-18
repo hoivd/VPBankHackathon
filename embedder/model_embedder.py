@@ -5,13 +5,16 @@ from logger import _setup_logger
 import config
 import os
 import time
+from pathlib import Path
+
+
 
 logger = _setup_logger(__name__, config.LOG_LEVEL)
 
 class ModelEmbedder:
     def __init__(self, model_name="vinai/phobert-base", device=None):
-        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
-        self.model = AutoModel.from_pretrained(model_name, use_safetensors=True)
+        self.tokenizer = AutoTokenizer.from_pretrained(Path(model_name))
+        self.model = AutoModel.from_pretrained(Path(model_name), use_safetensors=True)
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.model.to(self.device)
         self.model.eval()
