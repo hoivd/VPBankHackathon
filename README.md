@@ -30,7 +30,7 @@ Hệ thống hỗ trợ tự động thu thập, phân tích và truy vấn thô
 ├── mongodb/                    # Tương tác với MongoDB
 ├── agent/                      # Backend API agent để truy vấn
 │   └── app.py
-├── frontend/                   # Giao diện người dùng
+├── Frontend/                   # Giao diện người dùng
     ├── package.json
     └── ...
 ```
@@ -105,7 +105,7 @@ python app.py
 ### Bước 3️⃣: Khởi chạy Frontend Web App
 
 ```bash
-cd frontend
+cd Frontend
 npm install
 npm run dev
 ```
