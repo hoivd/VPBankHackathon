@@ -1,0 +1,587 @@
+<INFO-embedder.model_embedder> - KHOI TAO MO HINH EMBEDDER THANH CONG D:\VPBankHackathon\embedder\models\phobert_base_v2_local. SU DUNG DEVICE cuda
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình Bedrock...None
+<DEBUG-llm_model.bedrock_manager> - Calling Bedrock model anthropic.claude-instant-v1
+<DEBUG-llm_model.bedrock_manager> - Conten [{'type': 'text', 'text': 'Trương Mỹ Lan'}]
+<DEBUG-llm_model.bedrock_manager> - [generate] ✅ Đã nhận phản hồi từ mô hình anthropic.claude-instant-v1 mà không có reasoning.
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<DEBUG-utils> - [load_text] ✅ Đã load file văn bản: D:/VPBankHackathon/prompts/rerank_personal.txt
+<INFO-matching.personal_matching> - ⚙️ Đang tạo embedding cho Trương Mỹ Lan Là nữ chủ tịch tập đoàn vạn thịnh phát...
+<INFO-embedder.personal_embedder> - ⏳ Đang encode cá nhân (1 cá nhân)
+<INFO-embedder.model_embedder> - Thoi gian embedd 0.16 giay
+<INFO-embedder.model_embedder> - Encode THANH CONG
+<INFO-embedder.personal_embedder> - ✅ Đã encode xong các cá nhân
+<INFO-matching.personal_matching> - 🔍 Đang tìm kiếm trong FAISS index...
+<INFO-matching.personal_matching> - 📌 Tìm thấy các FAISS ID: [100089, 100056, 100072, 100066, 100073, 100051, 100070, 100071, 100085, 100088]
+<INFO-matching.personal_matching> - 🔗 Đang ánh xạ personal_embedd_id → per_id...
+<INFO-matching.llm_rerank_personal> - 🤖 Đang gọi LLM để đánh giá danh sách...
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình DeepSeek...us.deepseek.r1-v1:0
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Đã nhận phản hồi: Per_id:
+[per_id_1752778177209151]
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Reasoning: Okay, let's tackle this problem. So, the task is to compare a new customer's information against a blacklist of old customers to find potential matches. The user provided a specific example, and I need to follow the given rules to determine if there's a match.
+
+First, I need to extract the relevant information from the new customer's input. The input given is: "Trương Mỹ Lan Là nữ chủ tịch tập đoàn vạn thịnh phát". Let's parse this.
+
+From this, the full name is clearly Trương Mỹ Lan. The gender is mentioned as "nữ", which translates to Female. The position is "chủ tịch tập đoàn vạn thịnh phát" (Chairman of Vạn Thịnh Phát Group). The organization is "tập đoàn vạn thịnh phát". There's no mention of birth year, age, or residence area in the input, so those fields might be missing.
+
+Now, looking at the blacklist entries. The first entry in the list has full_name "Trương Mỹ Lan". Let's check the details:
+
+- Full name: Exact match. Both are Trương Mỹ Lan.
+- Gender: The new customer is female, and the blacklist entry's gender is Female. So that's a match.
+- Organization: The new customer's organization is "tập đoàn vạn thịnh phát", and the blacklist entry's organization is "Tập đoàn Vạn Thịnh Phát". The difference is just in capitalization and spacing, which according to the rules, is acceptable as a minor variation. So this is a match.
+- Position/Occupation: The new customer's position is "chủ tịch tập đoàn vạn thịnh phát", and the blacklist entry's occupation_or_position is "Chủ tịch Tập đoàn Vạn Thịnh Phát". Again, same as organization, just capitalization differences. So this matches.
+- Birth year/age: The new customer's input doesn't mention birth year or age. The blacklist entry has "birth_year_or_age": "68". Since the rules state that if birth_year is present, it must match. However, since the new customer doesn't provide this info, it's not a conflicting point. The rule says birth_year must match if present, but if it's missing in either, it's acceptable. So no conflict here.
+- Residence/Hometown: The new customer doesn't provide this, so no comparison needed.
+
+Other entries in the blacklist don't match the name Trương Mỹ Lan. For example, the second entry is Trần Quang Đạo, male, different position and organization. Others have different names, genders, or positions. So the only potential match is the first entry.
+
+The personal_relationships field in the first entry mentions being the main defendant in the Vạn Thịnh Phát case, which aligns with her position as chairman. This adds context but isn't directly compared, as per the rules.
+
+Therefore, the new customer Trương Mỹ Lan matches the first entry in the blacklist. The per_id for that entry is "per_id_1752778177209151".
+</think>
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình Bedrock...None
+<DEBUG-llm_model.bedrock_manager> - Calling Bedrock model anthropic.claude-instant-v1
+<DEBUG-llm_model.bedrock_manager> - Conten [{'type': 'text', 'text': 'Trương Mỹ Lan'}]
+<DEBUG-llm_model.bedrock_manager> - [generate] ✅ Đã nhận phản hồi từ mô hình anthropic.claude-instant-v1 mà không có reasoning.
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<DEBUG-utils> - [load_text] ✅ Đã load file văn bản: D:/VPBankHackathon/prompts/rerank_personal.txt
+<INFO-matching.personal_matching> - ⚙️ Đang tạo embedding cho Tìm cho tôi thông tin rủi ro của bà trương mỹ lan tập đoàn vạn thịnh phát, là nữ...
+<INFO-embedder.personal_embedder> - ⏳ Đang encode cá nhân (1 cá nhân)
+<INFO-embedder.model_embedder> - Thoi gian embedd 0.02 giay
+<INFO-embedder.model_embedder> - Encode THANH CONG
+<INFO-embedder.personal_embedder> - ✅ Đã encode xong các cá nhân
+<INFO-matching.personal_matching> - 🔍 Đang tìm kiếm trong FAISS index...
+<INFO-matching.personal_matching> - 📌 Tìm thấy các FAISS ID: [100089, 100056, 100072, 100066, 100073, 100071, 100070, 100051, 100048, 100085]
+<INFO-matching.personal_matching> - 🔗 Đang ánh xạ personal_embedd_id → per_id...
+<INFO-matching.llm_rerank_personal> - 🤖 Đang gọi LLM để đánh giá danh sách...
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình DeepSeek...us.deepseek.r1-v1:0
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Đã nhận phản hồi: Per_id:
+[per_id_1752778177209151]
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Reasoning: Okay, let's tackle this problem. So, the task is to compare a new customer's information against a blacklist to find potential matches. The user provided a query about "bà trương mỹ lan tập đoàn vạn thịnh phát, là nữ" and a list of blacklisted customers. I need to check if there's a match based on the given rules.
+
+First, I'll extract the relevant information from the query. The name is Trương Mỹ Lan. The gender is female. The organization mentioned is Tập đoàn Vạn Thịnh Phát. The query doesn't mention birth year or age, but the user might have that info. However, the rules say that if birth_year is present, it must match. But since the query doesn't provide it, maybe it's not a mandatory check here.
+
+Looking at the blacklist, the first entry is Trương Mỹ Lan with organization "Tập đoàn Vạn Thịnh Phát", gender Female, birth_year_or_age 68. The name matches exactly. The organization is the same. Gender matches. The birth year in the blacklist is 68, but the query doesn't mention it. However, the rules state that if birth_year is present, it must match. Since the query doesn't have it, maybe it's okay. But the problem is, the user's query might not have the birth year, so we can't confirm. But according to the rules, if the existing data has birth_year, then the new customer's must match. Wait, the new customer's info is extracted from the input. The input here is "bà trương mỹ lan tập đoàn vạn thịnh phát, là nữ". There's no mention of age or birth year. So the new customer's birth year is unknown. But the blacklist entry has birth_year_or_age as 68. Since the new customer's info doesn't have it, does that mean we can't check? The rules say "Năm sinh (birth_year) nếu có thì phải trùng khớp." So if the new customer has it, it must match. If not, then it's not a problem. So in this case, since the new customer's birth year isn't provided, we don't have to check that. So the other fields: full name matches, gender matches, organization matches. The occupation in the blacklist is "Chủ tịch Tập đoàn Vạn Thịnh Phát", but the query doesn't mention occupation, only the organization. The position might be inferred from the organization. Since the new customer's position isn't given, but the blacklist's occupation_or_position is "Chủ tịch...", maybe that's a match. Also, the residence in the blacklist is TP Hồ Chí Minh, but the query doesn't mention residence. So the main matching points are name, gender, organization. All of these match exactly. The birth year isn't provided, so it's not a conflict. Therefore, this is a potential match. The other entries in the blacklist have different names, genders, or organizations, so they don't match. So the correct per_id is per_id_1752778177209151.
+</think>
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình Bedrock...None
+<DEBUG-llm_model.bedrock_manager> - Calling Bedrock model anthropic.claude-instant-v1
+<DEBUG-llm_model.bedrock_manager> - Conten [{'type': 'text', 'text': 'Trương Mỹ Lan'}]
+<DEBUG-llm_model.bedrock_manager> - [generate] ✅ Đã nhận phản hồi từ mô hình anthropic.claude-instant-v1 mà không có reasoning.
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<DEBUG-utils> - [load_text] ✅ Đã load file văn bản: D:/VPBankHackathon/prompts/rerank_personal.txt
+<INFO-matching.personal_matching> - ⚙️ Đang tạo embedding cho Tìm kiếm rủi ro của bà Trương Mỹ Lan, là nam chủ công ty doanh nghiệp...
+<INFO-embedder.personal_embedder> - ⏳ Đang encode cá nhân (1 cá nhân)
+<INFO-embedder.model_embedder> - Thoi gian embedd 0.01 giay
+<INFO-embedder.model_embedder> - Encode THANH CONG
+<INFO-embedder.personal_embedder> - ✅ Đã encode xong các cá nhân
+<INFO-matching.personal_matching> - 🔍 Đang tìm kiếm trong FAISS index...
+<INFO-matching.personal_matching> - 📌 Tìm thấy các FAISS ID: [100089, 100056, 100072, 100066, 100073, 100051, 100048, 100061, 100071, 100070]
+<INFO-matching.personal_matching> - 🔗 Đang ánh xạ personal_embedd_id → per_id...
+<INFO-matching.llm_rerank_personal> - 🤖 Đang gọi LLM để đánh giá danh sách...
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình DeepSeek...us.deepseek.r1-v1:0
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Đã nhận phản hồi: Per_id:
+[]
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Reasoning: Okay, let's tackle this problem. So, I need to compare the new customer information with the blacklist entries to see if there's a potential match. The new customer's info is "Tìm kiếm rủi ro của bà Trương Mỹ Lan, là nam chủ công ty doanh nghiệp". Wait, that translates to "Risk search for Mrs. Truong My Lan, who is a male owner of a company enterprise." Hmm, that's a bit confusing. The name is female (bà is Mrs.), but the gender is male (nam). Maybe a typo? Let's check the blacklist entries.
+
+First, extract the info from the new customer. Full name: Trương Mỹ Lan. Gender: The input says "là nam" which is male, but "bà" is female. This is conflicting. Maybe a mistake in the input? Let's see the blacklist entries. Looking at the first entry in the blacklist: full_name is Trương Mỹ Lan, gender is Female. So the new customer's gender here is conflicting. But according to the rules, gender must match if present. The new customer's input has gender as male, but the blacklist entry has female. That's a problem. Unless there's a mistake in the input. Maybe "là nam chủ" refers to being a male owner, but the person is female. Maybe "nam" here is part of the position, not gender? Let me parse the Vietnamese again. "bà Trương Mỹ Lan, là nam chủ công ty doanh nghiệp". "Nam chủ" would be male owner, but "bà" is Mrs. So this is conflicting. Maybe it's a typo, and the gender should be female. But according to the input, the gender is male. So according to the rules, if gender is present, it must match. The blacklist entry for Trương Mỹ Lan is female. So this would be a mismatch. But wait, maybe the input has an error. Let's check other fields.
+
+Birth year: The new customer's info doesn't mention age or birth year. The blacklist entry for Trương Mỹ Lan has birth_year_or_age as "68", which is 68 years old. If the new customer's info doesn't have birth year, then that requirement is not enforced. But the gender is conflicting. So according to the rules, gender must match if present. Since the new customer's gender is male (as per input) and the blacklist entry is female, this would be a mismatch. But maybe the input has a typo. Let's check other fields. The occupation: "nam chủ công ty doanh nghiệp" translates to "male owner of a company enterprise". The blacklist entry's occupation is "Chủ tịch Tập đoàn Vạn Thịnh Phát" (Chairman of Vạn Thịnh Phát Group). The positions are similar, both are leadership roles. The organization in the blacklist is "Tập đoàn Vạn Thịnh Phát", but the new customer's organization isn't specified beyond "công ty doanh nghiệp" (company enterprise). The residence area isn't mentioned in the new customer's info. 
+
+But the main issue is the gender conflict. If the input says male, but the blacklist entry is female, then according to the rules, they must match. So this would disqualify the match. However, maybe the input's gender is a mistake. The name is Trương Mỹ Lan, which is a female name, and "bà" is Mrs. So the gender in the input might be an error. If we consider that the gender should be female, then it would match. But according to the input as given, gender is male. So strictly following the rules, this is a mismatch. But the system is supposed to look for strong similarities and consider potential matches even with some discrepancies. However, the rules state that gender must match if present. So if the new customer's gender is male, and the blacklist entry is female, it's a mandatory mismatch. Therefore, Trương Mỹ Lan in the blacklist would not be a match. But wait, maybe the input's gender is a typo. Let me check again. The input says "bà Trương Mỹ Lan, là nam chủ công ty doanh nghiệp". "Bà" is Mrs., so female. But "nam chủ" is male owner. This is conflicting. Maybe "nam chủ" is a typo for "nữ chủ" (female owner)? If that's the case, then gender would match. But the system can't assume typos. So based on the given data, gender is conflicting. Therefore, no match. But the system might still consider other factors. Let's check other entries. Are there any other entries with the name Trương Mỹ Lan? No, only the first entry. So if gender is a mandatory field and there's a conflict, then no match. But maybe the input's gender is incorrect. Alternatively, maybe the system should prioritize the name and other fields. Let's see. The name matches exactly. The occupation is similar (owner vs. chairman). The organization isn't specified in the new customer's info. Birth year isn't provided, so that's not a conflict. But gender is conflicting. According to the rules: "Giới tính (gender) nếu có thì phải trùng khớp." So if the new customer's gender is present (male), and the blacklist's is female, it's a mandatory mismatch. Therefore, no match. But the input's gender might be wrong. However, the system can't assume that. So the answer would be no match. But wait, the input says "là nam chủ công ty doanh nghiệp" which is "is a male owner of a company enterprise". So the gender here is male. But the name is female. This is conflicting. Therefore, the system would not consider this a match because gender doesn't align. So the Per_id would be empty. But maybe I'm missing something. Let me check the other entries. Are there any other entries with similar names? No. So the answer should be Per_id: [].
+</think>
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình Bedrock...None
+<DEBUG-llm_model.bedrock_manager> - Calling Bedrock model anthropic.claude-instant-v1
+<DEBUG-llm_model.bedrock_manager> - Conten [{'type': 'text', 'text': 'Trương Mỹ Lan'}]
+<DEBUG-llm_model.bedrock_manager> - [generate] ✅ Đã nhận phản hồi từ mô hình anthropic.claude-instant-v1 mà không có reasoning.
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<DEBUG-utils> - [load_text] ✅ Đã load file văn bản: D:/VPBankHackathon/prompts/rerank_personal.txt
+<INFO-matching.personal_matching> - ⚙️ Đang tạo embedding cho Tìm kiếm rủi ro của bà Trương Mỹ Lan, là nữ chủ công ty doanh nghiệp...
+<INFO-embedder.personal_embedder> - ⏳ Đang encode cá nhân (1 cá nhân)
+<INFO-embedder.model_embedder> - Thoi gian embedd 0.01 giay
+<INFO-embedder.model_embedder> - Encode THANH CONG
+<INFO-embedder.personal_embedder> - ✅ Đã encode xong các cá nhân
+<INFO-matching.personal_matching> - 🔍 Đang tìm kiếm trong FAISS index...
+<INFO-matching.personal_matching> - 📌 Tìm thấy các FAISS ID: [100089, 100056, 100072, 100066, 100073, 100051, 100048, 100061, 100070, 100071]
+<INFO-matching.personal_matching> - 🔗 Đang ánh xạ personal_embedd_id → per_id...
+<INFO-matching.llm_rerank_personal> - 🤖 Đang gọi LLM để đánh giá danh sách...
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình DeepSeek...us.deepseek.r1-v1:0
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Đã nhận phản hồi: Per_id:
+[per_id_1752778177209151]
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Reasoning: Okay, let's tackle this problem. So, the task is to compare a new customer's information against a blacklist to find potential matches based on certain criteria. The user provided a query input for a customer named Trương Mỹ Lan, who is a female owner of a company/enterprise. The blacklist has several entries, and I need to check if any of them match this new customer.
+
+First, I need to extract the relevant information from the query. The new customer's details are: full name is Trương Mỹ Lan, gender is female, occupation/position is "chủ công ty doanh nghiệp" (which translates to company owner or similar). There's no mention of birth year, age, organization, or residence area in the query. So, the key fields here are full name, gender, and occupation.
+
+Now, looking at the blacklist entries. Let's go through each one:
+
+1. The first entry in the blacklist is Trương Mỹ Lan. Full name matches exactly. Gender is Female, which matches. Her occupation_or_position is "Chủ tịch Tập đoàn Vạn Thịnh Phát" (Chairman of Vạn Thịnh Phát Group). The new customer's position is "chủ công ty doanh nghiệp" which is a general term for a company owner. There's a similarity here, as both are leadership roles in a company. The organization in the blacklist entry is "Tập đoàn Vạn Thịnh Phát", but the new customer's organization isn't specified. However, the rules say to accept slight variations and not require exact matches for organization. Since the name and gender match, and the positions are similar, this is a strong candidate. Also, the birth_year_or_age is 68, but the new customer doesn't have a birth year provided. The rules state that if birth_year is present, it must match. Since the new customer's birth year isn't given, this requirement is satisfied. So this entry is a potential match.
+
+2. Trần Quang Đạo: Different name, gender is male. Doesn't match.
+
+3. Đặng Anh Quân: Different name, male. No match.
+
+4. Lê Thị Thu Hà: Different name, female. Occupation is "Nhân viên" (employee), which doesn't match the new customer's owner role. Not a match.
+
+5. Nguyễn Phương Hằng: Different name, female. Position is "Tổng giám đốc" (General Director), which is a high position but the name doesn't match. So no.
+
+6. Trương Văn Tý: Different name, male. No match.
+
+7. Huỳnh Uy Dũng: Different name, male. No.
+
+8. Andrejs BRADENS: Different name, male. No.
+
+9. T.Đ.D: Initials, not matching. Male. No.
+
+10. N.Q.K: Initials, male. No.
+
+So the only possible match is the first entry. The name matches exactly, gender matches, and the position is a high-level role in a company. The organization in the blacklist entry is specific, but the new customer's organization isn't provided, so that's not a conflicting point. The birth year isn't given in the query, so the mandatory match for birth_year (if present) is satisfied because the query doesn't have it. Therefore, this should be a match. The personal_relationships field in the blacklist entry provides context that she's a major shareholder and involved in legal cases, which might add to the suspicion, but according to the rules, we don't directly compare that field. 
+
+So the per_id for the first entry is per_id_1752778177209151. That's the only one that meets all the required criteria.
+</think>
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình Bedrock...None
+<DEBUG-llm_model.bedrock_manager> - Calling Bedrock model anthropic.claude-instant-v1
+<DEBUG-llm_model.bedrock_manager> - Conten [{'type': 'text', 'text': 'Enrique Dann Esparragoza Rosas'}]
+<DEBUG-llm_model.bedrock_manager> - [generate] ✅ Đã nhận phản hồi từ mô hình anthropic.claude-instant-v1 mà không có reasoning.
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<DEBUG-utils> - [load_text] ✅ Đã load file văn bản: D:/VPBankHackathon/prompts/rerank_personal.txt
+<INFO-matching.personal_matching> - ⚙️ Đang tạo embedding cho Enrique Dann Esparragoza Rosas, sống ở Culiacan, Sinaloa, Mexico...
+<INFO-embedder.personal_embedder> - ⏳ Đang encode cá nhân (1 cá nhân)
+<INFO-embedder.model_embedder> - Thoi gian embedd 0.02 giay
+<INFO-embedder.model_embedder> - Encode THANH CONG
+<INFO-embedder.personal_embedder> - ✅ Đã encode xong các cá nhân
+<INFO-matching.personal_matching> - 🔍 Đang tìm kiếm trong FAISS index...
+<INFO-matching.personal_matching> - 📌 Tìm thấy các FAISS ID: [100023, 100089, 100056, 100021, 100020, 100061, 100022, 100024, 100072, 100025]
+<INFO-matching.personal_matching> - 🔗 Đang ánh xạ personal_embedd_id → per_id...
+<INFO-matching.llm_rerank_personal> - 🤖 Đang gọi LLM để đánh giá danh sách...
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình DeepSeek...us.deepseek.r1-v1:0
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Đã nhận phản hồi: Per_id:
+[per_id_1752778464748547]
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Reasoning: Okay, let's tackle this problem. So, I need to compare the new customer's information with the blacklist entries and find any potential matches based on the given rules. Let's start by extracting the necessary details from the new customer's input.
+
+The new customer is Enrique Dann Esparragoza Rosas, living in Culiacan, Sinaloa, Mexico. The key fields here are full_name, residence_area, and possibly others. The blacklist has several entries, so I need to check each one.
+
+First, looking at the first entry in the blacklist: full_name is "Enrique Dann Esparragoza Rosas", which matches exactly. The residence is "Culiacan, Sinaloa, Mexico" which also matches exactly. The birth_year is 1985, but the new customer's info doesn't mention a birth year or age. However, the rules state that if birth_year is present, it must match. Since the new customer doesn't have it, maybe that's okay. Gender is Male, but again, the new customer's gender isn't provided. Wait, the rules say gender must match if present. Since the new customer's gender isn't given, does that mean we can ignore the gender check? Or is it possible that the gender is missing in the new customer's data, so we don't have to consider it as a mismatch? The rules mention that if the fields are present, they must match. Since the new customer's data doesn't have gender, the existing gender in the blacklist (Male) doesn't conflict. 
+
+Also, the organization in the blacklist entry is "SINALOA CARTEL", but the new customer's organization isn't mentioned. However, the personal_relationships field mentions "Linked To: SINALOA CARTEL", which might be additional context but isn't used for direct comparison. 
+
+Since the name and residence match exactly, and there's no conflicting information (like birth year or gender), this seems like a strong match. The other entries in the blacklist have different names and locations, so they don't match. 
+
+Another thing to check: the rules require that birth_year must match if present. Since the new customer doesn't have a birth year, there's no conflict. The same applies to gender. So, even though the blacklist entry has birth_year 1985 and gender Male, the new customer's data doesn't provide those, so it's acceptable. 
+
+Therefore, the first entry in the blacklist is a potential match. The personal_id for that entry is "per_id_1752778464748547". 
+
+I should check if there are any other possible matches. Let's look at the other entries. The second entry is Trương Mỹ Lan, different name and location. The third is Trần Quang Đạo, different name. The fourth and others are different names and locations. The only one that matches name and residence is the first entry. 
+
+So, the answer should be the personal_id of the first entry.
+</think>
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình Bedrock...None
+<DEBUG-llm_model.bedrock_manager> - Calling Bedrock model anthropic.claude-instant-v1
+<DEBUG-llm_model.bedrock_manager> - Conten [{'type': 'text', 'text': 'Trương Mỹ Lan'}]
+<DEBUG-llm_model.bedrock_manager> - [generate] ✅ Đã nhận phản hồi từ mô hình anthropic.claude-instant-v1 mà không có reasoning.
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<DEBUG-utils> - [load_text] ✅ Đã load file văn bản: D:/VPBankHackathon/prompts/rerank_personal.txt
+<INFO-matching.personal_matching> - ⚙️ Đang tạo embedding cho Tìm kiếm thông tin rủi ro Trương Mỹ Lan, đang là chủ tịch tập đoàn  vạn thịnh phát và ở thành phố hồ chí minh...
+<INFO-embedder.personal_embedder> - ⏳ Đang encode cá nhân (1 cá nhân)
+<INFO-embedder.model_embedder> - Thoi gian embedd 0.02 giay
+<INFO-embedder.model_embedder> - Encode THANH CONG
+<INFO-embedder.personal_embedder> - ✅ Đã encode xong các cá nhân
+<INFO-matching.personal_matching> - 🔍 Đang tìm kiếm trong FAISS index...
+<INFO-matching.personal_matching> - 📌 Tìm thấy các FAISS ID: [100089, 100056, 100072, 100066, 100073, 100070, 100071, 100051, 100048, 100085]
+<INFO-matching.personal_matching> - 🔗 Đang ánh xạ personal_embedd_id → per_id...
+<INFO-matching.llm_rerank_personal> - 🤖 Đang gọi LLM để đánh giá danh sách...
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình DeepSeek...us.deepseek.r1-v1:0
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Đã nhận phản hồi: Per_id:
+[per_id_1752778177209151]
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Reasoning: Okay, let's tackle this problem. So, the task is to compare a new customer's information against a blacklist to see if there's a potential match. The user provided a query input for Trương Mỹ Lan, who is the chairman of Vạn Thịnh Phát Group and lives in Ho Chi Minh City. The blacklist has several entries, and I need to check if any of them match this new customer.
+
+First, I need to extract the relevant information from the query. The full name is Trương Mỹ Lan. The position is Chủ tịch (Chairman) of Tập đoàn Vạn Thịnh Phát. The residence is Thành phố Hồ Chí Minh. The user didn't mention birth year or age, gender, or other fields, but maybe those are in the blacklist entries.
+
+Looking at the blacklist, the first entry is for Trương Mỹ Lan. Let's check the details. The full name matches exactly. The organization is Tập đoàn Vạn Thịnh Phát, which matches the new customer's organization. The occupation_or_position is "Chủ tịch Tập đoàn Vạn Thịnh Phát," which is a direct match. The hometown_or_residence is "TP Hồ Chí Minh," which is the same as the new customer's residence (Thành phố Hồ Chí Minh is the same as TP HCM). The gender is Female, but since the query doesn't specify gender, maybe that's okay. The birth_year_or_age is 68. The query doesn't mention age or birth year, so according to the rules, if birth_year is present in the new customer's info, it must match. But since the query doesn't have it, maybe that's not a problem. The rules say birth_year must match if present. Since the new customer's info doesn't have it, it's acceptable. 
+
+The other entries in the blacklist have different names, so they can be ruled out. For example, Trần Quang Đạo, Đặng Anh Quân, etc., don't match the name. The personal_relationships field in the first entry also mentions her role in the SCB case, which might add context but isn't used for direct comparison. 
+
+So, the key points are: full name matches exactly, organization and position match, residence matches. Gender isn't provided in the query, but the blacklist entry has Female. Since the query doesn't specify gender, maybe that's okay. The rules state that if gender is present, it must match. But since the query doesn't have it, there's no conflict. Birth year isn't provided in the query, so no conflict there either. 
+
+Therefore, this seems like a strong match. The other fields all align, and there's no conflicting information. The personal_id for that entry is per_id_1752778177209151. So the answer should list that per_id.
+</think>
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình Bedrock...None
+<DEBUG-llm_model.bedrock_manager> - Calling Bedrock model anthropic.claude-instant-v1
+<DEBUG-llm_model.bedrock_manager> - Conten [{'type': 'text', 'text': 'Trương Mỹ Lan'}]
+<DEBUG-llm_model.bedrock_manager> - [generate] ✅ Đã nhận phản hồi từ mô hình anthropic.claude-instant-v1 mà không có reasoning.
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<DEBUG-utils> - [load_text] ✅ Đã load file văn bản: D:/VPBankHackathon/prompts/rerank_personal.txt
+<INFO-matching.personal_matching> - ⚙️ Đang tạo embedding cho Trương mỹ lan, chủ tịch tập đoàn, nam...
+<INFO-embedder.personal_embedder> - ⏳ Đang encode cá nhân (1 cá nhân)
+<INFO-embedder.model_embedder> - Thoi gian embedd 0.01 giay
+<INFO-embedder.model_embedder> - Encode THANH CONG
+<INFO-embedder.personal_embedder> - ✅ Đã encode xong các cá nhân
+<INFO-matching.personal_matching> - 🔍 Đang tìm kiếm trong FAISS index...
+<INFO-matching.personal_matching> - 📌 Tìm thấy các FAISS ID: [100089, 100056, 100072, 100066, 100073, 100051, 100071, 100070, 100059, 100048]
+<INFO-matching.personal_matching> - 🔗 Đang ánh xạ personal_embedd_id → per_id...
+<INFO-matching.llm_rerank_personal> - 🤖 Đang gọi LLM để đánh giá danh sách...
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình DeepSeek...us.deepseek.r1-v1:0
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Đã nhận phản hồi: Per_id:
+[]
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Reasoning: Okay, let's tackle this problem. So, I need to compare the new customer's information with the blacklist entries and find potential matches based on the given rules. Let's start by extracting the details from the new customer's input. The input is: "Trương mỹ lan, chủ tịch tập đoàn, nam". 
+
+First, I'll parse this into the required fields. The full name is Trương Mỹ Lan. The position is "chủ tịch tập đoàn" which translates to Chairman of the Corporation. The gender is listed as "nam", which is male. Wait, but in Vietnamese, "nam" is male, but the example in the blacklist has a female with a similar name. Hmm, that's a red flag. Let me check the blacklist entries.
+
+Looking at the first entry in the blacklist: full_name is Trương Mỹ Lan, gender is Female. Oh, the new customer's gender is male, but the blacklist entry is female. According to the rules, gender must match if present. Since the new customer's gender is male and the blacklist entry is female, that's a conflict. But wait, maybe there's a mistake in the input? The name Trương Mỹ Lan is typically a female name in Vietnamese. The gender in the new customer is "nam" which might be an error. But according to the rules, if gender is present, it must match. So this would disqualify the first entry. But maybe I should check other fields.
+
+The new customer's position is "chủ tịch tập đoàn" and the blacklist entry's occupation_or_position is "Chủ tịch Tập đoàn Vạn Thịnh Phát". The organization in the blacklist is "Tập đoàn Vạn Thịnh Phát". The new customer's organization isn't explicitly mentioned, but the position is similar. However, the gender mismatch is a problem. Unless there's a typo in the input. But according to the rules, birth_year and gender must match if present. The new customer's birth year isn't provided, but the blacklist entry has birth_year_or_age as "68". Since the new customer doesn't have a birth year, maybe that's not a conflict. But gender is present in both, and they don't match. So maybe this entry isn't a match.
+
+Wait, but the new customer's gender is listed as "nam" (male), but the blacklist entry is female. That's a direct conflict. So per the rules, gender must match if present. Therefore, this entry can't be a match. 
+
+Looking at other entries: The next entry is Trần Quang Đạo, male, but the name doesn't match. The third is Đặng Anh Quân, male, but name doesn't match. Lê Thị Thu Hà, female, name doesn't match. Nguyễn Phương Hằng, female, name doesn't match. Trương Văn Tý, male, but name is different. N.Q.K and T.Đ.D, names are initials. Nguyễn Văn Hải, male, name doesn't match. Huỳnh Uy Dũng, male, name doesn't match.
+
+Wait, but the new customer's name is Trương Mỹ Lan, which matches the first entry's full name. But the gender is conflicting. However, maybe there's a mistake in the input. For example, maybe the gender was entered incorrectly. The name Trương Mỹ Lan is female, so perhaps the input's "nam" is a typo. If that's the case, then the gender would actually match. But according to the given data, the input is "nam", so we have to take it as is. Unless the system allows for some flexibility in gender based on name conventions. But the rules state that gender must match if present. So even if the name is the same, if gender is conflicting, it's not a match. 
+
+But wait, the rules say: "Giới tính (gender) nếu có thì phải trùng khớp." So if both have gender, they must match. The new customer's gender is male, the blacklist entry is female. So no match. Therefore, the first entry is excluded. 
+
+But maybe the new customer's gender was input incorrectly. But we have to go by the data given. So in this case, the name matches, but gender doesn't. So no match. 
+
+But let's check other fields. The position is "chủ tịch tập đoàn" which is similar to "Chủ tịch Tập đoàn Vạn Thịnh Phát". The organization in the blacklist is "Tập đoàn Vạn Thịnh Phát", and the new customer's organization isn't specified. The residence area isn't provided in the new customer, but the blacklist entry has "TP Hồ Chí Minh". Since the new customer doesn't have residence info, that's not a conflict. 
+
+But the birth year: the new customer doesn't have it, the blacklist entry has 68. Since the new customer's birth year isn't provided, the rule says if present, must match. Since it's not present in the new customer, that's okay. But gender is present in both and doesn't match. So the first entry is excluded. 
+
+Therefore, there's no match. But wait, the personal_relationships in the first entry mentions "Bị cáo chính trong vụ án Vạn Thịnh Phát", which might relate to the position. But according to the rules, personal_relationships is for context, not direct comparison. 
+
+So, based on the given data, the new customer's gender is male, conflicting with the first entry's female. Therefore, no match. But the name is exactly the same. However, the rules require gender to match if present. So even if other fields match, gender is a mandatory check. 
+
+But maybe the system should consider possible typos. For example, maybe the gender was input wrong. But according to the problem statement, we have to use the data as given. So unless there's a way to infer that the gender is a mistake, we can't assume that. 
+
+Therefore, the conclusion is that there's no match because the gender doesn't align. But wait, the input says "nam" for gender, which is male, but the name Trương Mỹ Lan is typically female. Could that be a mistake? But the system might not account for name-gender conventions. The rules don't mention considering name conventions, only the provided gender. So we have to proceed with the given data. 
+
+Thus, the answer would be no matches. But wait, let me check the other entries again. Are there any other entries with the same name? No. The first entry is the only one with Trương Mỹ Lan. So if gender is a mandatory match and it's conflicting, then no match. 
+
+But the problem says "Nếu có bất kỳ sự nghi ngờ nào rằng Khách hàng mới và một mục trong danh sách đen có thể là cùng một người dựa trên các thông tin có sẵn, hãy coi đó là một sự trùng khớp tiềm năng." So even if there's a conflict in gender, but other fields match strongly, maybe it's a potential match. For example, if the name is the same, position is similar, but gender is conflicting. Maybe it's a data entry error. 
+
+The rules say "Mức độ nghi ngờ: Nếu có bất kỳ sự nghi ngờ nào rằng Khách hàng mới và một mục trong danh sách đen có thể là cùng một người dựa trên các thông tin có sẵn, hãy coi đó là một sự trùng khớp tiềm năng." So even if gender is conflicting, but other fields match, maybe it's a potential match. But the mandatory rules say gender must match if present. 
+
+Wait, the mandatory rules are: "Yêu cầu trùng khớp bắt buộc: Năm sinh (birth_year) nếu có thì phải trùng khớp. Giới tính (gender) nếu có thì phải trùng khớp." So if gender is present in both, it must match. In this case, the new customer's gender is "nam" (male), and the blacklist entry's gender is "Female". So they don't match. Therefore, even if other fields match, this is a mandatory requirement. Therefore, this entry cannot be considered a match. 
+
+So the answer should be no matches. But the name is exactly the same. However, the gender conflict is a mandatory disqualifier. Therefore, the final answer is Per_id: [].
+</think>
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình Bedrock...None
+<DEBUG-llm_model.bedrock_manager> - Calling Bedrock model anthropic.claude-instant-v1
+<DEBUG-llm_model.bedrock_manager> - Conten [{'type': 'text', 'text': 'Salvador Diaz Rodriguez'}]
+<DEBUG-llm_model.bedrock_manager> - [generate] ✅ Đã nhận phản hồi từ mô hình anthropic.claude-instant-v1 mà không có reasoning.
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<DEBUG-utils> - [load_text] ✅ Đã load file văn bản: D:/VPBankHackathon/prompts/rerank_personal.txt
+<INFO-matching.personal_matching> - ⚙️ Đang tạo embedding cho Salvador Diaz Rodriguez, sống ở Mexicali, Baja California, Mexico, sinh năm 1985...
+<INFO-embedder.personal_embedder> - ⏳ Đang encode cá nhân (1 cá nhân)
+<INFO-embedder.model_embedder> - Thoi gian embedd 0.02 giay
+<INFO-embedder.model_embedder> - Encode THANH CONG
+<INFO-embedder.personal_embedder> - ✅ Đã encode xong các cá nhân
+<INFO-matching.personal_matching> - 🔍 Đang tìm kiếm trong FAISS index...
+<INFO-matching.personal_matching> - 📌 Tìm thấy các FAISS ID: [100089, 100022, 100056, 100020, 100021, 100023, 100072, 100024, 100066, 100061]
+<INFO-matching.personal_matching> - 🔗 Đang ánh xạ personal_embedd_id → per_id...
+<INFO-matching.llm_rerank_personal> - 🤖 Đang gọi LLM để đánh giá danh sách...
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình DeepSeek...us.deepseek.r1-v1:0
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Đã nhận phản hồi: Per_id:
+[per_id_1752778464747956]
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Reasoning: Okay, let's tackle this problem. So, the task is to compare a new customer's information against a blacklist of old customers to see if there's a potential match. The user provided a specific example with the new customer being Salvador Diaz Rodriguez, living in Mexicali, Baja California, Mexico, born in 1985. The blacklist has several entries, and I need to check each one against this new entry.
+
+First, I need to extract the relevant information from the new customer's data. The full name is Salvador Diaz Rodriguez. The residence is Mexicali, Baja California, Mexico. The birth year is 1985. The gender isn't explicitly mentioned, but looking at the blacklist entry that matches the name, the gender is Male. Wait, but the new customer's gender isn't provided. Hmm, but the problem says that if gender is present, it must match. Since the new customer's gender isn't given, maybe we don't have to check that? Or does the system infer it from the blacklist? Wait, no. The new customer's information is provided in the input, which in this case is "Salvador Diaz Rodriguez, sống ở Mexicali, Baja California, Mexico, sinh năm 1985". The gender isn't mentioned here. But the problem states that for the new customer, we have to extract info from the input text. So in this case, gender isn't provided. Therefore, the gender check is not required because the new customer's gender is missing. The rules say that gender must match if present. Since the new customer's gender isn't present, we can skip that check.
+
+Next, birth year must match if present. The new customer's birth year is 1985. So any entry in the blacklist that has a birth year different from 1985 can be excluded. Let's look at the blacklist entries.
+
+Looking at the blacklist, there are a few entries with the name Salvador Diaz Rodriguez. Wait, no. Let me check each entry:
+
+1. The first entry is Trương Mỹ Lan, female, birth year 68 (which would be 2023 - 68 = 1955, but maybe it's stored as a string "68"). But the new customer's birth year is 1985, so this is a mismatch.
+
+2. The second entry is Salvador Diaz Rodriguez. Let's check that. His birth_year_or_age is "1985", which matches. The hometown_or_residence is "Mexicali, Baja California, Mexico", which matches exactly with the new customer's residence. The gender is Male. Since the new customer's gender isn't provided, but the blacklist entry's gender is Male, but since the new customer's gender isn't given, the gender check is not required. So this entry matches on name, birth year, and residence. So this is a potential match. The personal_id here is per_id_1752778464747956.
+
+Other entries in the blacklist:
+
+3. Trần Quang Đạo, birth year 1992. Doesn't match.
+
+4. Christian Noe Amador Valenzuela, birth year 1988. Doesn't match.
+
+5. Alberto David Benguiat Jimenez, 1982. No.
+
+6. Enrique Dann Esparragoza Rosas, 1985. Birth year matches. His residence is Culiacan, Sinaloa, Mexico. The new customer's residence is Mexicali, Baja California, Mexico. Different cities. So the residence doesn't match. But the name is different. So no match here.
+
+7. Đặng Anh Quân, birth year 43 (assuming age 43, which would be around 1980). Doesn't match 1985.
+
+8. Israel Daniel Paez Vargas, 1980. No.
+
+9. Lê Thị Thu Hà, female. Birth year not provided. But name doesn't match.
+
+10. Andrejs BRADENS, 1962. No.
+
+So the only entry that matches the name, birth year, and residence is the second entry in the blacklist: Salvador Diaz Rodriguez with per_id_1752778464747956. The name is exactly the same, birth year matches, residence matches. Even though the gender is Male, since the new customer's gender isn't provided, it's acceptable. According to the rules, if any of the required fields (birth_year and gender) are present, they must match. Since the new customer's gender isn't present, we don't check it. So this entry is a match.
+
+Therefore, the Per_id should be [per_id_1752778464747956].
+</think>
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình Bedrock...None
+<DEBUG-llm_model.bedrock_manager> - Calling Bedrock model anthropic.claude-instant-v1
+<DEBUG-llm_model.bedrock_manager> - Conten [{'type': 'text', 'text': 'Võ Tấn Hoàng Văn'}]
+<DEBUG-llm_model.bedrock_manager> - [generate] ✅ Đã nhận phản hồi từ mô hình anthropic.claude-instant-v1 mà không có reasoning.
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<DEBUG-utils> - [load_text] ✅ Đã load file văn bản: D:/VPBankHackathon/prompts/rerank_personal.txt
+<INFO-matching.personal_matching> - ⚙️ Đang tạo embedding cho Võ Tấn Hoàng Văn, giới tính nam, làm việc ở ngân hàng scb...
+<INFO-embedder.personal_embedder> - ⏳ Đang encode cá nhân (1 cá nhân)
+<INFO-embedder.model_embedder> - Thoi gian embedd 0.02 giay
+<INFO-embedder.model_embedder> - Encode THANH CONG
+<INFO-embedder.personal_embedder> - ✅ Đã encode xong các cá nhân
+<INFO-matching.personal_matching> - 🔍 Đang tìm kiếm trong FAISS index...
+<INFO-matching.personal_matching> - 📌 Tìm thấy các FAISS ID: [100089, 100056, 100072, 100066, 100073, 100071, 100070, 100061, 100051, 100085]
+<INFO-matching.personal_matching> - 🔗 Đang ánh xạ personal_embedd_id → per_id...
+<INFO-matching.llm_rerank_personal> - 🤖 Đang gọi LLM để đánh giá danh sách...
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình DeepSeek...us.deepseek.r1-v1:0
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Đã nhận phản hồi: Per_id:
+[per_id_1752778177210847]
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Reasoning: Okay, let's tackle this problem. So, I need to compare the new customer's information with the blacklist entries to see if there's a potential match. The new customer's info is: "Võ Tấn Hoàng Văn, giới tính nam, làm việc ở ngân hàng scb". 
+
+First, I'll extract the relevant details from this input. The full name is Võ Tấn Hoàng Văn, gender is male (nam), and he works at SCB bank. There's no mention of birth year or age, residence, or occupation beyond the organization.
+
+Now, looking at the blacklist entries. Let's go through each one:
+
+1. The first entry is Trương Mỹ Lan. Different name, female, different organization (Vạn Thịnh Phát). Not a match.
+
+2. Trần Quang Đạo: Different name, male, works in criminal group. Doesn't match.
+
+3. Đặng Anh Quân: Different name, works at a university. No match.
+
+4. Lê Thị Thu Hà: Female, different name. No.
+
+5. Nguyễn Phương Hằng: Female, different company. Not matching.
+
+6. N.Q.K: Initials, male, criminal group. Name doesn't match.
+
+7. T.Đ.D: Initials, male, same as above.
+
+8. Andrejs BRADENS: Foreign name, different details.
+
+9. Trương Văn Tý: Different name, from Nghệ An. Not matching.
+
+10. The last entry: Full name is Võ Tấn Hoàng Văn, male, organization is Ngân hàng SCB. The personal relationships mention that he's an accomplice of Trương Mỹ Lan. 
+
+So, the name matches exactly. Gender is male in both cases. The organization is SCB bank, which matches the new customer's workplace. The blacklist entry doesn't have birth year, but the new customer's info also doesn't provide it. Since birth year is a mandatory match only if present, and here it's missing in both, that's acceptable. 
+
+The occupation in the blacklist entry is null, but the new customer's position is working at SCB, which aligns with the organization. Since the rules allow using position to compare with occupation_or_position if needed, this seems to fit. 
+
+Additionally, the personal_relationships field in the blacklist entry mentions he's an accomplice, which gives context but isn't directly used for comparison. 
+
+All the required fields (gender matches, name matches, organization matches) and there's no conflicting information. Even though some fields are missing, the existing ones align. So this should be a match. The per_id for this entry is per_id_1752778177210847.
+</think>
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình Bedrock...None
+<DEBUG-llm_model.bedrock_manager> - Calling Bedrock model anthropic.claude-instant-v1
+<DEBUG-llm_model.bedrock_manager> - Conten [{'type': 'text', 'text': 'Võ Tấn Hoàng Văn'}]
+<DEBUG-llm_model.bedrock_manager> - [generate] ✅ Đã nhận phản hồi từ mô hình anthropic.claude-instant-v1 mà không có reasoning.
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<DEBUG-utils> - [load_text] ✅ Đã load file văn bản: D:/VPBankHackathon/prompts/rerank_personal.txt
+<INFO-matching.personal_matching> - ⚙️ Đang tạo embedding cho Võ Tấn Hoàng Văn, giới tính nữ, làm việc ở ngân hàng scb...
+<INFO-embedder.personal_embedder> - ⏳ Đang encode cá nhân (1 cá nhân)
+<INFO-embedder.model_embedder> - Thoi gian embedd 0.01 giay
+<INFO-embedder.model_embedder> - Encode THANH CONG
+<INFO-embedder.personal_embedder> - ✅ Đã encode xong các cá nhân
+<INFO-matching.personal_matching> - 🔍 Đang tìm kiếm trong FAISS index...
+<INFO-matching.personal_matching> - 📌 Tìm thấy các FAISS ID: [100089, 100056, 100072, 100066, 100073, 100071, 100070, 100051, 100061, 100085]
+<INFO-matching.personal_matching> - 🔗 Đang ánh xạ personal_embedd_id → per_id...
+<INFO-matching.llm_rerank_personal> - 🤖 Đang gọi LLM để đánh giá danh sách...
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình DeepSeek...us.deepseek.r1-v1:0
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Đã nhận phản hồi: Per_id:
+[per_id_1752778177210847]
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Reasoning: Okay, let's tackle this problem. So, the task is to compare a new customer's information against a blacklist of old customers to see if there's a potential match. The user provided a specific example, and I need to figure out how to approach this step by step.
+
+First, let's look at the new customer's info: "Võ Tấn Hoàng Văn, giới tính nữ, làm việc ở ngân hàng scb". Translating that, the full name is Võ Tấn Hoàng Văn, gender is female, and works at SCB bank.
+
+Now, I need to check each entry in the blacklist to see if any of them match. The rules say that birth_year and gender must match if present. Also, other fields like organization, occupation, and residence should be considered with some flexibility.
+
+Looking at the blacklist, there are 10 entries. Let's go through them one by one.
+
+The first entry is Trương Mỹ Lan. Gender is female, which matches. But the name is different. Her organization is Tập đoàn Vạn Thịnh Phát, not SCB. However, in the personal_relationships field, it mentions "Võ Tấn Hoàng Văn" as someone she directed. But the new customer's name is Võ Tấn Hoàng Văn, which is the same as mentioned here. Wait, but the gender here is female, but in the blacklist entry for Võ Tấn Hoàng Văn (the 10th entry), the gender is male. Wait, the new customer is female, but the existing entry in the blacklist for Võ Tấn Hoàng Văn is male. That's a conflict. But the first entry's personal_relationships mentions Võ Tấn Hoàng Văn as a male. So the new customer is female, but the existing entry in the blacklist for that name is male. So gender doesn't match. Therefore, even though the name matches, the gender is conflicting, so it's not a match. But wait, the new customer's gender is female, but the existing entry in the blacklist for Võ Tấn Hoàng Văn is male. So that's a problem. But maybe there's a mistake? Let me check again.
+
+Wait, the 10th entry in the blacklist is:
+
+{
+    "organization": "Ngân hàng SCB",
+    "created_at": "1752781429917065",
+    "per_id": "per_id_1752778177210847",
+    "full_name": "Võ Tấn Hoàng Văn",
+    "occupation_or_position": null,
+    "hometown_or_residence": null,
+    "gender": "Male",
+    "personal_relationships": "Đồng phạm thực hiện ý chí của Trương Mỹ Lan",
+    "birth_year_or_age": null
+}
+
+So here, the full name is exactly Võ Tấn Hoàng Văn, organization is SCB bank. But gender is Male, while the new customer is female. According to the rules, gender must match if present. Since the blacklist entry has gender as Male, and the new customer is female, this is a conflict. Therefore, even though the name and organization match, the gender doesn't. So this entry can't be a match.
+
+But wait, the first entry in the blacklist (Trương Mỹ Lan) has in personal_relationships a mention of Võ Tấn Hoàng Văn. But that's a different person. The new customer's name is Võ Tấn Hoàng Văn, but the gender is female. The blacklist entry for Võ Tấn Hoàng Văn is male, so that's conflicting. So maybe there's a typo in the new customer's gender? Or perhaps the new customer is a different person with the same name but different gender. But according to the rules, gender must match. So even if other fields match, if gender is present and doesn't match, it's excluded.
+
+Therefore, the only entry with the same name is the 10th one, but gender is conflicting. So no match? But wait, maybe the new customer's gender was input incorrectly. But according to the given data, the new customer is female. The blacklist entry is male. So no match.
+
+Wait, but the new customer's organization is SCB, which matches the 10th entry's organization. But gender is conflicting. So according to the rules, gender must match if present. Since the blacklist entry has gender as Male, and the new customer is female, it's a mismatch. Therefore, the 10th entry is not a match.
+
+But wait, maybe there's another entry that's a partial match. Let's check others.
+
+Looking at other entries:
+
+Entry 2: Trần Quang Đạo, male, organization not SCB. No match.
+
+Entry 3: Đặng Anh Quân, male. No.
+
+Entry 4: Lê Thị Thu Hà, female, organization Công ty Cổ phần Đại Nam. Not SCB.
+
+Entry 5: Nguyễn Phương Hằng, female, organization Đại Nam. Not SCB.
+
+Entry 6: N.Q.K, male, organization băng nhóm. No.
+
+Entry 7: T.Đ.D, male. No.
+
+Entry 8: Trương Văn Tý, male. No.
+
+Entry 9: Andrejs BRADENS, male. No.
+
+Entry 10: Võ Tấn Hoàng Văn, male, SCB. But gender mismatch.
+
+So the only possible match is entry 10, but gender is conflicting. Therefore, according to the rules, since gender must match if present, and in this case, the blacklist entry has gender as Male, and the new customer is female, it's a mismatch. Therefore, no match.
+
+But wait, the new customer's gender is female, but the existing entry is male. So no match. Therefore, the answer should be an empty list.
+
+But wait, maybe there's a mistake in the data entry. For example, maybe the gender in the blacklist is incorrect. But according to the given data, we have to go with what's provided. So the answer is no match.
+
+But wait, the first entry's personal_relationships mentions Võ Tấn Hoàng Văn. But that's a different person. The new customer's name is the same, but gender is different. So even if the name matches, gender doesn't. So no match.
+
+Therefore, the final answer should be Per_id: [].
+</think>
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình Bedrock...None
+<DEBUG-llm_model.bedrock_manager> - Calling Bedrock model anthropic.claude-instant-v1
+<DEBUG-llm_model.bedrock_manager> - Conten [{'type': 'text', 'text': 'Võ Tấn Hoàng Vân'}]
+<DEBUG-llm_model.bedrock_manager> - [generate] ✅ Đã nhận phản hồi từ mô hình anthropic.claude-instant-v1 mà không có reasoning.
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<DEBUG-utils> - [load_text] ✅ Đã load file văn bản: D:/VPBankHackathon/prompts/rerank_personal.txt
+<INFO-matching.personal_matching> - ⚙️ Đang tạo embedding cho Võ Tấn Hoàng Vân, giới tính Nữ, làm việc ở ngân hàng SCB...
+<INFO-embedder.personal_embedder> - ⏳ Đang encode cá nhân (1 cá nhân)
+<INFO-embedder.model_embedder> - Thoi gian embedd 0.01 giay
+<INFO-embedder.model_embedder> - Encode THANH CONG
+<INFO-embedder.personal_embedder> - ✅ Đã encode xong các cá nhân
+<INFO-matching.personal_matching> - 🔍 Đang tìm kiếm trong FAISS index...
+<INFO-matching.personal_matching> - 📌 Tìm thấy các FAISS ID: [100089, 100056, 100072, 100066, 100073, 100071, 100061, 100070, 100051, 100085]
+<INFO-matching.personal_matching> - 🔗 Đang ánh xạ personal_embedd_id → per_id...
+<INFO-matching.llm_rerank_personal> - 🤖 Đang gọi LLM để đánh giá danh sách...
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình DeepSeek...us.deepseek.r1-v1:0
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Đã nhận phản hồi: Per_id:
+[]
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Reasoning: Okay, let's tackle this problem. So, the task is to compare a new customer's information against a blacklist to see if there's a potential match. The new customer's data is "Võ Tấn Hoàng Vân, giới tính Nữ, làm việc ở ngân hàng SCB". The blacklist has several entries, and I need to check each one based on the given rules.
+
+First, I need to extract the relevant info from the new customer. The full name is Võ Tấn Hoàng Vân, gender is female (Nữ), and she works at SCB bank. There's no mention of birth year, age, organization, occupation/position beyond working at SCB, or residence/hometown. So the key fields here are full_name, gender, and organization (SCB).
+
+Now, looking at the blacklist entries. Let's go through each one:
+
+1. Trương Mỹ Lan: Female, works at Tập đoàn Vạn Thịnh Phát. Birth year 68. The personal_relationships mentions Võ Tấn Hoàng Văn as an accomplice. But the name here is Văn, not Vân. Gender matches, but the name is different. The organization is different (Vạn Thịnh Phát vs SCB). However, the personal_relationships says that this person directed Võ Tấn Hoàng Văn to withdraw money from SCB. So maybe there's a connection. But the new customer's name is Vân, not Văn. But in Vietnamese, Văn and Vân can be similar, but they are different. However, the gender here is female, and the blacklist entry for Võ Tấn Hoàng Văn is male. Wait, the new customer is female, but the Võ Tấn Hoàng Văn in the blacklist is male. So that's a mismatch in gender. So maybe not a match here.
+
+Wait, the new customer is Võ Tấn Hoàng Vân (female), and in the blacklist, there's a Võ Tấn Hoàng Văn (male) in entry 10. The name is similar except for the last part: Vân vs Văn. But gender is different. According to the rules, gender must match if present. Since the new customer is female and the blacklist entry for Võ Tấn Hoàng Văn is male, that's a conflict. So this entry can't be a match.
+
+But wait, the organization for the new customer is SCB, and entry 10's organization is Ngân hàng SCB. So organization matches. But the name is similar but not exact, and gender is conflicting. Since gender must match, this would rule out this entry. However, maybe there's a typo in the name? Like Vân vs Văn. But the gender is different, so even if the name is a typo, the gender mismatch would disqualify it.
+
+Another entry: looking for SCB. Entry 10 is the only one with organization SCB. The others: Trương Mỹ Lan's personal_relationships mentions SCB, but her organization is Vạn Thịnh Phát. The new customer works at SCB, so maybe that's a connection. But the name is different. The personal_relationships of Trương Mỹ Lan mentions Võ Tấn Hoàng Văn, but again, different name and gender.
+
+Other entries: check for any other possible matches. For example, Nguyễn Phương Hằng is female, works at Công ty Cổ phần Đại Nam. Not SCB. Gender matches, but organization doesn't. Lê Thị Thu Hà: female, same company as Nguyễn Phương Hằng. Not SCB. Trần Quang Đạo: male, organization not SCB. Đặng Anh Quân: male. The rest are male or not related to SCB.
+
+So the only possible connection is entry 10: Võ Tấn Hoàng Văn, male, works at SCB. But the new customer is female. Since gender must match, this is a conflict. Therefore, no match. But wait, maybe the gender in the blacklist is male, but the new customer is female. So according to the rules, if gender is present, it must match. So this is a hard requirement. Therefore, even if the name is similar and organization matches, the gender mismatch would exclude it.
+
+But wait, the new customer's name is Võ Tấn Hoàng Vân, and the blacklist entry is Võ Tấn Hoàng Văn. The difference is the last name part: Vân vs Văn. In Vietnamese, these are two different names. Vân is a common female name (like cloud), Văn is more common for males (literature). So the names are similar but not the same, and gender is different. So no match here.
+
+Another angle: check if any other entries have SCB mentioned. Trương Mỹ Lan's personal_relationships mentions SCB, but her own organization is Vạn Thịnh Phát. The new customer works at SCB. But the name is different. So maybe not a direct match.
+
+So, after checking all entries, there's no entry where the gender matches (female), the name is similar, and the organization matches. The only possible entry is Võ Tấn Hoàng Văn, but gender is male. Therefore, no match. So the answer should be an empty list.
+</think>
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình Bedrock...None
+<DEBUG-llm_model.bedrock_manager> - Calling Bedrock model anthropic.claude-instant-v1
+<DEBUG-llm_model.bedrock_manager> - Conten [{'type': 'text', 'text': 'Trần Quang Đạo'}]
+<DEBUG-llm_model.bedrock_manager> - [generate] ✅ Đã nhận phản hồi từ mô hình anthropic.claude-instant-v1 mà không có reasoning.
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<DEBUG-utils> - [load_text] ✅ Đã load file văn bản: D:/VPBankHackathon/prompts/rerank_personal.txt
+<INFO-matching.personal_matching> - ⚙️ Đang tạo embedding cho Trần Quang Đạo, xã Đông Thạnh, huyện Hóc Môn, Thành phố Hồ Chí Minh, sinh năm 1992...
+<INFO-embedder.personal_embedder> - ⏳ Đang encode cá nhân (1 cá nhân)
+<INFO-embedder.model_embedder> - Thoi gian embedd 0.02 giay
+<INFO-embedder.model_embedder> - Encode THANH CONG
+<INFO-embedder.personal_embedder> - ✅ Đã encode xong các cá nhân
+<INFO-matching.personal_matching> - 🔍 Đang tìm kiếm trong FAISS index...
+<INFO-matching.personal_matching> - 📌 Tìm thấy các FAISS ID: [100089, 100056, 100072, 100066, 100073, 100071, 100070, 100051, 100048, 100059]
+<INFO-matching.personal_matching> - 🔗 Đang ánh xạ personal_embedd_id → per_id...
+<INFO-matching.llm_rerank_personal> - 🤖 Đang gọi LLM để đánh giá danh sách...
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình DeepSeek...us.deepseek.r1-v1:0
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Đã nhận phản hồi: Per_id:
+[per_id_1752780244472280]
+<DEBUG-llm_model.bedrock_manager> - [DeepSeek] Reasoning: Okay, let's tackle this problem. So, I need to compare a new customer's information against a blacklist of old customers to see if there's a potential match. The user provided a sample input and the blacklist data. Let me start by understanding the requirements and the data.
+
+First, the new customer's info is: "Trần Quang Đạo, xã Đông Thạnh, huyện Hóc Môn, Thành phố Hồ Chí Minh, sinh năm 1992". From this, I need to extract the full name, birth year, gender, organization, occupation/position, and residence/hometown. Let's parse that.
+
+Full name: Trần Quang Đạo.
+Birth year: 1992 (since it's "sinh năm 1992").
+Gender: Not explicitly mentioned. Hmm, but maybe inferred from the name? In Vietnamese, names can sometimes hint at gender. "Đạo" is typically male, but I'm not sure. However, the instructions say gender must match if present. Since the new customer's gender isn't given, maybe it's not a mandatory check here. Wait, but the old customer entries have gender. So if the new customer's gender isn't provided, does that mean we can't match on gender? Or is it okay to proceed as long as the existing fields that are present match? The rules state that if gender is present, it must match. Since the new customer's gender isn't given, maybe we don't have to check it. But maybe the system should infer it. Hmm, this is a bit unclear. Let me check the example. The sample input didn't have gender, but the matching entry in the blacklist has gender as Male. Maybe the system allows for cases where gender isn't provided in the new customer's info. But according to the rules, if gender is present in both, they must match. Since the new customer's gender isn't given, maybe it's not a problem. But perhaps the system should assume that if the new customer's gender isn't present, it's not a conflicting factor. So proceed.
+
+Residence: xã Đông Thạnh, huyện Hóc Môn, Thành phố Hồ Chí Minh. That's the residence area.
+
+Organization and occupation/position: The new customer's info doesn't mention an organization or occupation. So those fields are missing. The rules say to use position of the new customer to compare with occupation_or_position of the old if occupation isn't present. But in this case, the new customer doesn't have occupation or position listed. So maybe those fields are not a factor here.
+
+Now, looking at the blacklist. Let's go through each entry to see if any match.
+
+The second entry in the blacklist is:
+{
+    "organization": "Các công ty Ressun, Resshose, Rees Mark, Lesson",
+    "created_at": "1752780244472280",
+    "per_id": "per_id_1752780244472280",
+    "full_name": "Trần Quang Đạo",
+    "occupation_or_position": "Cầm đầu băng nhóm tội phạm",
+    "hometown_or_residence": "xã Đông Thạnh, huyện Hóc Môn, Thành phố Hồ Chí Minh",
+    "gender": "Male",
+    "personal_relationships": "Nhờ người thân thành lập 4 công ty",
+    "birth_year_or_age": "1992"
+}
+
+Comparing this to the new customer:
+
+Full name: Trần Quang Đạo vs Trần Quang Đạo. Exact match.
+
+Birth year: 1992 vs "1992". Exact match.
+
+Gender: The new customer's gender isn't provided, so no conflict. The old entry has Male. Since the new customer's gender isn't given, it's acceptable.
+
+Residence: Both have "xã Đông Thạnh, huyện Hóc Môn, Thành phố Hồ Chí Minh". Exact match.
+
+Organization and occupation: The new customer doesn't have these, so they don't affect the match. The old entry's occupation is "Cầm đầu băng nhóm tội phạm", but since the new customer's info doesn't mention occupation, it's not a conflicting point.
+
+Other entries in the blacklist:
+
+First entry: Trương Mỹ Lan. Name doesn't match. Birth year 68 vs 1992. No match.
+
+Third entry: Đặng Anh Quân. Name doesn't match.
+
+Fourth: Lê Thị Thu Hà. Name no match.
+
+Fifth: Nguyễn Phương Hằng. Name no.
+
+Sixth: N.Q.K. Name is abbreviated, so no.
+
+Seventh: T.Đ.D. Name not matching.
+
+Eighth: Trương Văn Tý. Name no, birth year 1996 vs 1992.
+
+Ninth: Huỳnh Uy Dũng. Name no.
+
+Tenth: Nguyễn Văn Hải. Name no.
+
+So the only possible match is the second entry. All the mandatory fields (birth year) match. The name is exact. Residence is exact. Gender in the old entry is Male, but since the new customer's gender isn't provided, it's acceptable. The other fields (organization, occupation) are not present in the new customer, so they don't cause a conflict. Therefore, this is a potential match. The personal_id for that entry is per_id_1752780244472280.
+
+So the answer should be that per_id.
+</think>
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1

@@ -117,7 +117,7 @@ class Utils:
         """
         try:
             with open(file_path, 'w', encoding='utf-8') as f:
-                json.dump(data, f, ensure_ascii=ensure_ascii, indent=indent)
+                json.dump(data, f, ensure_ascii=ensure_ascii, indent=indent, default=str)
             logger.debug(f"[save_json] ✅ Đã ghi JSON vào '{file_path}'")
         except Exception as e:
             logger.debug(f"[save_json] ❌ Lỗi khi ghi JSON: {e}")

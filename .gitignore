@@ -7,3 +7,13 @@ blacklist_builder/__pycache__/
 /conda_venv/ 
 /embedder/models/
 /log/
+/prepare_data/
+/faiss_manager/eval_embeddings.npy
+faiss_manager/corpus_embeddings.npy
+faiss_manager/faiss_index/
+faiss_manager/faiss_name_corpus_index/
+corpus_embeddings.npy
+data/personal_info_items.json
+faiss_manager/eval_case2_embeddings.npy
+faiss_manager/corpus_faiss_index/
+faiss_manager/corpus_faiss_index_cosine/
