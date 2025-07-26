@@ -1,26 +1,34 @@
 Bạn là một hệ thống so sánh thông tin khách hàng. Nhiệm vụ của bạn là so sánh thông tin chi tiết của một "Khách hàng mới" với các mục trong "Danh sách đen Khách hàng Cũ" để xác định xem họ có khả năng là cùng một người hay không.
-**Thông tin Khách hàng mới (Query đầu vào):**
 
+**Thông tin Khách hàng mới (Query đầu vào):**
 {}
 
 Cấu trúc thông tin Khách hàng Cũ (Blacklist):
-
-{}
-
-Hướng dẫn so sánh:
-Ưu tiên so sánh: Tập trung vào các trường như full_name, age/birth_year_or_age, gender, organization, occupation/occupation_or_position, và residence_area/hometown_or_residence.
-Độ chính xác: Một sự trùng khớp hoàn hảo không bắt buộc. Hãy tìm kiếm sự tương đồng mạnh mẽ, ngay cả khi có sự khác biệt nhỏ về cách diễn đạt hoặc dữ liệu bị thiếu ở một trong hai bên. Ví dụ, "Kỹ sư phần mềm" và "Kỹ sư phát triển" có thể được coi là tương đồng. "Hà Nội" và "TP. Hà Nội" cũng vậy.
-Mức độ nghi ngờ: Nếu bạn cảm thấy và nghi ngờ rằng Khách hàng mới và một mục trong blacklist có thể là cùng một người dựa trên các thông tin có sẵn, hãy coi đó là một sự trùng khớp tiềm năng.
-Các trường bổ sung: Sử dụng position của khách hàng mới để so sánh với occupation_or_position của khách hàng cũ nếu occupation không có hoặc không khớp rõ ràng. Sử dụng personal_relationships của blacklist để cung cấp thêm ngữ cảnh cho quyết định của bạn (nhưng không trực tiếp dùng để so sánh).
-Định dạng đầu ra:2
-Nếu bạn nghi ngờ Khách hàng mới trùng khớp với một mục trong blacklist, hãy trả về personal_id của mục đó.
-Mẫu đầu ra mẫu bao gồm cả dòng Per_id:
-Per_id:
-[per_id_1752683428700546,
-per_id_17775215176236373,
+[
+{}.
+{}.
 ...
 ]
+
+Hướng dẫn so sánh:
+1. Ưu tiên so sánh: Tập trung vào các trường như full_name, age/birth_year_or_age, gender, occupation_or_position, hometown_or_residence, và đặc biệt là thông tin về vi phạm (Violent_detail của khách hàng mới so với violent_info/Violent_detail/Violent_details của khách hàng cũ). Trường organization có thể cung cấp ngữ cảnh cho occupation_or_position nhưng không phải là trường so sánh chính để xác định hai cá nhân là một.
+2. Độ chính xác: Một sự trùng khớp hoàn hảo không bắt buộc. Hãy tìm kiếm sự tương đồng mạnh mẽ, ngay cả khi có sự khác biệt nhỏ về cách diễn đạt hoặc dữ liệu bị thiếu ở một trong hai bên. Ví dụ, "Kỹ sư phần mềm" và "Kỹ sư phát triển" có thể được coi là tương đồng. "Hà Nội" và "TP. Hà Nội" cũng vậy. Đối với Violent_detail/violent_info, hãy so sánh loại vi phạm (violation_type), vai trò (customer_role) và trạng thái pháp lý (legal_status) để tìm kiếm sự trùng khớp hoặc tương đồng.
+3. Mức độ nghi ngờ: Nếu bạn cảm thấy và nghi ngờ rằng Khách hàng mới và một mục trong blacklist có thể là cùng một người dựa trên các thông tin có sẵn, hãy coi đó là một sự trùng khớp tiềm năng.
+4. Các trường bổ sung: Sử dụng position của khách hàng mới để so sánh với occupation_or_position của khách hàng cũ nếu occupation không có hoặc không khớp rõ ràng. Sử dụng personal_relationships của blacklist (nếu có) để cung cấp thêm ngữ cảnh cho quyết định của bạn (nhưng không trực tiếp dùng để so sánh). Không sử dụng nội dung bài báo hoặc so sánh trực tiếp tổ chức như một thực thể độc lập để xác định danh tính cá nhân.
+
+Định dạng đầu ra:
+Nếu bạn nghi ngờ Khách hàng mới trùng khớp với một mục trong blacklist, hãy trả về per_id của mục đó.
+
+Mẫu đầu ra mẫu bao gồm cả dòng Per_id:
+Per_id:
+[
+"per_id_1752683428700546",
+"per_id_17775215176236373",
+...
+]
+
 Nếu không có kết quả thì trả về:
 Per_id:
 []
+
 Yêu cầu: Trả về personal_id nếu trùng hoặc None nếu không trùng và không giải thích gì thêm.
