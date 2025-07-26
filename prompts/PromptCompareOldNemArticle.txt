@@ -1,58 +1,29 @@
-Mục tiêu:
+Bạn là một hệ thống so sánh thông tin khách hàng. Nhiệm vụ của bạn là so sánh thông tin chi tiết của một "Khách hàng mới" với các mục trong "Danh sách đen Khách hàng Cũ" để xác định xem họ có khả năng là cùng một người hay không.
 
-Sử dụng thông tin từ các danh sách `custom_info` (cho cá nhân) và danh sách tổ chức từ dữ liệu cũ và dữ liệu mới để xác định các cá nhân và tổ chức trùng lặp.
+**Thông tin Khách hàng mới (Query đầu vào):**
+{}
 
-1.  **Đối với mỗi cá nhân trùng lặp** được tìm thấy, hãy trả về một đối tượng JSON chứa `personal_id` của họ từ dữ liệu mới, `per_id` của họ từ dữ liệu cũ, và một bản tổng hợp thông tin cá nhân của họ từ cả hai nguồn (kết hợp các trường thông tin một cách đầy đủ và chính xác nhất, ưu tiên thông tin chi tiết hơn nếu có sự khác biệt).
-2.  **Đối với mỗi tổ chức trùng lặp** được tìm thấy, hãy trả về một đối tượng JSON chứa `organizer_id` của họ từ dữ liệu mới, `org_id` của họ từ dữ liệu cũ, và một bản tổng hợp thông tin của tổ chức từ cả hai nguồn (kết hợp các trường thông tin một cách đầy đủ và chính xác nhất, ưu tiên thông tin chi tiết hơn nếu có sự khác biệt).
-
-Dữ liệu đầu vào:
-
-1.  **Nội dung bài báo cũ, custom info cá nhân cũ và organizer info cũ tương ứng**
-
-    Nội dung bài báo:
-
-    {old_article_text}
-
-    personal_info:
-
-    {old_personal_info}
-
-    organizer_info:
-
-    {old_organizer_info}
-
-2.  **Nội dung bài báo mới và custom info cá nhân tương ứng**
-
-    Nội dung bài báo:
-
-    {new_article_text}
-
-    personal_info:
-
-    {new_personal_info}
-
-    organizer_info:
-
-    {new_organizer_info}
-
-Format đầu ra:
-
+Cấu trúc thông tin Khách hàng Cũ (Blacklist):
 [
-    [
-        dict_person_duplicated_1,
-        dict_person_duplicated_2,
-        ...
-    ],
-    [
-        dict_org_duplicated_1,
-        dict_org_duplicated_2,
-        ...
-    ]
+ {},
+ {},
+...
+
 ]
 
+Hướng dẫn so sánh:
+1. Ưu tiên so sánh: Tập trung vào các trường như full_name, age/birth_year_or_age, gender, occupation_or_position, hometown_or_residence, và đặc biệt là thông tin về vi phạm (Violent_detail của khách hàng mới so với violent_info/Violent_detail/Violent_details của khách hàng cũ). Trường organization có thể cung cấp ngữ cảnh cho occupation_or_position nhưng không phải là trường so sánh chính để xác định hai cá nhân là một.
+2. Độ chính xác: Một sự trùng khớp hoàn hảo không bắt buộc. Hãy tìm kiếm sự tương đồng mạnh mẽ, ngay cả khi có sự khác biệt nhỏ về cách diễn đạt hoặc dữ liệu bị thiếu ở một trong hai bên. Ví dụ, "Kỹ sư phần mềm" và "Kỹ sư phát triển" có thể được coi là tương đồng. "Hà Nội" và "TP. Hà Nội" cũng vậy. Đối với Violent_detail/violent_info, hãy so sánh loại vi phạm (violation_type), vai trò (customer_role) và trạng thái pháp lý (legal_status) để tìm kiếm sự trùng khớp hoặc tương đồng.
+3. Mức độ nghi ngờ: Nếu bạn cảm thấy và nghi ngờ rằng Khách hàng mới và một mục trong blacklist có thể là cùng một người dựa trên các thông tin có sẵn, hãy coi đó là một sự trùng khớp tiềm năng.
+4. Các trường bổ sung: Sử dụng position của khách hàng mới để so sánh với occupation_or_position của khách hàng cũ nếu occupation không có hoặc không khớp rõ ràng. Sử dụng personal_relationships của blacklist (nếu có) để cung cấp thêm ngữ cảnh cho quyết định của bạn (nhưng không trực tiếp dùng để so sánh). Không sử dụng nội dung bài báo hoặc so sánh trực tiếp tổ chức như một thực thể độc lập để xác định danh tính cá nhân.
+5. Tổng hợp thông tin: Nếu xác định được sự trùng khớp tiềm năng, hãy tạo một bản tổng hợp thông tin cá nhân của họ. Bản tổng hợp này phải kết hợp các trường thông tin từ cả 'Khách hàng mới' và 'Khách hàng Cũ' một cách đầy đủ và chính xác nhất, ưu tiên thông tin chi tiết hơn nếu có sự khác biệt (ví dụ: một trường có giá trị cụ thể trong khi trường tương ứng ở nguồn khác là null). Đối với các trường 'Violent_detail' (Khách hàng mới) và 'violent_info'/'Violent_detail'/'Violent_details' (Khách hàng cũ), hãy gộp tất cả các vi phạm độc lập thành một danh sách duy nhất dưới khóa 'violations' trong bản tổng hợp, đảm bảo không có bản sao.
+
+Định dạng đầu ra:
+Nếu bạn nghi ngờ Khách hàng mới trùng khớp với một mục trong blacklist, hãy trả về một danh sách chứa một danh sách con, trong đó mỗi danh sách con chứa một từ điển tổng hợp thông tin của người đó. Từ điển tổng hợp này phải bao gồm các trường: 'personal_id' (từ Khách hàng mới), 'per_id' (từ Khách hàng cũ), 'full_name', 'birth_year_or_age', 'gender', 'occupation_or_position', 'organization', 'hometown_or_residence' (nếu có từ Khách hàng cũ).
 
 Mẫu đầu ra mẫu:
 ```json
+
 [
     [
         {
@@ -63,22 +34,16 @@ Mẫu đầu ra mẫu:
             "gender": "Female",
             "occupation_or_position": "Chủ tịch Tập đoàn",
             "organization": "Tập đoàn Vạn Thịnh Phát",
-            "hometown_or_residence": "TP Hồ Chí Minh",
-            "personal_relationships": null
-        }
-    ],
-    [
-        {
-            "organizer_id": "O001",
-            "org_id": "org_id_1752384078640471",
-            "full_name": "Tập đoàn Vạn Thịnh Phát",
-            "birth_year_or_age": null,
-            "gender": null,
-            "occupation_or_position": null,
-            "organization": null,
-            "hometown_or_residence": null,
-            "personal_relationships": "Có Trương Mỹ Lan là Chủ tịch"
+            "hometown_or_residence": "TP Hồ Chí Minh"
         }
     ]
 ]
 
+Nếu không có kết quả thì trả về:
+[
+    [
+        {}
+    ]
+]
+
+Yêu cầu: Trả về format đầu ra trên nếu trùng hoặc [ [ {} ] ] nếu không trùng và không giải thích gì thêm.
