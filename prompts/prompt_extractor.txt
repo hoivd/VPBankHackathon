@@ -179,7 +179,7 @@ Mẫu đầu ra mẫu 1 (Nếu là người hoặc tổ chức có rủi ro):
 "organization": "Tập đoàn Vạn Thịnh Phát",
 "hometown_or_residence": null,
 "aliases": [],
-"personal_relationships": "Bị cáo chính trong vụ án Vạn Thịnh Phát; Cổ đông lớn, người nắm giữ gần tuyệt đối cổ phần Ngân hàng SCB; Người ra chỉ thị cho các bị cáo Đinh Văn Thành, Bùi Anh Dũng, Võ Tấn Hoàng Văn, Tạ Chiêu Trung, Trương Khánh Hoàng, Trần Thị Mỹ Dung"
+
 }},
 {{
 "personal_id": "P002",
@@ -193,7 +193,6 @@ Mẫu đầu ra mẫu 1 (Nếu là người hoặc tổ chức có rủi ro):
 "organization": "Tòa án nhân dân cấp cao tại TP.HCM",
 "hometown_or_residence": null,
 "aliases": [],
-"personal_relationships": "Chủ tọa phiên tòa phúc thẩm vụ Vạn Thịnh Phát giai đoạn 1"
 }},
 {{
 "personal_id": "P003",
@@ -207,7 +206,6 @@ Mẫu đầu ra mẫu 1 (Nếu là người hoặc tổ chức có rủi ro):
 "organization": "Tòa án nhân dân cấp cao tại TP.HCM",
 "hometown_or_residence": null,
 "aliases": [],
-"personal_relationships": "Thẩm phán trong hội đồng xét xử phúc thẩm vụ Vạn Thịnh Phát giai đoạn 1"
 }}
 ],
 [
@@ -222,7 +220,6 @@ Mẫu đầu ra mẫu 1 (Nếu là người hoặc tổ chức có rủi ro):
 "organization": null,
 "related_entities_type": null,
 "website": null,
-"personal_relationships": "Có Trương Mỹ Lan là chủ tịch hội đồng quản trị"
 }},
 {{
 "organizer_id": "O002",
@@ -235,7 +232,6 @@ Mẫu đầu ra mẫu 1 (Nếu là người hoặc tổ chức có rủi ro):
 "organization": null,
 "related_entities_type": null,
 "website": null,
-"personal_relationships": "Có Trương Mỹ Lan là cổ đông lớn"
 }}
 ],
 {{
@@ -257,7 +253,8 @@ Mẫu đầu ra mẫu 1 (Nếu là người hoặc tổ chức có rủi ro):
 "laws_or_regulations_violated": [],
 "financial_impact_of_violation": null,
 "mitigation_actions": null,
-"appeal_status": null
+"appeal_status": null,
+"personal_relationships": "Bị cáo chính trong vụ án Vạn Thịnh Phát; Cổ đông lớn, người nắm giữ gần tuyệt đối cổ phần Ngân hàng SCB; Người ra chỉ thị cho các bị cáo Đinh Văn Thành, Bùi Anh Dũng, Võ Tấn Hoàng Văn, Tạ Chiêu Trung, Trương Khánh Hoàng, Trần Thị Mỹ Dung"
 }},
 {{
 "entity_id": "P002",
@@ -272,7 +269,8 @@ Mẫu đầu ra mẫu 1 (Nếu là người hoặc tổ chức có rủi ro):
 "laws_or_regulations_violated": [],
 "financial_impact_of_violation": null,
 "mitigation_actions": null,
-"appeal_status": null
+"appeal_status": null,
+"personal_relationships": "..."
 }},
 {{
 "entity_id": "P003",
@@ -287,7 +285,8 @@ Mẫu đầu ra mẫu 1 (Nếu là người hoặc tổ chức có rủi ro):
 "laws_or_regulations_violated": [],
 "financial_impact_of_violation": null,
 "mitigation_actions": null,
-"appeal_status": null
+"appeal_status": null,
+"personal_relationships": "..."
 }}
 ],
 "list_organizer_risks": [
@@ -304,7 +303,8 @@ Mẫu đầu ra mẫu 1 (Nếu là người hoặc tổ chức có rủi ro):
 "laws_or_regulations_violated": [],
 "financial_impact_of_violation": null,
 "mitigation_actions": null,
-"appeal_status": null
+"appeal_status": null,
+"personal_relationships": "..."
 }},
 {{
 "entity_id": "O002",
@@ -319,7 +319,8 @@ Mẫu đầu ra mẫu 1 (Nếu là người hoặc tổ chức có rủi ro):
 "laws_or_regulations_violated": [],
 "financial_impact_of_violation": null,
 "mitigation_actions": null,
-"appeal_status": null
+"appeal_status": null,
+"personal_relationships": "..."
 }}
 ]
 }}
