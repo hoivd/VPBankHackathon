@@ -1,4 +1,4 @@
-🧭 BƯỚC 1: TRÍCH XUẤT THÔNG TIN CÁ NHÂN
+prompt = f"""🧭 BƯỚC 1: TRÍCH XUẤT THÔNG TIN CÁ NHÂN
 
 Hãy đọc kỹ bài báo dưới đây và xác định tất cả các cá nhân được đề cập trong nội dung **có liên quan đến các yếu tố rủi ro hoặc vi phạm theo định nghĩa ở BƯỚC 3 (tức là `violation_type` khác 'Không có hành vi phạm được đề cập' và `customer_role` khác 'Không có liên quan rõ ràng trong bài báo').**
 
@@ -9,11 +9,15 @@ Hãy đọc kỹ bài báo dưới đây và xác định tất cả các cá nh
 - Năm sinh hoặc tuổi
 - Giới tính
 - Quốc tịch
+- Quốc tịch
 - Nghề nghiệp hoặc chức vụ
+- Bằng cấp hoặc trình độ học vấn
+- Các chức vụ hoặc vai trò đáng chú ý trước đây
 - Bằng cấp hoặc trình độ học vấn
 - Các chức vụ hoặc vai trò đáng chú ý trước đây
 - Cơ quan hoặc tổ chức liên quan
 - Quê quán hoặc nơi cư trú
+- Các tên gọi khác hoặc biệt danh
 - Các tên gọi khác hoặc biệt danh
 
 📌 Đầu ra yêu cầu: Trả về dưới dạng danh sách JSON, trong đó mỗi phần tử là một đối tượng chứa thông tin của một cá nhân. Các key trong JSON phải viết bằng **tiếng Anh** theo mẫu sau:
@@ -25,11 +29,15 @@ Hãy đọc kỹ bài báo dưới đây và xác định tất cả các cá nh
 "birth_year_or_age": "...",
 "gender": "...",
 "nationality": "...",
+"nationality": "...",
 "occupation_or_position": "...",
+"education_or_qualifications": "...",
+"previous_roles": [],
 "education_or_qualifications": "...",
 "previous_roles": [],
 "organization": "...",
 "hometown_or_residence": "...",
+"aliases": []
 "aliases": []
 }},
 ...
@@ -46,9 +54,14 @@ Hãy đọc kỹ bài báo dưới đây và xác định tất cả các tổ c
 - Năm thành lập
 - Ngành hoặc lĩnh vực hoạt động chính
 - Loại hình pháp lý
+- Ngành hoặc lĩnh vực hoạt động chính
+- Loại hình pháp lý
 - Nghề nghiệp hoặc chức vụ (áp dụng nếu tổ chức đóng vai trò như một cơ quan quản lý, giám sát, v.v.)
 - Địa điểm trụ sở chính
+- Địa điểm trụ sở chính
 - Cơ quan hoặc tổ chức liên quan (ví dụ: công ty con, công ty mẹ, đối tác)
+- Mô tả mối quan hệ với tổ chức liên quan
+- Địa chỉ trang web chính thức
 - Mô tả mối quan hệ với tổ chức liên quan
 - Địa chỉ trang web chính thức
 
@@ -61,9 +74,15 @@ Hãy đọc kỹ bài báo dưới đây và xác định tất cả các tổ c
 "founded_year": "...",
 "industry_or_sector": "...",
 "legal_structure": "...",
+"founded_year": "...",
+"industry_or_sector": "...",
+"legal_structure": "...",
 "occupation_or_position": "...",
 "headquarters_location": "...",
+"headquarters_location": "...",
 "organization": "...",
+"related_entities_type": "...",
+"website": "..."
 "related_entities_type": "...",
 "website": "..."
 }},
@@ -84,8 +103,15 @@ Hãy đọc kỹ bài báo dưới đây và xác định tất cả các tổ c
 ✅ 4. event_summary (Tóm tắt sự việc)
 -> Tóm tắt ngắn gọn sự việc chính của toàn bài báo.
 
+✅ 3. source_credibility (Độ tin cậy của nguồn tin)
+-> Chỉ định cho toàn bài: "High", "Medium", "Low"
+
+✅ 4. event_summary (Tóm tắt sự việc)
+-> Tóm tắt ngắn gọn sự việc chính của toàn bài báo.
+
 Dựa trên danh sách cá nhân được trích xuất ở BƯỚC 1 và tổ chức được trích xuất ở BƯỚC 2, hãy đánh giá **từng người/tổ chức** theo các đặc trưng rủi ro sau. **Chỉ đánh giá những cá nhân/tổ chức có liên quan đến các yếu tố rủi ro hoặc vi phạm được nêu rõ trong bài báo.**
 
+✅ 5. Đặc trưng rủi ro theo từng cá nhân (mỗi cá nhân là một phần tử trong danh sách):
 ✅ 5. Đặc trưng rủi ro theo từng cá nhân (mỗi cá nhân là một phần tử trong danh sách):
 
 list_personal_risks (key)
@@ -106,10 +132,19 @@ list_personal_risks (key)
 "mitigation_actions": "...", ← Các hành động khắc phục, bồi thường hoặc biện pháp đã được thực hiện để giải quyết vi phạm
 "appeal_status": "...", ← Tình trạng của quá trình kháng cáo liên quan đến phán quyết (ví dụ: "Đang kháng cáo" / "Kháng cáo bị bác bỏ" / "Không kháng cáo")
 "personal_relationships": "..." ( Mối quan hệ với các cá nhân/tổ chức khác trong bài báo (nếu có), không có giá trị sẵn).
+"risk_severity": "...", ← Mức độ nghiêm trọng của rủi ro: "Nghiêm trọng" / "Trung bình" / "Thấp"
+"date_of_violation": "...", ← Ngày hoặc khoảng thời gian cụ thể xảy ra hành vi vi phạm (ví dụ: "2021-03 đến 2022-03" hoặc "2021")
+"jurisdiction_of_violation": "...", ← Khu vực pháp lý nơi hành vi vi phạm diễn ra (ví dụ: "TP.HCM, Việt Nam")
+"laws_or_regulations_violated": [], ← Danh sách các điều luật hoặc quy định cụ thể đã bị vi phạm
+"financial_impact_of_violation": "...", ← Ước tính thiệt hại tài chính hoặc mức phạt liên quan đến vi phạm (ví dụ: "18 triệu VND" hoặc "Không rõ")
+"mitigation_actions": "...", ← Các hành động khắc phục, bồi thường hoặc biện pháp đã được thực hiện để giải quyết vi phạm
+"appeal_status": "...", ← Tình trạng của quá trình kháng cáo liên quan đến phán quyết (ví dụ: "Đang kháng cáo" / "Kháng cáo bị bác bỏ" / "Không kháng cáo")
+"personal_relationships": "..." ( Mối quan hệ với các cá nhân/tổ chức khác trong bài báo (nếu có), không có giá trị sẵn).
 }},
 ...
 ]
 
+✅ 6. Đặc trưng rủi ro theo từng tổ chức (mỗi tổ chức là một phần tử trong danh sách):
 ✅ 6. Đặc trưng rủi ro theo từng tổ chức (mỗi tổ chức là một phần tử trong danh sách):
 
 list_organizer_risks (key)
@@ -130,10 +165,19 @@ list_organizer_risks (key)
 "mitigation_actions": "...", ← Các hành động khắc phục, bồi thường hoặc biện pháp đã được thực hiện để giải quyết vi phạm
 "appeal_status": "...", ← Tình trạng của quá trình kháng cáo liên quan đến phán quyết (ví dụ: "Đang kháng cáo" / "Kháng cáo bị bác bỏ" / "Không kháng cáo")
 "personal_relationships": "..." ( Mối quan hệ với các cá nhân/tổ chức khác trong bài báo (nếu có), không có giá trị sẵn).
+"risk_severity": "...", ← Mức độ nghiêm trọng của rủi ro: "Nghiêm trọng" / "Trung bình" / "Thấp"
+"date_of_violation": "...", ← Ngày hoặc khoảng thời gian cụ thể xảy ra hành vi vi phạm (ví dụ: "2021-03 đến 2022-03" hoặc "2021")
+"jurisdiction_of_violation": "...", ← Khu vực pháp lý nơi hành vi vi phạm diễn ra (ví dụ: "TP.HCM, Việt Nam")
+"laws_or_regulations_violated": [], ← Danh sách các điều luật hoặc quy định cụ thể đã bị vi phạm
+"financial_impact_of_violation": "...", ← Ước tính thiệt hại tài chính hoặc mức phạt liên quan đến vi phạm (ví dụ: "18 triệu VND" hoặc "Không rõ")
+"mitigation_actions": "...", ← Các hành động khắc phục, bồi thường hoặc biện pháp đã được thực hiện để giải quyết vi phạm
+"appeal_status": "...", ← Tình trạng của quá trình kháng cáo liên quan đến phán quyết (ví dụ: "Đang kháng cáo" / "Kháng cáo bị bác bỏ" / "Không kháng cáo")
+"personal_relationships": "..." ( Mối quan hệ với các cá nhân/tổ chức khác trong bài báo (nếu có), không có giá trị sẵn).
 }},
 ...
 ]
 
+📌 Lưu ý 1: Mỗi cá nhân/tổ chức trong danh sách phải được đánh giá độc lập, không gộp chung. Nếu không đủ thông tin để xác định, hãy để null hoặc mảng rỗng [] tùy theo kiểu dữ liệu.
 📌 Lưu ý 1: Mỗi cá nhân/tổ chức trong danh sách phải được đánh giá độc lập, không gộp chung. Nếu không đủ thông tin để xác định, hãy để null hoặc mảng rỗng [] tùy theo kiểu dữ liệu.
 Lưu ý 2: **Chỉ bao gồm các cá nhân và tổ chức được xác định có các đặc trưng rủi ro cụ thể trong bài báo (nghĩa là `violation_type` không phải là 'Không có hành vi phạm được đề cập' và `customer_role` không phải là 'Không có liên quan rõ ràng trong bài báo'). Nếu một cá nhân hoặc tổ chức không đáp ứng tiêu chí này, họ sẽ không được đưa vào bất kỳ danh sách nào trong đầu ra (cả danh sách ở BƯỚC 1, BƯỚC 2 và các danh sách rủi ro ở BƯỚC 3).**
 
@@ -159,7 +203,7 @@ LƯU Ý: Chỉ trả về **hai danh sách JSON (một cho cá nhân, một cho 
 
 \"\"\"
 
-   {article_text}
+   {}
 
 \"\"\"
 
@@ -173,7 +217,10 @@ Mẫu đầu ra mẫu 1 (Nếu là người hoặc tổ chức có rủi ro):
 "birth_year_or_age": null,
 "gender": "Female",
 "nationality": "Việt Nam",
+"nationality": "Việt Nam",
 "occupation_or_position": "Chủ tịch hội đồng quản trị",
+"education_or_qualifications": null,
+"previous_roles": [],
 "education_or_qualifications": null,
 "previous_roles": [],
 "organization": "Tập đoàn Vạn Thịnh Phát",
@@ -187,7 +234,10 @@ Mẫu đầu ra mẫu 1 (Nếu là người hoặc tổ chức có rủi ro):
 "birth_year_or_age": null,
 "gender": "Female",
 "nationality": "Việt Nam",
+"nationality": "Việt Nam",
 "occupation_or_position": "Thẩm phán chủ tọa",
+"education_or_qualifications": null,
+"previous_roles": [],
 "education_or_qualifications": null,
 "previous_roles": [],
 "organization": "Tòa án nhân dân cấp cao tại TP.HCM",
@@ -200,7 +250,10 @@ Mẫu đầu ra mẫu 1 (Nếu là người hoặc tổ chức có rủi ro):
 "birth_year_or_age": null,
 "gender": "Male",
 "nationality": "Việt Nam",
+"nationality": "Việt Nam",
 "occupation_or_position": "Thẩm phán",
+"education_or_qualifications": null,
+"previous_roles": [],
 "education_or_qualifications": null,
 "previous_roles": [],
 "organization": "Tòa án nhân dân cấp cao tại TP.HCM",
@@ -215,7 +268,11 @@ Mẫu đầu ra mẫu 1 (Nếu là người hoặc tổ chức có rủi ro):
 "founded_year": null,
 "industry_or_sector": "Bất động sản",
 "legal_structure": "Công ty Cổ phần",
+"founded_year": null,
+"industry_or_sector": "Bất động sản",
+"legal_structure": "Công ty Cổ phần",
 "occupation_or_position": null,
+"headquarters_location": null,
 "headquarters_location": null,
 "organization": null,
 "related_entities_type": null,
@@ -227,7 +284,11 @@ Mẫu đầu ra mẫu 1 (Nếu là người hoặc tổ chức có rủi ro):
 "founded_year": null,
 "industry_or_sector": "Tài chính ngân hàng",
 "legal_structure": "Ngân hàng thương mại cổ phần",
+"founded_year": null,
+"industry_or_sector": "Tài chính ngân hàng",
+"legal_structure": "Ngân hàng thương mại cổ phần",
 "occupation_or_position": null,
+"headquarters_location": null,
 "headquarters_location": null,
 "organization": null,
 "related_entities_type": null,
@@ -238,6 +299,7 @@ Mẫu đầu ra mẫu 1 (Nếu là người hoặc tổ chức có rủi ro):
 "news_sentiment_type": "Negative",
 "recency": "recent",
 "source_credibility": "High",
+"event_summary": "Vụ án bà Phương Hằng và các đồng phạm bị xét xử phúc thẩm về tội lợi dụng các quyền tự do dân chủ xâm phạm lợi ích nhà nước, tổ chức, cá nhân. Bà Hằng bày tỏ sự ân hận do thiếu hiểu biết pháp luật. Các đồng phạm khác và người liên quan cũng kháng cáo bản án sơ thẩm.",
 "event_summary": "Vụ án bà Phương Hằng và các đồng phạm bị xét xử phúc thẩm về tội lợi dụng các quyền tự do dân chủ xâm phạm lợi ích nhà nước, tổ chức, cá nhân. Bà Hằng bày tỏ sự ân hận do thiếu hiểu biết pháp luật. Các đồng phạm khác và người liên quan cũng kháng cáo bản án sơ thẩm.",
 "list_personal_risks": [
 {{
@@ -334,6 +396,7 @@ Mẫu đầu ra mẫu 2 (Nếu không có người hoặc tổ chức có rủi 
 "news_sentiment_type": "Positive",
 "recency": "recent",
 "source_credibility": "High",
+"event_summary": null,
 "event_summary": null,
 "list_personal_risks": [],
 "list_organizer_risks": []
