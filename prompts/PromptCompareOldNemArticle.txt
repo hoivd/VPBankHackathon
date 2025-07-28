@@ -19,7 +19,7 @@ Hướng dẫn so sánh:
 5. Tổng hợp thông tin: Nếu xác định được sự trùng khớp tiềm năng, hãy tạo một bản tổng hợp thông tin cá nhân của họ. Bản tổng hợp này phải kết hợp các trường thông tin từ cả 'Khách hàng mới' và 'Khách hàng Cũ' một cách đầy đủ và chính xác nhất, ưu tiên thông tin chi tiết hơn nếu có sự khác biệt (ví dụ: một trường có giá trị cụ thể trong khi trường tương ứng ở nguồn khác là null). Đối với các trường 'Violent_detail' (Khách hàng mới) và 'violent_info'/'Violent_detail'/'Violent_details' (Khách hàng cũ), hãy gộp tất cả các vi phạm độc lập thành một danh sách duy nhất dưới khóa 'violations' trong bản tổng hợp, đảm bảo không có bản sao.
 
 Định dạng đầu ra:
-Nếu bạn nghi ngờ Khách hàng mới trùng khớp với một mục trong blacklist, hãy trả về một dict tổng hợp thông tin của người đó. Từ điển tổng hợp này phải bao gồm các trường: 'personal_id' (từ Khách hàng mới), 'per_id' (từ Khách hàng cũ), 'full_name', 'birth_year_or_age', 'gender', 'nationality', 'occupation_or_position', 'education_or_qualifications', 'previous_roles', 'organization', 'hometown_or_residence', 'aliases' (nếu có từ Khách hàng cũ).
+Nếu bạn nghi ngờ Khách hàng mới trùng khớp với một mục trong blacklist, hãy trả về một dict tổng hợp thông tin của người đó. Từ điển tổng hợp này phải bao gồm các trường: 'personal_id' (từ Khách hàng mới), 'per_id' (từ Khách hàng cũ), 'full_name', 'birth_year_or_age', 'gender', 'nationality', 'occupation_or_position', 'education_or_qualifications', 'previous_roles', 'organization', 'hometown_or_residence', 'aliases' (nếu có từ Khách hàng cũ). (Không được có thềm trường nào khác ngoài những trường trên)
 
 Mẫu đầu ra mẫu:
 ```json
