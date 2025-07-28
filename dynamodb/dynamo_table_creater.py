@@ -69,7 +69,7 @@ class DynamoTableManager:
         for table_name, schema in tables_to_create.items():
             self.create_table(table_name, schema)
 
-if __name__ == "__main__":
+def main():
     AWS_ACCESS_KEY = Utils.load_api_key_from_env("NEW_AWS_ACCESS_KEY")
     AWS_SECRET_KEY = Utils.load_api_key_from_env("NEW_AWS_SECRET_KEY")
     REGION = config.AWS_REGION
@@ -81,6 +81,9 @@ if __name__ == "__main__":
         aws_secret_key=AWS_SECRET_KEY,
         aws_access_key=AWS_ACCESS_KEY,
         region=REGION,
-        table_config=config.TABLE_CONFIG)
+        table_config=config.TABLE_CONFIG_DEMO)
     
     manager.create_all_tables()
+
+if __name__ == "__main__":
+    main()

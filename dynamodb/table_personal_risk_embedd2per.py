@@ -8,15 +8,15 @@ import config
 
 logger = _setup_logger(__name__, config.LOG_LEVEL)
 
-class TablePersonalEmbedd2Personal:
+class TablePersonalRiskEmbedd2Personal:
     def __init__(self, query: DynamoQuery, table_config):
         self.query = query
-        self.table_name, _ = list(table_config['personal_embedd2per_config'].items())[0]
+        self.table_name, _ = list(table_config['personal_risk_embedd2per_config'].items())[0]
 
     def get_by_per_embedd_id(self, personal_embedd_id: str):
         return self.query.get_item_by_key(
             table_name=self.table_name,
-            key_dict={"personal_embedd_id": personal_embedd_id}
+            key_dict={"personal_risk_embedd_id": personal_embedd_id}
         )
 
     def get_embedd_by_per_id(self, per_id: str) -> list:
@@ -25,7 +25,7 @@ class TablePersonalEmbedd2Personal:
             filter_expression=Attr("per_id").eq(per_id)
         )
         logger.info(f"Found {len(results)} embeddings for per_id '{per_id}'")
-        return [item["personal_embedd_id"] for item in results]
+        return [item["personal_risk_embedd_id"] for item in results]
 
     def get_embedd_by_per_id_list(self, per_ids: list[str]) -> list:
         all_embedds = []
@@ -34,7 +34,7 @@ class TablePersonalEmbedd2Personal:
                 table_name=self.table_name,
                 filter_expression=Attr("per_id").eq(per_id)
             )
-            all_embedds.extend([item["personal_embedd_id"] for item in results])
+            all_embedds.extend([item["personal_risk_embedd_id"] for item in results])
         return all_embedds
 
     def map_embedd_ids_to_per_ids(self, embedd_ids: list[str]) -> dict[str, str]:
@@ -44,6 +44,7 @@ class TablePersonalEmbedd2Personal:
         :param embedd_ids: danh sách các personal_embedd_id
         :return: dict {personal_embedd_id: per_id}
         """
+        embedd_ids = [str(id) for id in embedd_ids]
         mapping = {}
         for embedd_id in embedd_ids:
             item = self.get_by_per_embedd_id(embedd_id)
@@ -66,14 +67,15 @@ def main():
     
     query = DynamoQuery(base_dynamo.dynamodb)
 
-    personal2media_table = TablePersonalEmbedd2Personal(query=query, table_config=config.TABLE_CONFIG)
+    personal_risk_embedd2media_table = TablePersonalRiskEmbedd2Personal(query=query, table_config=config.TABLE_CONFIG_DEMO)
 
     # # Ví dụ sử dụng
     # per_ids = ["per_id_1752666855224801", "per_id_1752666855225827", 'per_id_1752666855227701']
     # embedd_id = personal2media_table.get_embedd_by_per_id_list(per_ids)
 
-    per_embed_ids = [100208, 100213]
-    per_id_mapping = personal2media_table.map_embedd_ids_to_per_ids(per_embed_ids)
+    per_embed_ids = ["per_id_1753601865338008", "per_id_1753601865335117", "per_id_1753601865340027"]
+
+    per_id_mapping = personal_risk_embedd2media_table.get_embedd_by_per_id_list(per_embed_ids)
     print(per_id_mapping)
     # print(embedd_id)
 

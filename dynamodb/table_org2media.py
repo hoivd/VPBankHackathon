@@ -17,6 +17,13 @@ class TableOrg2Media:
             filter_expression=Attr("media_id").eq(media_id)
         )
         return [item["org_id"] for item in results]
+    
+    def get_items_by_org(self, org_id: str) -> list:
+        results = self.query.scan_by_filter(
+            table_name=self.table_name,
+            filter_expression=Attr("org_id").eq(org_id)
+        )
+        return results  # Trả toàn bộ item liên quan đến org_id
 
 if __name__ == "__main__":
     AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")

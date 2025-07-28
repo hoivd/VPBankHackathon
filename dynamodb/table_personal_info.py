@@ -31,7 +31,7 @@ class TablePersonalInfo:
         """
         return self.query.scan_all(self.table_name)
     
-if __name__ == "__main__":
+def main():
     AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
     AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
     REGION = config.AWS_REGION
@@ -46,15 +46,18 @@ if __name__ == "__main__":
 
     personal2media_table = TablePersonalInfo(query=query, table_config=config.TABLE_CONFIG)
 
-    # # Ví dụ sử dụng
-    # per_id = "per_id_1752346833994845"
-    # item = personal2media_table.get_by_per_id(per_id)
-    # print(f"Item with per_id '{per_id}': {item}")
+    # Ví dụ sử dụng
+    per_id = "per_id_1752778464752931"
+    item = personal2media_table.get_by_per_id(per_id)
+    print(f"Item with per_id '{per_id}': {Utils.json_to_str(item)}")
 
-    all_items = personal2media_table.get_all_items()
-    print(type(all_items))
-    print(f"Tổng số item: {len(all_items)}")
-    for item in all_items[:5]:  # In thử 5 item đầu tiên
-        print(item)
+    # all_items = personal2media_table.get_all_items()
+    # print(type(all_items))
+    # print(f"Tổng số item: {len(all_items)}")
+    # for item in all_items[:5]:  # In thử 5 item đầu tiên
+    #     print(item)
 
-    Utils.save_json(all_items, "./data/personal_info_items.json")
+    # Utils.save_json(all_items, "./data/personal_info_items.json")
+
+if __name__ == "__main__":
+    main()

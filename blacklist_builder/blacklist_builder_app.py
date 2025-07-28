@@ -9,12 +9,15 @@ from blacklist_builder.article_extractor import ArticlePersonExtractor
 from blacklist_builder.article_risk_processor import ArticleRiskProcessor
 from blacklist_builder.article_risk_matching_extractor import ArticleRiskMatchingExtractor
 from blacklist_builder.multiarticle_risk_processor import ArticleBatchRunner
-from embedder.model_embedder import ModelEmbedder
-from embedder.article_embedder import ArticleEmbedder
-from embedder.personal_embedder import PersonalEmbedder
-from embedder.organization_embedder import OrganizationEmbedder
+from embedder.bedrock_base import BedrockBaseClient
+from embedder.cohere_embedder import CohereMultilingualEmbedder
+from blacklist_builder.faiss_handler.faiss_personal_and_risk_handler import PersonalAndRiskHandler
+from blacklist_builder.faiss_handler.faiss_organization_and_risk_handler import OrganizationAndRiskHandler
+from blacklist_builder.faiss_handler.retrieval_faiss_personal_and_risk import PersonalInfoSimilarRetriever
+from blacklist_builder.faiss_handler.retrieval_faiss_organization_and_risk import OrganizationInfoSimilarRetriever
 from faiss_manager.faiss_index_manager import FaissIndexManager
 from datetime import datetime
+from blacklist_builder.info_comparer import InfoComparer
 import os
 from dotenv import load_dotenv
 from S3.s3_connector import S3Connector
@@ -37,7 +40,8 @@ class BlacklistBuilderApp:
 
         # ===== Dinh nghia id model =====
         self.PERSONAL_MODEL = config.DEEPSEEK_MODEL_VIRGINA_ID
-        self.COMPARE_MODEL = "us.anthropic.claude-3-7-sonnet-20250219-v1:0"
+        self.PERSONAL_COMPARE_PROMPT = config.PROMPT_PERSONAL_COMPARE_FILE
+        self.ORGANIZATION_COMPARE_PROMPT = config.PROMPT_ORGANIZATION_COMPARE_FILE
 
         # ===== Dinh nghia id model =====
         self.EXTRACTOR_PROMPT =  config.PROMPT_EXTRACTOR_FILE
@@ -53,21 +57,26 @@ class BlacklistBuilderApp:
             secret_key=self.AWS_SECRET_KEY
         )
 
-        model_name = config.EMBEDDING_MODEL_NAME
-        self.base_model_embedder = ModelEmbedder(model_name=model_name)
-        self.article_embedder = ArticleEmbedder(base_embedder=self.base_model_embedder)
-        self.personal_embeder = PersonalEmbedder(base_embedder=self.base_model_embedder)
-        self.org_embedder = OrganizationEmbedder(base_embedder=self.base_model_embedder)
+        self.base_bedrock = BedrockBaseClient(
+            aws_access_key_id=self.AWS_ACCESS_KEY,
+            aws_secret_access_key=self.AWS_SECRET_KEY,
+            region_name=self.REGION_MODEL
+        )
 
-        self.article_faiss_manager = FaissIndexManager(config.EMBEDDING_DIM)
-        self.personal_faiss_manager = FaissIndexManager(config.EMBEDDING_DIM)
-        self.org_faiss_manager = FaissIndexManager(config.EMBEDDING_DIM)
+        model_name = config.EMBEDDING_MODEL_NAME
+
+        self._init_info_article_extractor()
+
+        self.personal_faiss_path = 'D:/VPBankHackathon/data/faiss_indexs/personal_faiss_index'
+        self.org_faiss_path = 'D:/VPBankHackathon/data/faiss_indexs/org_faiss_index'
+        self._init_faiss_handler()
+        self._init_faiss_retriever()
 
         # ===== Khởi tạo model trích xuất thông tin cá nhân =====
-        self._init_person_extractor()
+        self._init_first_article_processor()
 
         # ===== Khởi tạo model so sánh thông tin cũ =====
-        self._init_compare_extractor()
+        self._init_additional_article_processor()
 
         # ===== Khởi tạo runner =====
         self.batch_runner = ArticleBatchRunner(
@@ -76,7 +85,7 @@ class BlacklistBuilderApp:
             base_dynamo=self.base_dynamo
         )
 
-    def _init_person_extractor(self):
+    def _init_info_article_extractor(self):
         person_model_id = self.PERSONAL_MODEL
         person_model_manager = BedrockModelManager(
             aws_access_key_id=self.AWS_ACCESS_KEY,
@@ -93,19 +102,40 @@ class BlacklistBuilderApp:
             model_manager=person_model_manager,
             prompt_template=extractor_prompt
         )
+    
+    def _init_faiss_handler(self):
+        embedder = CohereMultilingualEmbedder(bedrock_client=self.bedrock_base.get_client())
+        personal_faiss_manager = FaissIndexManager(1024)
+        organization_faiss_manager = FaissIndexManager(1024)
+        
+        self.personal_risk_handler = PersonalAndRiskHandler(embedder=embedder, faiss_manager=personal_faiss_manager)
+        self.organization_risk_handler = OrganizationAndRiskHandler(embedder=embedder, faiss_manager=organization_faiss_manager)
 
+    def _init_faiss_retriever(self):
+        personal_faiss_index_path = self.personal_faiss_path
+
+        self.personal_retriever = PersonalInfoSimilarRetriever(index_dir=personal_faiss_index_path,
+                                        bedrock_base_client=self.bedrock_base.get_client(), 
+                                        base_dynamo=self.base_dynamo)
+
+        organization_faiss_index_path = self.org_faiss_path
+
+        self.organization_retriever = OrganizationInfoSimilarRetriever(index_dir=organization_faiss_index_path,
+                                        bedrock_base_client=self.bedrock_base.get_client(), 
+                                        base_dynamo=self.base_dynamo)
+
+
+    def _init_first_article_processor(self):
         self.new_processor = ArticleRiskProcessor(
-            info_extractor=self.personal_extractor,
+            info_extractor=self.info_article_extractor,
             base_dynamo=self.base_dynamo.dynamodb,
-            article_embedder=self.article_embedder,
-            personal_embedder=self.personal_embeder,
-            org_embedder=self.org_embedder,
-            article_faiss_manager=self.article_faiss_manager,
-            personal_faiss_manager=self.personal_faiss_manager,
-            org_faiss_manager=self.org_faiss_manager
+            personal_and_risk_handler=self.personal_risk_handler,
+            organization_and_risk_handler=self.organization_risk_handler
         )
 
-    def _init_compare_extractor(self):
+    
+
+    def _init_info_comparer(self):
         compare_model_id = self.COMPARE_MODEL
         compare_model_manager = BedrockModelManager(
             aws_access_key_id=self.AWS_ACCESS_KEY,
@@ -113,23 +143,33 @@ class BlacklistBuilderApp:
             region_name=self.REGION_MODEL,
             default_model_id=compare_model_id
         )
+        personal_compare_prompt_file = self.PERSONAL_COMPARE_PROMPT 
+        personal_compare_prompt = Utils.load_text(personal_compare_prompt_file)
+        logger.info(f"Đã tải prompt từ {personal_compare_prompt_file}")
+        logger.debug(f"Prompt nội dung: {personal_compare_prompt}")
 
-        compare_prompt_path = self.COMPARE_INFO_PROMPT
-        compare_prompt = Utils.load_text(compare_prompt_path)
-        logger.info(f"✅ Đã load prompt so sánh từ {compare_prompt_path}")
+        organization_compare_prompt_file = self.ORGANIZATION_COMPARE_PROMPT 
+        organization_compare_prompt = Utils.load_text(organization_compare_prompt_file)
+        logger.info(f"Đã tải prompt từ {organization_compare_prompt_file}")
+        logger.debug(f"Prompt nội dung: {organization_compare_prompt}")
 
+        self.info_comparer = InfoComparer(self.base_dynamo, 
+                                    compare_model_manager, 
+                                    personal_compare_prompt,
+                                    organization_compare_prompt)
+
+    def _init_additional_article_processor(self):
         self.rebuild_processor = ArticleRiskMatchingExtractor(
-            info_extractor=self.personal_extractor,
+            info_extractor=self.info_article_extractor,
             base_dynamo=self.base_dynamo.dynamodb,
-            llm_manager=compare_model_manager,
-            compare_prompt_template=compare_prompt,
-            article_embedder=self.article_embedder,
-            personal_embedder=self.personal_embeder,
-            org_embedder=self.org_embedder,
-            article_faiss_manager=self.article_faiss_manager,
-            personal_faiss_manager=self.personal_faiss_manager,
-            org_faiss_manager=self.org_faiss_manager
+            info_comparer=self.info_comparer,
+            personal_info_similar_retriever=self.personal_retriever,
+            organization_info_similar_retriever=self.organization_retriever,
+            personal_and_risk_handler=self.personal_risk_handler,
+            organization_and_risk_handler=self.organization_risk_handler
+
         )
+
 
     def save_article_faiss_index(self, article_index_path: str):
         logger.info(f"💾 Đang lưu FAISS index bài viết tại {article_index_path}...")
@@ -203,12 +243,9 @@ class BlacklistBuilderApp:
         logger.info(f"📝 Đang xử lý danh sách bài báo ({len(articles)} bài)...")
         self.batch_runner.run_from_list(articles, table_config=self.TABLE_CONFIG)
 
-if __name__ == "__main__":
+def main():
     app = BlacklistBuilderApp()
 
-    # bucket_name = "team253"
-    # key = "adverse_media_data/case1.json"
-    # app.run_from_s3(bucket_name, key)
     S3_AWS_ACCESS_KEY = Utils.load_api_key_from_env("NEW_AWS_ACCESS_KEY")
     S3_AWS_SECRET_KEY = Utils.load_api_key_from_env("NEW_AWS_SECRET_KEY")
     S3_REGION = config.AWS_REGION
@@ -261,3 +298,7 @@ if __name__ == "__main__":
     )
 
     logger.info("✅ Hoàn thành xử lý bài báo.")
+
+
+if __name__ == "__main__":
+    main()

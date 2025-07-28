@@ -1,4 +1,5 @@
 import json
+import os
 import re
 from logger import _setup_logger
 import config
@@ -15,16 +16,27 @@ from blacklist_builder.builder.rebuild_item_builder import RebuildItemBuilder
 from dynamodb.dynamo_deleter import DynamoDBDeleter
 from dynamodb.table_org_embedd2org import TableOrgEmbedd2Org
 from dynamodb.table_personal_embedd2personal import TablePersonalEmbedd2Personal
+from dynamodb.table_personal_risk_embedd2per import TablePersonalRiskEmbedd2Personal
+from dynamodb.table_organization_risk_embedd2org import TableOrgainzationRiskEmbedd2Orgainzation
+from blacklist_builder.faiss_handler.faiss_personal_and_risk_handler import PersonalAndRiskHandler
+from blacklist_builder.faiss_handler.faiss_organization_and_risk_handler import OrganizationAndRiskHandler
+from blacklist_builder.faiss_handler.retrieval_faiss_personal_and_risk import PersonalInfoSimilarRetriever
+from blacklist_builder.faiss_handler.retrieval_faiss_organization_and_risk import OrganizationInfoSimilarRetriever
+from embedder.bedrock_base import BedrockBaseClient
+from embedder.cohere_embedder import CohereMultilingualEmbedder
+from faiss_manager.faiss_index_manager import FaissIndexManager
 
 logger = _setup_logger(__name__, config.LOG_LEVEL)
 
 class ArticleRiskMatchingExtractor:
     def __init__(self, 
                  info_extractor, 
-                 base_dynamo, 
-                 llm_manager, compare_prompt_template, 
-                 article_embedder, personal_embedder, org_embedder, 
-                 article_faiss_manager, personal_faiss_manager, org_faiss_manager):
+                 base_dynamo,
+                 info_comparer,
+                personal_and_risk_handler: PersonalAndRiskHandler,
+                organization_and_risk_handler: OrganizationAndRiskHandler,
+                personal_info_similar_retriever: PersonalInfoSimilarRetriever,
+                organization_info_similar_retriever: OrganizationInfoSimilarRetriever):
         """
         :param gemini_extractor: công cụ trích xuất từ Gemini API
         :param dynamo_pusher: đối tượng DynamoPusher (bắt buộc)
@@ -33,27 +45,27 @@ class ArticleRiskMatchingExtractor:
         self.base_dynamo = base_dynamo
         self.dynamo_pusher = DynamoPusher(dynamodb=self.base_dynamo)
 
-        self.table_config = config.TABLE_CONFIG
+        self.table_config = config.TABLE_CONFIG_DEMO
 
         self.query = DynamoQuery(self.base_dynamo)
         self.table_adverse_media = TableAdverseMedia(self.query, self.table_config)
         self.table_personal_embedd2media = TablePersonalEmbedd2Personal(self.query, self.table_config)
         self.table_org_embedd2media = TableOrgEmbedd2Org(self.query, self.table_config)
+        self.personal_risk_embedd2media_table = TablePersonalRiskEmbedd2Personal(self.query, self.table_config)
+        self.organization_risk_embedd2media_table = TableOrgainzationRiskEmbedd2Orgainzation(self.query, self.table_config)
 
-        self.comparer = InfoComparer(base_dynamo, llm_manager, compare_prompt_template)
+        self.comparer = info_comparer
 
         self.new_item_builder = NewItemBuilder
         self.rebuild_item_builder = RebuildItemBuilder
 
         self.dynamo_deleter = DynamoDBDeleter(self.base_dynamo)
 
-        self.article_embedder = article_embedder
-        self.personal_embedder = personal_embedder
-        self.org_embedder = org_embedder
-
-        self.article_faiss_manager = article_faiss_manager
-        self.personal_faiss_manager = personal_faiss_manager
-        self.org_faiss_manager = org_faiss_manager
+        self.personal_and_risk_handler = personal_and_risk_handler
+        self.organization_and_risk_handler = organization_and_risk_handler
+        
+        self.personal_info_similar_retriever = personal_info_similar_retriever
+        self.organization_info_similar_retriever = organization_info_similar_retriever
 
     def extract_json_blocks(self, raw_text: str):
         json_blocks = json.loads(raw_text)
@@ -85,357 +97,367 @@ class ArticleRiskMatchingExtractor:
 
         return personal_info_json, org_info_json, risk_info_json
 
-    def delete_old_object(self, old_personal_ids, old_organization_ids, table_config: dict):
-        orgnization_config = table_config['organization_config']
+    def delete_old_personal_items(self, old_personal_ids, table_config: dict):
         personal_config = table_config['person_config']
-
-        for old_org_id in old_organization_ids:
-            self.dynamo_deleter.delete_item(orgnization_config, old_org_id)
 
         for old_personal_id in old_personal_ids:
             self.dynamo_deleter.delete_item(personal_config, old_personal_id)
+
+        logger.info("Xoa du lieu PERSONAL_ITEMS cu trung thanh cong")
+
+    def delete_old_organization_items(self, old_organization_ids, table_config: dict):
+        organization_config = table_config['organization_config']
+
+        for old_organization_id in old_organization_ids:
+            self.dynamo_deleter.delete_item(organization_config, old_organization_id)
 
         logger.info("Xoa du lieu cu trung thanh cong")
 
     def push_to_dynamodb(self, items: dict, table_config: dict):
         logger.info("📝 Đang lưu vào DynamoDB...")
+
+        self.dynamo_pusher.insert(items['adverse_media_item'], table_config=table_config['media_config'])
         self.dynamo_pusher.insert(items['organization_info_items'], table_config=table_config['organization_config'])
         self.dynamo_pusher.insert(items['personal_info_items'], table_config=table_config['person_config'])
-        self.dynamo_pusher.insert(items['org2media_items'], table_config=table_config['o2m_config'])
+        self.dynamo_pusher.insert(items['organization2media_items'], table_config=table_config['o2m_config'])
         self.dynamo_pusher.insert(items['personal2media_items'], table_config=table_config['p2m_config'])
+        self.dynamo_pusher.insert(items['personal_risk_embedd2per_items'], table_config=table_config['personal_risk_embedd2per_config'])
+        self.dynamo_pusher.insert(items['organization_risk_embedd2org_items'], table_config=table_config['organization_risk_embedd2org_config'])
 
         logger.info("Day du lieu moi len Database thanh cong")
 
-    def process_dynamodb(self, new_items: dict, old_ids: dict, table_config: dict):
-        self.delete_old_object(old_ids['old_personal_ids'], old_ids['old_organization_ids'], table_config)
+    def handler_new_personal_info_json(self, new_personal_info_jsons: list[dict], new_risk_info_json, table_config: dict):
+        def prepare_new_personal_risk_info(new_personal_info_jsons, new_risk_info_json):
+            personal_risk_infos = new_risk_info_json["list_personal_risks"]
 
-        self.push_to_dynamodb(new_items, table_config)
-        logger.info("✅ Xử lý data mới cũ thành công")
+            personal_id2_risk_info = {} 
+            for personal_risk_info in personal_risk_infos:
+                violent_details = {k: v for k, v in personal_risk_info.items() if k != "entity_id"}
+                personal_id = personal_risk_info["entity_id"]
+                personal_id2_risk_info[personal_id] = violent_details
 
-    def prepare_dynamodb_items(self, 
-                               personal_duplicated, 
-                               organization_duplicated, 
-                               risk_info, 
-                               media_id):
-        org_rebuilt_items, org_id_gen_to_org_id, org_ids = self.rebuild_item_builder.create_rebuild_organization_items(organization_duplicated, partition_key="org_id")
-        per_rebuilt_items, per_id_gen_to_per_id, per_ids = self.rebuild_item_builder.create_rebuild_personal_items(personal_duplicated, partition_key="per_id")
+            new_personal_risk_infos = []
+            for new_personal_info_json in new_personal_info_jsons:
+                personal_id = new_personal_info_json["personal_id"]
+                personal_info = {k: v for k, v in new_personal_info_json.items()}
+                personal_info['violent_details'] = personal_id2_risk_info.get(personal_id, {})
+                new_personal_risk_infos.append(personal_info)
 
-        org_gen_ids = list(org_id_gen_to_org_id.keys())
-        per_gen_ids = list(per_id_gen_to_per_id.keys())
+            logger.debug(f"[prepare_new_personal_risk_info] Personal risk info: {Utils.json_to_str(new_personal_risk_infos)}")
 
-        personal2media_items = self.new_item_builder.create_personal2media_items(risk_info=risk_info, partition_key='p2m_id', per_id_gen_to_per_id=per_id_gen_to_per_id, media_id=media_id)
-        org2media_items = self.new_item_builder.create_org2media_items(risk_info=risk_info, partition_key='o2m_id', org_id_gen_to_org_id=org_id_gen_to_org_id, media_id=media_id)
-        
-        logger.info("✅ Rebuilt Organization Items:")
-        logger.info(json.dumps(org_rebuilt_items, indent=2, ensure_ascii=False))
-        logger.debug(Utils.json_to_str(org_id_gen_to_org_id))
-        
-        logger.info("✅ Rebuilt Personal Items:")
-        logger.info(json.dumps(per_rebuilt_items, indent=2, ensure_ascii=False))
-        logger.debug(Utils.json_to_str(per_id_gen_to_per_id))
+            return new_personal_risk_infos
 
-        logger.debug(Utils.json_to_str(personal2media_items))
-        logger.debug(Utils.json_to_str(org2media_items))
+        personal_risk_infos = prepare_new_personal_risk_info(new_personal_info_jsons, new_risk_info_json) 
 
-        logger.info(f"List Personal info per_ids: {per_ids}")
-        logger.info(f"List Organization info org_ids: {org_ids}")
+        top_k_similar_results = self.personal_info_similar_retriever.retrieve_personal_risk_info(personal_risk_infos)
+        top_k_similar_personal_risks = [result["top_k_personal_risk_infos"] for result in top_k_similar_results]
 
-        logger.info(f"Tim thay {len(per_ids)} personal info trung")
-        logger.info(f"Tim thay {len(org_ids)} organization info trung")
-        logger.info(f"Tim thay {len(personal2media_items)} personal2media_items moi")
-        logger.info(f"Tim thay {len(org2media_items)} organization2media_items moi")
+        # logger.debug(f"[handler_new_personal_info_json] Top k similar personal risk: {Utils.json_to_str(top_k_similar_results)}")
 
-        logger.info("Chuan bi items thanh cong")
+        duplicated_personal_infos = []
+        new_personal_infos = []
+        for idx, (personal_risk_info, similar_personal_risk) in enumerate(zip(personal_risk_infos, top_k_similar_personal_risks)):
+            logger.debug(f"So sanh lan {idx + 1} voi {len(similar_personal_risk)} ket qua tu FAIS")
+            logger.debug(f"{50 * '-'}")
+            logger.debug(f"[handler_new_personal_info_json] Personal risk info: {Utils.json_to_str(personal_risk_info)}")
+            logger.debug(f"[handler_new_personal_info_json] Similar personal risk info: {Utils.json_to_str(similar_personal_risk)}")
 
-        return (
-            {
-                'personal_info_items': per_rebuilt_items,
-                'organization_info_items': org_rebuilt_items,
-                'personal2media_items': personal2media_items,
-                'org2media_items': org2media_items
-            } ,
-            {   
-                'old_personal_ids': per_ids,
-                'old_organization_ids': org_ids,
-                'new_personal_ids': per_gen_ids,
-                'new_organization_ids': org_gen_ids
-            }
+            new_personal_info = self.comparer.compare_personal_info(
+                new_personal_info=personal_risk_info,
+                old_personal_infos=similar_personal_risk
+            )
+
+            if new_personal_info: 
+                duplicated_personal_infos.append(new_personal_info)
+            else:
+                new_personal_infos.append(new_personal_info_jsons[idx])
+
+            logger.debug(f"{50 * '-'}")
+            logger.debug(f"[handler_new_personal_info_json] New personal info: {Utils.json_to_str(new_personal_info)}")
+            logger.debug(f"{50 * '-'}")
+
+        logger.info(f"[handler_new_personal_info_json] So luong personal_info trung: {len(duplicated_personal_infos)}")
+        logger.info(f"[handler_new_personal_info_json] So luong personal_info moi: {len(new_personal_infos)}")
+
+        return duplicated_personal_infos, new_personal_infos
+
+    def handler_new_organization_info_json(self, new_organization_info_jsons: list[dict], new_risk_info_json, table_config: dict):
+        def prepare_new_organization_risk_info(new_organization_info_jsons, new_risk_info_json):
+            organization_risk_infos = new_risk_info_json["list_organizer_risks"]
+
+            organization_id2_risk_info = {} 
+            for organization_risk_info in organization_risk_infos:
+                violent_details = {k: v for k, v in organization_risk_info.items() if k != "entity_id"}
+                organization_id = organization_risk_info["entity_id"]
+                organization_id2_risk_info[organization_id] = violent_details
+
+            new_organization_risk_infos = []
+            for new_organization_info_json in new_organization_info_jsons:
+                organization_id = new_organization_info_json["organizer_id"]
+                organization_info = {k: v for k, v in new_organization_info_json.items()}
+                organization_info['violent_details'] = organization_id2_risk_info.get(organization_id, {})
+                new_organization_risk_infos.append(organization_info)
+
+            logger.debug(f"[prepare_new_organization_risk_info] organization risk info: {Utils.json_to_str(new_organization_risk_infos)}")
+
+            return new_organization_risk_infos
+
+        organization_risk_infos = prepare_new_organization_risk_info(new_organization_info_jsons, new_risk_info_json) 
+
+        top_k_similar_results = self.organization_info_similar_retriever.retrieve_organization_risk_info(organization_risk_infos)
+        top_k_similar_organization_risks = [result["top_k_organization_risk_infos"] for result in top_k_similar_results]
+
+        # logger.debug(f"[handler_new_organization_info_json] Top k similar organization risk: {Utils.json_to_str(top_k_similar_results)}")
+
+        duplicated_organization_infos = []
+        new_organization_infos = []
+        for idx, (organization_risk_info, similar_organization_risk) in enumerate(zip(organization_risk_infos, top_k_similar_organization_risks)):
+            logger.debug(f"So sanh lan {idx + 1} voi {len(similar_organization_risk)} ket qua tu FAIS")
+            logger.debug(f"{50 * '-'}")
+            logger.debug(f"[handler_new_organization_info_json] organization risk info: {Utils.json_to_str(organization_risk_info)}")
+            logger.debug(f"[handler_new_organization_info_json] Similar organization risk info: {Utils.json_to_str(similar_organization_risk)}")
+
+            new_organization_info = self.comparer.compare_organization_info(
+                new_organization_info=organization_risk_info,
+                old_organization_infos=similar_organization_risk
+            )
+
+            if new_organization_info: 
+                duplicated_organization_infos.append(new_organization_info)
+            else:
+                new_organization_infos.append(new_organization_info_jsons[idx])
+
+            logger.debug(f"{50 * '-'}")
+            logger.debug(f"[handler_new_organization_info_json] New organization info: {Utils.json_to_str(new_organization_info)}")
+            logger.debug(f"{50 * '-'}")
+
+        logger.info(f"[handler_new_organization_info_json] So luong organization_info trung: {len(duplicated_organization_infos)}")
+        logger.info(f"[handler_new_organization_info_json] So luong organization_info moi: {len(new_organization_infos)}")
+
+        return duplicated_organization_infos, new_organization_infos
+
+    def handle_faiss_personal_risk_items(self, personal_info_items: list[dict], personal2media_items: list[dict], table_config: dict):
+        personal_risk_embedding_ids, per_ids = self.personal_and_risk_handler.embed_and_index(
+            personal_info_items=personal_info_items,
+            personal2media_items=personal2media_items
         )
+
+        personal_risk_embedding_ids = [str(id) for id in personal_risk_embedding_ids]
+        per_ids = [str(id) for id in per_ids]
+
+        personal_risk_embedd2per_items = self.new_item_builder.create_personal_risk_embedd2per(
+            per_ids=per_ids,
+            personal_risk_embedding_ids=personal_risk_embedding_ids,
+            table_config=table_config
+        ) 
+
+        return personal_risk_embedd2per_items
+
+    def handle_faiss_organization_risk_items(self, organization_info_items: list[dict], organization2media_items: list[dict], table_config: dict):
+        organization_risk_embedding_ids, org_ids = self.organization_and_risk_handler.embed_and_index(
+            organization_info_items=organization_info_items,
+            organization2media_items=organization2media_items
+        )
+
+        organization_risk_embedding_ids = [str(id) for id in organization_risk_embedding_ids]
+        org_ids = [str(id) for id in org_ids]
+
+        organization_risk_embedd2org_items = self.new_item_builder.create_organization_risk_embedd2org(
+            org_ids=org_ids,
+            organization_risk_embedding_ids=organization_risk_embedding_ids,
+            table_config=table_config
+        ) 
+
+        return organization_risk_embedd2org_items
     
-    def prepare_new_items(self, new_personal_info_json, new_org_info_json, risk_info, media_id):
-        new_personal_info_items, per_id_gen_to_per_id = self.new_item_builder.create_personal_items(new_personal_info_json, partition_key='per_id')
-        new_organization_info_items, org_id_gen_to_org_id = self.new_item_builder.create_organization_items(new_org_info_json, partition_key='org_id')
-        new_personal2media_items = self.new_item_builder.create_personal2media_items(risk_info=risk_info, partition_key='p2m_id', per_id_gen_to_per_id=per_id_gen_to_per_id, media_id=media_id)
-        new_org2media_items = self.new_item_builder.create_org2media_items(risk_info=risk_info, partition_key='o2m_id', org_id_gen_to_org_id=org_id_gen_to_org_id, media_id=media_id)
+    def delete_old_organization_embeddings_faiss_and_dynamodb(self, old_organization_ids: list[str], table_config: dict):
+        organization_risk_embedd2_org_config = table_config['organization_risk_embedd2org_config']
+        old_embedding_ids = self.organization_risk_embedd2media_table.get_embedd_by_org_id_list(old_organization_ids)
 
-        logger.debug(f"new_personal_info_items: {new_personal_info_items}")
-        logger.debug(f"new_organization_info_items: {new_organization_info_items}")
-        logger.debug(f"new_personal2media_items: {new_personal2media_items}")
-        logger.debug(f"new_org2media_items: {new_org2media_items}")
+        logger.debug(f"[delete_old_embeddings_faiss_and_dynamodb] Old embedding IDs: {old_embedding_ids}")
+        self.organization_and_risk_handler.remove_old_embeddings_faiss(old_embedding_ids)
 
-        logger.info("Chuan bi items thanh cong ")
+        for old_embedding_id in old_embedding_ids:
+            self.dynamo_deleter.delete_item(organization_risk_embedd2_org_config, old_embedding_id)
+
+    def delete_old_personal_embeddings_faiss_and_dynamodb(self, old_personal_ids: list[str], table_config: dict):
+        personal_risk_embedd2_per_config = table_config['personal_risk_embedd2per_config']
+        old_embedding_ids = self.personal_risk_embedd2media_table.get_embedd_by_per_id_list(old_personal_ids)
+
+        logger.debug(f"[delete_old_embeddings_faiss_and_dynamodb] Old embedding IDs: {old_embedding_ids}")
+        self.personal_and_risk_handler.remove_old_embeddings_faiss(old_embedding_ids)
+
+        for old_embedding_id in old_embedding_ids:
+            self.dynamo_deleter.delete_item(personal_risk_embedd2_per_config, old_embedding_id)
+
+    def prepare_organization_items(self,
+                                   duplicated_organization_infos: list[dict],
+                                   new_organization_infos: list[dict],
+                                   new_risk_info_json: dict,
+                                   media_id: str,
+                                   table_config: dict):
+        organization_info_duplicated_items, organization_id2org_id_duplicated, old_org_ids = self.rebuild_item_builder.create_rebuild_organization_items(duplicated_organization_infos, partition_key='org_id')
+        organization_info_new_items, organization_id2org_id_new = self.new_item_builder.create_organization_items(new_organization_infos, partition_key='org_id')
+
+        organization_info_items = organization_info_duplicated_items + organization_info_new_items
+        organization_id2org_id = {**organization_id2org_id_duplicated, **organization_id2org_id_new}
+
+        logger.debug(f"[process_article] Organization info items: {Utils.json_to_str(organization_info_items)}")
+        logger.debug(f"[process_article] Organization ID to Org ID: {Utils.json_to_str(organization_id2org_id)}")
+
+        organization2media_items = self.new_item_builder.create_org2media_items(
+            risk_info=new_risk_info_json, 
+            partition_key='o2m_id', 
+            org_id_gen_to_org_id=organization_id2org_id, 
+            media_id=media_id
+        )
+
+        logger.debug(f"[process_article] Organization2Media items: {Utils.json_to_str(organization2media_items)}")
+
+        organization_risk_embedd2org_items = self.handle_faiss_organization_risk_items(
+            organization_info_items=organization_info_items,
+            organization2media_items=organization2media_items,
+            table_config=table_config
+        )
+
         return {
-            'personal_info_items': new_personal_info_items,
-            'organization_info_items': new_organization_info_items,
-            'personal2media_items': new_personal2media_items,
-            'org2media_items': new_org2media_items
+            "organization_info_items": organization_info_items,
+            "organization2media_items": organization2media_items,
+            "organization_risk_embedd2org_items": organization_risk_embedd2org_items,
+            "old_org_ids": old_org_ids
         }
     
-    def push_unduplicated_items_to_dynamodb(self, unduplicated_items: dict, table_config: dict):
+    def prepare_personal_items(self,
+                               duplicated_personal_infos: list[dict],
+                               new_personal_infos: list[dict],
+                               new_risk_info_json: dict,
+                               media_id: str,
+                               table_config: dict):
+        personal_info_duplicated_items, personal_id2per_id_duplicated, old_per_ids = self.rebuild_item_builder.create_rebuild_personal_items(duplicated_personal_infos, partition_key='per_id')
+        personal_info_new_items, personal_id2per_id_new = self.new_item_builder.create_personal_items(new_personal_infos, partition_key='per_id')
+
+        personal_info_items = personal_info_duplicated_items + personal_info_new_items
+        personal_id2per_id = {**personal_id2per_id_duplicated, **personal_id2per_id_new}
+
+        logger.debug(f"[process_article] Personal info items: {Utils.json_to_str(personal_info_items)}")
+        logger.debug(f"[process_article] Personal ID to Per ID: {Utils.json_to_str(personal_id2per_id)}")
+        
+        personal2media_items = self.new_item_builder.create_personal2media_items(
+            risk_info=new_risk_info_json, 
+            partition_key='p2m_id', 
+            per_id_gen_to_per_id=personal_id2per_id, 
+            media_id=media_id
+        )
+
+        logger.debug(f"[process_article] Personal2Media items: {Utils.json_to_str(personal2media_items)}")
+
+        personal_risk_embedd2per_items = self.handle_faiss_personal_risk_items(
+            personal_info_items=personal_info_items,
+            personal2media_items=personal2media_items,
+            table_config=table_config
+        )       
+
+        return {
+            "personal_info_items": personal_info_items,
+            "personal2media_items": personal2media_items,
+            "personal_risk_embedd2per_items": personal_risk_embedd2per_items,
+            "old_per_ids": old_per_ids
+        }
+    
+    def prepare_items_from_info_extracted(self,
+                                          new_personal_info_json: list[dict],
+                                          new_org_info_json: list[dict],
+                                          new_risk_info_json: dict,
+                                          article_text: str,
+                                          table_config: dict):
+        adverse_media_item, media_id = self.new_item_builder.create_adverse_media_item(risk_info=new_risk_info_json, partition_key='media_id', context=article_text)
+
+        logger.debug(f"[process_article] Personal info: {Utils.json_to_str(new_personal_info_json)}")
+        logger.debug(f"[process_article] Organization info: {Utils.json_to_str(new_org_info_json)}")
+        logger.debug(f"[process_article] Risk info: {Utils.json_to_str(new_risk_info_json)}")
+
+        duplicated_organization_infos, new_organization_infos = self.handler_new_organization_info_json(new_org_info_json, new_risk_info_json, table_config)
+        logger.debug(f"[process_article] Duplicated organization infos: {Utils.json_to_str(duplicated_organization_infos)}")
+        logger.debug(f"[process_article] New organization infos: {Utils.json_to_str(new_organization_infos)}")
+
+        organization_items = self.prepare_organization_items(
+            duplicated_organization_infos=duplicated_organization_infos,
+            new_organization_infos=new_organization_infos,
+            new_risk_info_json=new_risk_info_json,
+            media_id=media_id,
+            table_config=table_config
+        )
+
+        duplicated_personal_infos, new_personal_infos = self.handler_new_personal_info_json(new_personal_info_json, new_risk_info_json, table_config)
+
+        logger.info(f"[process_article] Số lượng thông tin cá nhân trùng lặp: {len(duplicated_personal_infos)}")
+        logger.info(f"[process_article] Số lượng thông tin cá nhân mới: {len(new_personal_infos)}")
+
+        personal_items = self.prepare_personal_items(
+            duplicated_personal_infos=duplicated_personal_infos,
+            new_personal_infos=new_personal_infos,
+            new_risk_info_json=new_risk_info_json,
+            media_id=media_id,
+            table_config=table_config
+        )
+
+
+        items = {
+            "adverse_media_item": adverse_media_item,
+            "personal_info_items": personal_items['personal_info_items'],
+            "personal2media_items": personal_items['personal2media_items'],
+            "personal_risk_embedd2per_items": personal_items['personal_risk_embedd2per_items'],
+            "organization_info_items": organization_items["organization_info_items"],
+            "organization2media_items": organization_items["organization2media_items"],
+            "organization_risk_embedd2org_items": organization_items["organization_risk_embedd2org_items"]
+        }
+
+        return items, organization_items, personal_items
+
+    def save_items_to_dynamodb(self,
+                               items: dict,
+                               organization_items: dict,
+                               personal_items: dict,
+                               table_config: dict):
         logger.info("📝 Đang lưu vào DynamoDB...")
+        self.delete_old_organization_items(old_organization_ids=organization_items['old_org_ids'], table_config=table_config)
+        self.delete_old_organization_embeddings_faiss_and_dynamodb(old_organization_ids=organization_items['old_org_ids'], table_config=table_config)
 
-        self.dynamo_pusher.insert(unduplicated_items['organization_info_items'], table_config=table_config['organization_config'])
-        self.dynamo_pusher.insert(unduplicated_items['personal_info_items'], table_config=table_config['person_config'])
-        self.dynamo_pusher.insert(unduplicated_items['org2media_items'], table_config=table_config['o2m_config'])
-        self.dynamo_pusher.insert(unduplicated_items['personal2media_items'], table_config=table_config['p2m_config'])
+        self.delete_old_personal_items(old_personal_ids=personal_items['old_per_ids'], table_config=table_config)
+        self.delete_old_personal_embeddings_faiss_and_dynamodb(old_personal_ids=personal_items['old_per_ids'], table_config=table_config)
 
-        logger.info("Day du lieu moi len Database thanh cong")
-        
-    
-    def updated_new_items_after_compare(self, new_personal_info_json, new_org_info_json, old_ids):
-        new_personal_ids = old_ids['new_personal_ids']
-        new_organization_ids = old_ids['new_organization_ids']
+        logger.info("📝 Đang lưu vào DynamoDB...")
+        logger.debug(f"[process_article] Old personal IDs to delete: {Utils.json_to_str(personal_items['old_per_ids'])}")
+        self.push_to_dynamodb(items, table_config)
 
-        # Lọc bỏ các personal_id đã có
-        filtered_personal_info = [
-            item for item in new_personal_info_json
-            if item.get("personal_id") not in new_personal_ids
-        ]
-
-        # Lọc bỏ các organizer_id đã có
-        filtered_org_info = [
-            item for item in new_org_info_json
-            if item.get("organizer_id") not in new_organization_ids
-        ]
-
-        return filtered_personal_info, filtered_org_info
-
-    def embed_article_and_add_to_faiss(self, article_text: str, table_config: dict): 
-        article_embedding = self.article_embedder.embed_article(article_text) 
-        logger.debug(f"[embed_article_and_add_to_faiss] Article embedding: {article_embedding[0, :10]}")
-
-        article_embedding_id = self.article_faiss_manager.add(article_embedding)
-        logger.info(f"✅ Đã thêm embedding của bài báo vào FAISS với ID: {article_embedding_id}")
-        return str(article_embedding_id[0])
-
-    def create_article_embedd2media_item(self, media_id: str, article_embedding_id: int, table_config: dict):
-        table_name, partition_key = list(table_config['article_embedd2media_config'].items())[0]
-        logger.debug(f"[create_article_embedding2media_item] Tạo item cho media_id: {media_id}, article_embedding_id: {article_embedding_id}")
-        item = {
-            "media_id": media_id,
-            partition_key: article_embedding_id
-        }
-        return item
-
-    def embed_peronsal_org_embedd2media_and_add_to_faiss(self, personal_info_items: list[dict], organization_info_items: list[dict], table_config: dict):
-        personal_info_items_str = [Utils.json_to_str(item) for item in personal_info_items]
-        org_info_items_str = [Utils.json_to_str(item) for item in organization_info_items]
-
-        logger.info("🧠 Đang encode cá nhân và tổ chức...")
-        personal_embeddings = self.personal_embedder.embed_personal(personal_info_items_str)
-        org_embeddings = self.org_embedder.embed_organization(org_info_items_str)
-        logger.debug(f"[embed_personal_org_embedd2media] Personal embeddings: {personal_embeddings[0, :10]} {len(personal_embeddings)} items")
-        logger.debug(f"[embed_personal_org_embedd2media] Organization embeddings: {org_embeddings[0, :10]} {len(org_embeddings)} items")
-        logger.info("✅ Đã encode cá nhân và tổ chức xong.")
-
-        personal_embedding_ids = self.personal_faiss_manager.add(personal_embeddings)
-        org_embedding_ids = self.org_faiss_manager.add(org_embeddings)
-
-        personal_embedding_ids = [str(id) for id in personal_embedding_ids]
-        org_embedding_ids = [str(id) for id in org_embedding_ids]
-        logger.info(f"✅ Đã thêm embedding cá nhân vào FAISS với IDs: {personal_embedding_ids}")
-        logger.info(f"✅ Đã thêm embedding tổ chức vào FAISS với IDs: {org_embedding_ids}")
-
-        return personal_embedding_ids, org_embedding_ids
-
-    def delete_personal_org_embedd2media(self, personal_ids: list[int], org_ids: list[int], table_config: dict):
-        if not personal_ids and not org_ids:
-            logger.info("Không có personal_ids hoặc org_ids để xóa.")
-        
-        if personal_ids:
-            personal_embedding_ids = self.table_personal_embedd2media.get_embedd_by_per_id_list(personal_ids)
-            personal_ids = [str(id) for id in personal_embedding_ids]
-            logger.debug(f"[delete_personal_org_embedd2media] Personal embedding {personal_embedding_ids}")
-            self.personal_faiss_manager.remove_by_ids(personal_embedding_ids)
-            self.dynamo_deleter.delete_item(table_config['personal_embedd2per_config'], personal_ids)
-            logger.info(f"🗑️ Đang xóa {len(personal_ids)} cá nhân khỏi FAIS... Dynamo")
-
-        if org_ids:
-            org_embedding_ids = self.table_org_embedd2media.get_embedd_by_org_id_list(org_ids)
-            org_ids = [str(id) for id in org_embedding_ids]
-            logger.debug(f"[delete_personal_org_embedd2media] Organization embedding {org_embedding_ids}")
-
-            self.org_faiss_manager.remove_by_ids(org_embedding_ids)
-            self.dynamo_deleter.delete_item(table_config['org_embedd2org_config'], org_ids)
-            logger.info(f"🗑️ Đang xóa {len(org_ids)} tổ chức khỏi FAIS... Dynamo")
-
-        logger.info("✅ Đã xóa cá nhân và tổ chức khỏi FAISS.")
-
-    def create_personal_embedd2media_items(self, personal_info_items: list[dict], personal_embedding_ids: list[int], table_config: dict):
-        _, personal_embedd_partition_key = list(table_config['personal_embedd2per_config'].items())[0]
-        _, personal_partition_key = list(table_config['person_config'].items())[0]
-        logger.debug(f"[create_personal_embedd2media_items] Tạo item cho {len(personal_info_items)} cá nhân")
-        def create_item(item: dict, embedding_id: int):
-            item = {
-                personal_embedd_partition_key: embedding_id,
-                personal_partition_key: item[personal_partition_key]
-            }
-            return item
-
-        personal_embedd2media_items = [create_item(item, embedding_id) for item, embedding_id in zip(personal_info_items, personal_embedding_ids)]
-        logger.debug(f"[create_personal_embedd2media_items] Đã tạo {len(personal_embedd2media_items)} items cá nhân")
-        return personal_embedd2media_items
-
-    def create_org_embedd2media_items(self, organization_info_items: list[dict], org_embedding_ids: list[int], table_config: dict):
-        _, org_embedd_partition_key = list(table_config['org_embedd2org_config'].items())[0]
-        _, org_partition_key = list(table_config['organization_config'].items())[0]
-        logger.debug(f"[create_org_embedd2media_items] Tạo item cho {len(organization_info_items)} tổ chức")    
-
-        def create_item(item: dict, embedding_id: int):
-            item = {
-                org_embedd_partition_key: embedding_id,
-                org_partition_key: item[org_partition_key]
-            }
-            return item    
-
-        org_embedd2media_items = [create_item(item, embedding_id) for item, embedding_id in zip(organization_info_items, org_embedding_ids)]
-        logger.debug(f"[create_org_embedd2media_items] Đã tạo {len(org_embedd2media_items)} items tổ chức")
-        return org_embedd2media_items 
+        logger.info('Lưu adverse media mới vào DynamoDB thành công')
 
 
     def process_article(self, article_text: str, table_config):
         logger.info(f"Tien hanh so sanh bao moi voi cac bai bao cu")
         logger.info(f"Noi dung bao moi {article_text[:100]}")
+
         new_personal_info_json, new_org_info_json, new_risk_info_json = self.extract_info_from_article(article_text)
-        adverse_media_item, media_id = self.new_item_builder.create_adverse_media_item(risk_info=new_risk_info_json, partition_key='media_id', context=article_text)
-       
-        #Embedd bai bao va day vao faiss index
-        article_embedding_id = self.embed_article_and_add_to_faiss(article_text, table_config)
 
-        #Tao item article_embedd2media
-        article_embedd2media_item = self.create_article_embedd2media_item(media_id, article_embedding_id, table_config)
-
-        logger.debug(Utils.json_to_str(adverse_media_item))
-        logger.debug(media_id)
-        
-        old_media_ids = self.table_adverse_media.get_all_media_ids()
-        logger.info(f" Tìm thấy {len(old_media_ids)} old media \n List OLD MEDIA: {old_media_ids}")
-
-
-        old_per_ids_to_delete = []
-        old_org_ids_to_delete = []
-
-        personal_items_to_embed = []
-        organization_items_to_embed = []
-        for idx, old_media_id in enumerate(old_media_ids):
-            try:
-                logger.info(f"\n {'-' * 50} \n")
-                logger.info(f'Đang xu ly media_id: {old_media_id}')
-
-                logger.info(f"[SO SANH LAN {idx + 1}] SO LUONG PERSONAL_INFO BAN DAU MOI XET: {len(new_personal_info_json)}")
-                logger.info(f"[SO SANH LAN {idx + 1}] SO LUONG ORGANIZATION_INFO BAN DAU MOI XET: {len(new_org_info_json)}")
-                personal_duplicated, organization_duplicated = self.comparer.compare_info(new_article_text=article_text,
-                                                                            new_personal_info=new_personal_info_json,
-                                                                            new_org_info=new_org_info_json,
-                                                                            media_id=old_media_id)
-
-                
-                logger.debug(f"Tien hanh khoi tao items")
-                rebuild_items, old_ids = self.prepare_dynamodb_items(personal_duplicated, organization_duplicated, new_risk_info_json, media_id)
-                self.process_dynamodb(rebuild_items, old_ids, table_config)
-                
-                personal_items_to_embed.extend(rebuild_items['personal_info_items'])
-                organization_items_to_embed.extend(rebuild_items['organization_info_items'])
-
-                old_per_ids_to_delete.extend(old_ids['old_personal_ids'])
-                old_org_ids_to_delete.extend(old_ids['old_organization_ids'])
-
-                new_personal_info_json, new_org_info_json = self.updated_new_items_after_compare(new_personal_info_json, new_org_info_json, old_ids)
-                logger.info(f"[SO SANH LAN {idx + 1}] SO LUONG PERSONAL_INFO TRUNG: {len(personal_duplicated)}")
-                logger.info(f"[SO SANH LAN {idx + 1}] SO LUONG ORGANIZATION_INFO TRUNG: {len(organization_duplicated)}")
-                
-                logger.info(f"[SO SANH LAN {idx + 1}] SO LUONG PERSONAL_INFO MOI CON LAI: {len(new_personal_info_json)}")
-                logger.info(f"[SO SANH LAN {idx + 1}] SO LUONG ORGANIZATION_INFO CON LAI: {len(new_org_info_json)}")    
-
-
-                
-                if len(new_personal_info_json) == 0 and len(new_org_info_json) == 0:
-                    logger.info(f"KHONG CON PERSONAL_INFO MOI")
-                    logger.info(f"KHONG CON ORGANIZATION_INFO MOI")
-                    logger.info('Xu ly so sanh bai bao cu va luu bai bao moi thanh cong')
-                    logger.info(f"\n {'-' * 50} \n")
-
-                    personal_embedd_ids, org_embedd_ids =  self.embed_peronsal_org_embedd2media_and_add_to_faiss(personal_items_to_embed, organization_items_to_embed, table_config)
-                    personal_embedd2media_items = self.create_personal_embedd2media_items(
-                        personal_info_items=personal_items_to_embed,
-                        personal_embedding_ids=personal_embedd_ids,
-                        table_config=table_config
-                    )
-
-                    org_embedd2media_items = self.create_org_embedd2media_items(
-                        organization_info_items=organization_items_to_embed,
-                        org_embedding_ids=org_embedd_ids,
-                        table_config=table_config
-                    )
-                    logger.debug(f"[process_article] Personal embedd2media items: {personal_embedd2media_items}")
-                    logger.debug(f"[process_article] Organization embedd2media items: {org_embedd2media_items}")
-                    self.delete_personal_org_embedd2media(old_per_ids_to_delete, old_org_ids_to_delete, table_config)
-                    logger.info(f"Đã embedd {len(personal_embedd_ids)} cá nhân và {len(org_embedd_ids)} tổ chức mới vào FAISS.")
-                    self.dynamo_pusher.insert(adverse_media_item, table_config=table_config['media_config'])
-                    self.dynamo_pusher.insert(article_embedd2media_item, table_config=table_config['article_embedd2media_config'])
-                    self.dynamo_pusher.insert(personal_embedd2media_items, table_config=table_config['personal_embedd2per_config'])
-                    self.dynamo_pusher.insert(org_embedd2media_items, table_config=table_config['org_embedd2org_config'])
-                    return
-            except Exception as e:
-                logger.error(f"Loi khi so sanh lan thu {idx + 1} {e}")
-        
-        unduplicated_items = self.prepare_new_items(new_personal_info_json, new_org_info_json, new_risk_info_json, media_id)
-
-        #Them nguoi moi khong trung vao danh sach can embedd
-        new_personal_info_items = unduplicated_items['personal_info_items']
-        new_organization_info_items = unduplicated_items['organization_info_items']
-
-        personal_items_to_embed.extend(new_personal_info_items)
-        organization_items_to_embed.extend(new_organization_info_items)
-
-        personal_embedd_ids, org_embedd_ids =  self.embed_peronsal_org_embedd2media_and_add_to_faiss(personal_items_to_embed, organization_items_to_embed, table_config)
-        personal_embedd2media_items = self.create_personal_embedd2media_items(
-            personal_info_items=personal_items_to_embed,
-            personal_embedding_ids=personal_embedd_ids,
+        items, organization_items, personal_items = self.prepare_items_from_info_extracted(
+            new_personal_info_json=new_personal_info_json,
+            new_org_info_json=new_org_info_json,
+            new_risk_info_json=new_risk_info_json,
+            article_text=article_text,
             table_config=table_config
         )
 
-        org_embedd2media_items = self.create_org_embedd2media_items(
-            organization_info_items=organization_items_to_embed,
-            org_embedding_ids=org_embedd_ids,
-            table_config=table_config
-        )
-        logger.debug(f"[process_article] Personal embedd2media items: {personal_embedd2media_items}")
-        logger.debug(f"[process_article] Organization embedd2media items: {org_embedd2media_items}")
-        self.delete_personal_org_embedd2media(old_per_ids_to_delete, old_org_ids_to_delete, table_config)
-        logger.info(f"Đã embedd {len(personal_embedd_ids)} cá nhân và {len(org_embedd_ids)} tổ chức mới vào FAISS.")
+        self.save_items_to_dynamodb(items, organization_items, personal_items, table_config)
 
-        self.push_unduplicated_items_to_dynamodb(unduplicated_items, table_config)
-        self.dynamo_pusher.insert(adverse_media_item, table_config=table_config['media_config'])
-        self.dynamo_pusher.insert(article_embedd2media_item, table_config=table_config['article_embedd2media_config'])
-        self.dynamo_pusher.insert(personal_embedd2media_items, table_config=table_config['personal_embedd2per_config'])
-        self.dynamo_pusher.insert(org_embedd2media_items, table_config=table_config['org_embedd2org_config'])
-
-        logger.info("✅ Đã lưu adverse media mới vào DynamoDB")
-        logger.info("✅ Đã lưu article_embedd2media mới vào DynamoDB")
-        
-        logger.info('Lưu adverse media mới vào DynamoDB thành công')
         logger.info('Xu ly so sanh bai bao cu va luu bai bao moi thanh cong')
         logger.info(f"\n {'-' * 50} \n")
-        
 
-if __name__ == "__main__":
-
+def main():
     AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
     AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
     REGION = config.AWS_REGION
     REGION_MODEL = config.AWS_VIRGINA_REGION
-    MODEL_ID = config.DEEPSEEK_MODEL_VIRGINA_ID
+    MODEL_ID = config.CLAUDE_35_HAIKU_CROSS_REGION_VIRGINA_MODEL_ID
 
     # Khởi tạo manager
     bedrock_manager = BedrockModelManager(
@@ -458,33 +480,75 @@ if __name__ == "__main__":
         secret_key=AWS_SECRET_KEY
     )
 
-    compare_prompt_file = config.PROMPT_COMPARE_INFO_FILE
-    compare_prompt = Utils.load_text(compare_prompt_file)
-    logger.info(f"Đã tải prompt từ {compare_prompt_file}")
+
+    bedrock_base = BedrockBaseClient(
+        access_key=AWS_ACCESS_KEY,
+        secret_key=AWS_SECRET_KEY,
+        region_name=REGION_MODEL
+    )
+
+    # Tạo retriever với client đã có
+    personal_faiss_index_path = 'D:/VPBankHackathon/data/faiss_indexs/personal_faiss_index'
+
+    personal_retriever = PersonalInfoSimilarRetriever(index_dir=personal_faiss_index_path,
+                                     bedrock_base_client=bedrock_base.get_client(), 
+                                     base_dynamo=base_dynamo)
+
+    organization_faiss_index_path = 'D:/VPBankHackathon/data/faiss_indexs/org_faiss_index'
+
+    organization_retriever = OrganizationInfoSimilarRetriever(index_dir=organization_faiss_index_path,
+                                     bedrock_base_client=bedrock_base.get_client(), 
+                                     base_dynamo=base_dynamo)
+
+
+    # Khởi tạo Cohere embedder
+    embedder = CohereMultilingualEmbedder(bedrock_client=bedrock_base.get_client())
+    personal_faiss_manager = FaissIndexManager.load_index(personal_faiss_index_path)
+    personal_risk_handler = PersonalAndRiskHandler(embedder=embedder, faiss_manager=personal_faiss_manager)
+
+    organization_faiss_manager = FaissIndexManager.load_index(organization_faiss_index_path)
+    organization_risk_handler = OrganizationAndRiskHandler(embedder=embedder, faiss_manager=organization_faiss_manager)
+
+    personal_compare_prompt_file = './prompts/prompt_compare_new_old_personal_risk_info.txt' 
+    personal_compare_prompt = Utils.load_text(personal_compare_prompt_file)
+    logger.info(f"Đã tải prompt từ {personal_compare_prompt_file}")
+    logger.debug(f"Prompt nội dung: {personal_compare_prompt}")
+
+    organization_compare_prompt_file = 'D:/VPBankHackathon/prompts/prompt_compare_new_old_organization.txt' 
+    organization_compare_prompt = Utils.load_text(organization_compare_prompt_file)
+    logger.info(f"Đã tải prompt từ {organization_compare_prompt_file}")
+    logger.debug(f"Prompt nội dung: {organization_compare_prompt}")
+
+    info_comparer = InfoComparer(base_dynamo, 
+                                bedrock_manager, 
+                                personal_compare_prompt,
+                                organization_compare_prompt)
 
     processor = ArticleRiskMatchingExtractor(
         info_extractor=extractor,
         base_dynamo=base_dynamo.dynamodb,
-        llm_manager=bedrock_manager,
-        compare_prompt_template=compare_prompt
+        info_comparer=info_comparer,
+        personal_info_similar_retriever=personal_retriever,
+        organization_info_similar_retriever=organization_retriever,
+        personal_and_risk_handler=personal_risk_handler,
+        organization_and_risk_handler=organization_risk_handler
     )
 
     context_file = 'data/contents_old.json'
     bucket_name = "team253vpbank"
     key = "adverse_media_data/case1.json"
 
-    contents = Utils.fetch_json_from_s3(bucket_name, key)
+    contents = Utils.fetch_json_from_s3(bucket=bucket_name,
+                                         key=key, 
+                                         aws_access_key=AWS_ACCESS_KEY,
+                                         aws_secret_key=AWS_SECRET_KEY, 
+                                         region_name=REGION)
+                                         
     logger.info(f"Đã load {len(contents)} bài báo từ file {context_file}")
 
     content = contents[1]
 
-    table_config = {
-        'media_config': {"adverse_media": "media_id"},
-        'person_config': {"personal_info": "per_id"},
-        'organization_config': {"organization_info": "org_id"},
-        'p2m_config':{"personal2media": "p2m_id"},
-        'o2m_config': {"org2media": "o2m_id"}
-    }
+    table_config = config.TABLE_CONFIG_DEMO    
     # table_media_config={"adverse_media": "media_id"}
     # table_person_config={"personal_info": "per_id"}
     # table_organization_config={"organization_info": "org_id"}
@@ -495,4 +559,13 @@ if __name__ == "__main__":
         article_text=content,
         table_config=table_config
     )
+
+    personal_faiss_manager.save_index(personal_faiss_index_path)
+    organization_faiss_manager.save_index(organization_faiss_index_path)
+
+    logger.info("Đã lưu FAISS index cá nhân sau khi xử lý bài báo.")
+
+    logger.info("Xử lý bài báo hoàn tất.")
         
+if __name__ == "__main__":
+    main()    

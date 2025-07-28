@@ -2,7 +2,10 @@
 import json
 from utils import Utils
 from embedder.bedrock_base import BedrockBaseClient
+from logger import _setup_logger
+import config
 
+logger = _setup_logger(__name__, config.LOG_LEVEL)
 class CohereMultilingualEmbedder:
     def __init__(self, bedrock_client):
         self.client = bedrock_client
@@ -13,6 +16,8 @@ class CohereMultilingualEmbedder:
         texts: list văn bản hoặc tên thực thể cần embedding
         input_type: 'search_document' hoặc 'search_query' (tùy mục đích)
         """
+        logger.debug(f"Thuc hien embedding {texts[:20]} bang CohereMultilingualEmbedder")
+        
         payload = {
             "texts": texts,
             "input_type": input_type

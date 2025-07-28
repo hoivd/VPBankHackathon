@@ -6,6 +6,8 @@ from logger import _setup_logger
 import config
 from embedder.model_embedder import ModelEmbedder
 from embedder.article_embedder import ArticleEmbedder
+from embedder.bedrock_base import BedrockBaseClient
+from embedder.cohere_embedder import CohereMultilingualEmbedder
 
 logger = _setup_logger(__name__, config.LOG_LEVEL)
 class FaissSearcher:
@@ -47,8 +49,7 @@ class FaissSearcher:
 
         return results
 
-
-if __name__ == "__main__":
+def main():
     # bucket_name = "team253"
     # key = "adverse_media_data/case1.json"
 
@@ -58,21 +59,41 @@ if __name__ == "__main__":
     # query = contents_case1[3]
     # logger.info(f"Đang tìm kiếm với bài báo: {query[:100]}...")
 
-    model_name = config.EMBEDDING_MODEL_NAME
-    base_model_embedder = ModelEmbedder(model_name=model_name)
-    article_embedder = ArticleEmbedder(base_embedder=base_model_embedder)
+    # model_name = config.EMBEDDING_MODEL_NAME
+    # base_model_embedder = ModelEmbedder(model_name=model_name)
+    # article_embedder = ArticleEmbedder(base_embedder=base_model_embedder)
 
-    faiss_index_path = 'data/personal_faiss_index'
+    
+    AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
+    AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
+    REGION = "us-east-1"
+
+    # Khởi tạo Bedrock client
+    bedrock_base = BedrockBaseClient(
+        access_key=AWS_ACCESS_KEY,
+        secret_key=AWS_SECRET_KEY,
+        region_name=REGION
+    )
+
+    # Khởi tạo Cohere embedder
+    embedder = CohereMultilingualEmbedder(bedrock_client=bedrock_base.get_client())
+
+    faiss_index_path = 'D:/VPBankHackathon/data/faiss_indexs/personal_faiss_index'
     faiss_searcher = FaissSearcher(faiss_index_path)
 
     top_k = 3
     query = '''
-        Văn Quân, là người đàn ông 43 tuổi, từng là giảng viên đại học, không phải là chủ tịch'''
+        Trương Khánh Hoàng, ngân hàng SCB'''
     print(f"Đang tìm kiếm với bài báo: {query[:100]}...")
-    query_embedding = article_embedder.embed_article(query)
-    results = faiss_searcher.search_top_k(query_embedding, top_k=5)
+    query_embedding = embedder.embed([query])
+    print(type(query_embedding))
+    results = faiss_searcher.search_top_k(np.array(query_embedding[0]), top_k=5)
 
     print("Kết quả tìm kiếm:")
     print(f"\nTop-{top_k} kết quả gần nhất:")
     for i, item in enumerate(results, 1):
         print(f"{i}. ID: {item['id']}, Distance: {item['distance']:.4f}")
+
+
+if __name__ == "__main__":
+    main()

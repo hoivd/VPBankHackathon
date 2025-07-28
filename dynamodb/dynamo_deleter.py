@@ -97,8 +97,8 @@ class DynamoDBDeleter:
             self.delete_all_items(
                 table_config=table_config,
             )
-
-if __name__ == "__main__":
+            
+def main():
     AWS_ACCESS_KEY = Utils.load_api_key_from_env("NEW_AWS_ACCESS_KEY")
     AWS_SECRET_KEY = Utils.load_api_key_from_env("NEW_AWS_SECRET_KEY")
 
@@ -112,10 +112,13 @@ if __name__ == "__main__":
 
     deleter = DynamoDBDeleter(base_dynamo.dynamodb)
 
-    table_config = config.TABLE_CONFIG
+    table_config = config.TABLE_CONFIG_DEMO
 
     deleter.delete_multiple_tables_items(table_config)
     # org_embedd2media_config = table_config['org_embedd2media_config']
     # ids = [100000, 100001]
     # deleter.delete_item(org_embedd2media_config, partition_value=ids)
 
+
+if __name__ == "__main__":
+    main()

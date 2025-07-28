@@ -42,7 +42,7 @@ class ArticlePersonExtractor:
                 results.append(None)
         return results
     
-if __name__ == "__main__":
+def main():
     context_file = 'data/contents_old.json'
     bucket_name = "team253vpbank"
     key = "adverse_media_data/case1.json"
@@ -82,3 +82,6 @@ if __name__ == "__main__":
     logger.info(f"Kết quả: {answer}")
 
     
+    
+if __name__ == "__main__":
+    main()

@@ -79,24 +79,22 @@ class RebuildItemBuilder:
 
         return rebuilt_items, per_id_gen_to_per_id, per_ids
     
-
-    
-if __name__ == "__main__":
-    # Dữ liệu tổ chức cần rebuild
-    organization_duplicated = Utils.load_json('prepare_data/org_duplicated.json')
-    print(Utils.json_to_str(organization_duplicated))
-    # Khởi tạo builder
+def main():
+    # # Dữ liệu tổ chức cần rebuild
+    # organization_duplicated = Utils.load_json('prepare_data/org_duplicated.json')
+    # print(Utils.json_to_str(organization_duplicated))
+    # # Khởi tạo builder
     builder = RebuildItemBuilder
 
-    # Gọi hàm rebuild
-    org_rebuilt_items, org_id_gen_to_org_id, org_ids = builder.create_rebuild_organization_items(organization_duplicated, partition_key="org_id")
+    # # Gọi hàm rebuild
+    # org_rebuilt_items, org_id_gen_to_org_id, org_ids = builder.create_rebuild_organization_items(organization_duplicated, partition_key="org_id")
 
-    # In kết quả ra console
-    print("✅ Rebuilt Organization Items:")
-    print(json.dumps(org_rebuilt_items, indent=2, ensure_ascii=False))
-    print(Utils.json_to_str(org_id_gen_to_org_id))
+    # # In kết quả ra console
+    # print("✅ Rebuilt Organization Items:")
+    # print(json.dumps(org_rebuilt_items, indent=2, ensure_ascii=False))
+    # print(Utils.json_to_str(org_id_gen_to_org_id))
 
-    personal_duplicated = Utils.load_json('prepare_data/personal_duplicated.json')
+    personal_duplicated = Utils.load_json('D:/VPBankHackathon/data/items/personal_duplicated.json')
     print(Utils.json_to_str(personal_duplicated))
     # Khởi tạo builder
 
@@ -107,4 +105,6 @@ if __name__ == "__main__":
     print("✅ Rebuilt Personal Items:")
     print(json.dumps(per_rebuilt_items, indent=2, ensure_ascii=False))
     print(Utils.json_to_str(per_id_gen_to_per_id))
-
+    
+if __name__ == "__main__":
+    main()

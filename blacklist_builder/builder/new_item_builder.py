@@ -1,7 +1,10 @@
 import copy
 from utils import Utils
 import time
+from logger import _setup_logger
+import config
 
+logger = _setup_logger(__name__, config.LOG_LEVEL)
 class NewItemBuilder:
     @staticmethod
     def create_adverse_media_item(risk_info: dict, partition_key: str, context: str): 
@@ -113,9 +116,38 @@ class NewItemBuilder:
 
 
         return org_info_copy, org_id_gen_to_org_id
-    
 
+    @staticmethod
+    def create_personal_risk_embedd2per(personal_risk_embedding_ids: list[int], per_ids: list[str], table_config: dict):
+        _, person_risk_embedd2per_id_partition_key = list(table_config['personal_risk_embedd2per_config'].items())[0]
+        logger.debug(f"Thuc hien tao item cho personal_risk_embedd ")
+
+        def create_item(per_id: str, embedding_id: int):
+            item = {
+                person_risk_embedd2per_id_partition_key: embedding_id,
+                'per_id': per_id
+            }
+            return item    
+
+        person_risk_embedd2per_id_partition_key = [create_item(per_id, embedding_id) for per_id, embedding_id in zip(per_ids, personal_risk_embedding_ids)]
+        logger.debug(f"[create_personal_risk_embedd2per] Đã tạo {len(person_risk_embedd2per_id_partition_key)} items rui ro ca nhan")
+        return person_risk_embedd2per_id_partition_key            
     
+    @staticmethod
+    def create_organization_risk_embedd2org(organization_risk_embedding_ids: list[int], org_ids: list[str], table_config: dict):
+        _, orgson_risk_embedd2org_id_partition_key = list(table_config['organization_risk_embedd2org_config'].items())[0]
+        logger.debug(f"Thuc hien tao item cho organization_risk_embedd ")
+
+        def create_item(org_id: str, embedding_id: int):
+            item = {
+                orgson_risk_embedd2org_id_partition_key: embedding_id,
+                'org_id': org_id
+            }
+            return item    
+
+        orgson_risk_embedd2org_id_partition_key = [create_item(org_id, embedding_id) for org_id, embedding_id in zip(org_ids, organization_risk_embedding_ids)]
+        logger.debug(f"[create_organization_risk_embedd2org] Đã tạo {len(orgson_risk_embedd2org_id_partition_key)} items rui ro ca nhan")
+        return orgson_risk_embedd2org_id_partition_key            
 
 if __name__ == "__main__":
     builder = NewItemBuilder()
