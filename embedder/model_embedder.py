@@ -1,24 +1,24 @@
 import torch
 from transformers import AutoTokenizer, AutoModel
 import numpy as np
-from logger import _setup_logger
-import config
+# from logger import _setup_logger
+# import config
 import os
 import time
 from pathlib import Path
 
 
 
-logger = _setup_logger(__name__, config.LOG_LEVEL)
+# logger = _setup_logger(__name__, config.LOG_LEVEL)
 
 class ModelEmbedder:
-    def __init__(self, model_name="vinai/phobert-base", device=None):
-        self.tokenizer = AutoTokenizer.from_pretrained(Path(model_name))
-        self.model = AutoModel.from_pretrained(Path(model_name), use_safetensors=True)
+    def __init__(self, model_name="vinai/phobert-base-v2", device=None):
+        self.tokenizer = AutoTokenizer.from_pretrained(model_name)
+        self.model = AutoModel.from_pretrained(model_name)
         self.device = device or ("cuda" if torch.cuda.is_available() else "cpu")
         self.model.to(self.device)
         self.model.eval()
-        logger.info(f"KHOI TAO MO HINH EMBEDDER THANH CONG {model_name}. SU DUNG DEVICE {self.device}")
+        # logger.info(f"KHOI TAO MO HINH EMBEDDER THANH CONG {model_name}. SU DUNG DEVICE {self.device}")
 
     def mean_pooling(self, model_output, attention_mask):
         # Lấy embedding ra, tính trung bình theo attention_mask
@@ -44,9 +44,9 @@ class ModelEmbedder:
             model_output = self.model(**encoded_input)
         end = time.time()
 
-        logger.info(f"Thoi gian embedd {end - start:.2f} giay")
+        # logger.info(f"Thoi gian embedd {end - start:.2f} giay")
         embeddings = self.mean_pooling(model_output, encoded_input['attention_mask'])
-        logger.info(f"Encode THANH CONG")
+        # logger.info(f"Encode THANH CONG")
 
         if return_numpy:
             return embeddings.cpu().numpy()
@@ -56,10 +56,10 @@ class ModelEmbedder:
         os.makedirs(save_dir, exist_ok=True)
         self.tokenizer.save_pretrained(save_dir)
         self.model.save_pretrained(save_dir)
-        logger.info(f"Model and tokenizer saved to {save_dir}")
+        # logger.info(f"Model and tokenizer saved to {save_dir}")
     
 if __name__ == "__main__":
-    embedder = ModelEmbedder(model_name="./embedder/models/phobert_base_v2_local")
+    embedder = ModelEmbedder()
 
     texts = [
         '''
@@ -81,10 +81,10 @@ if __name__ == "__main__":
 
     embeddings = embedder.encode(texts)
 
-    logger.info(f"Shape: {embeddings.shape}")         # (2, 768)
-    logger.info(f"Embedding 1: {embeddings[0][:10]}") # In 10 giá trị đầu tiên
+    # logger.info(f"Shape: {embeddings.shape}")         # (2, 768)
+    # logger.info(f"Embedding 1: {embeddings[0][:10]}") # In 10 giá trị đầu tiên
 
     # Lưu model local
-    embedder.save_model_local("./embedder/models/phobert_base_v2_local")
+    embedder.save_model_local("D:\VPBankHackathon\embedder\models\phobert_base_v2_local")
 
 
