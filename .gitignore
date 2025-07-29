@@ -1,6 +1,6 @@
 .env
 /venv/
-/__pycache__/
+**/__pycache__//__pycache__/
 mongodb/__pycache__/
 blacklist_builder/__pycache__/
 /log/

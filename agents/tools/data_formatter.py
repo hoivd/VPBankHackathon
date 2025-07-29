@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Script to format lookup result data according to expected format
-Processes personal and organizational risk data from DynamoDB lookup results
-"""
 import json
 import ast
 from collections import Counter, defaultdict

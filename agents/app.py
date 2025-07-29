@@ -1,9 +1,5 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-FastAPI Backend for Person Risk Analysis Agent
-Provides REST API endpoints for the Vietnamese person risk analysis system
-"""
 import os
 import sys
 import json
@@ -18,24 +14,16 @@ load_dotenv()
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
-try:
-    from embedder.model_embedder import ModelEmbedder
-    from embedder.personal_embedder import PersonalEmbedder
-    from faiss_manager.faiss_searcher import FaissSearcher
-    from agents.tools.person_risk_agent import PersonRiskAgent
-    from dynamodb.table_adverse_media import TableAdverseMedia
-    from dynamodb.dynamo_query import DynamoQuery
-    from dynamodb.base_dynamo import BaseDynamoDB
-    from utils import Utils
-    import config
-except ImportError:
-    from tools.person_risk_agent import PersonRiskAgent
-    sys.path.append('..')
-    from dynamodb.table_adverse_media import TableAdverseMedia
-    from dynamodb.dynamo_query import DynamoQuery
-    from dynamodb.base_dynamo import BaseDynamoDB
-    from utils import Utils
-    import config
+from embedder.cohere_embedder import CohereMultilingualEmbedder
+from embedder.personal_embedder import PersonalEmbedder
+from embedder.bedrock_base import BedrockBaseClient
+from faiss_manager.faiss_searcher import FaissSearcher
+from agents.tools.person_risk_agent import PersonRiskAgent
+from dynamodb.table_adverse_media import TableAdverseMedia
+from dynamodb.dynamo_query import DynamoQuery
+from dynamodb.base_dynamo import BaseDynamoDB
+from utils import Utils
+import config
 
 app = FastAPI(
     title="VP Bank Person Risk Analysis API",
@@ -60,27 +48,36 @@ faiss_searcher = None
 
 @app.on_event("startup")
 async def startup_event():
-    """Initialize the agent and media service on startup"""
     global agent, media_service, personal_embedder, faiss_searcher
     try:
+        # Initialize AWS credentials first
+        AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
+        AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
+        REGION = config.AWS_REGION
         
+        print("🚀 Initializing Embedding Services...")
         model_name = config.EMBEDDING_MODEL_NAME
-        faiss_index_path = 'D:/VPBankHackathon/faiss_indexes/new_table/personal_faiss_index'
-
-        # ==== Bước 2: Khởi tạo các thành phần chính ====
-        base_embedder = ModelEmbedder(model_name=model_name)
+        faiss_index_path = 'faiss_indexes/new_table/personal_faiss_index'
+        
+        # Initialize Bedrock client
+        bedrock_base = BedrockBaseClient(
+            access_key=AWS_ACCESS_KEY,
+            secret_key=AWS_SECRET_KEY,
+            region_name=REGION
+        )
+        
+        # Initialize Cohere embedder with Bedrock client
+        base_embedder = CohereMultilingualEmbedder(bedrock_client=bedrock_base.get_client())
         personal_embedder = PersonalEmbedder(base_embedder=base_embedder)
         faiss_searcher = FaissSearcher(index_dir=faiss_index_path)
+        print("✅ Embedding services initialized successfully!")
+        
         print("🚀 Initializing Person Risk Agent...")
         agent = PersonRiskAgent()
         print("✅ Agent initialized successfully!")
         
         print("🚀 Initializing Media Service...")
         # Initialize DynamoDB components for media service
-        AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
-        AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
-        REGION = config.AWS_REGION
-
         base_dynamo = BaseDynamoDB(
             region_name=REGION,
             access_key=AWS_ACCESS_KEY,
@@ -88,8 +85,8 @@ async def startup_event():
         )
         
         query = DynamoQuery(base_dynamo.dynamodb)
-        table_config=config.TABLE_CONFIG
-        media_service = TableAdverseMedia(query,table_config)
+        table_config = config.TABLE_CONFIG
+        media_service = TableAdverseMedia(query, table_config)
         print("✅ Media Service initialized successfully!")
         
     except Exception as e:
@@ -233,18 +230,12 @@ async def detailed_analysis(request: PersonLookupRequest):
             success=False,
             error=f"Error analyzing person: {str(e)}"
         )
+@app.post("/get-name-list")
+async def get_name(request: QueryRequest):
+    continue
 
 @app.post("/extract-name")
 async def extract_name(request: QueryRequest):
-    """
-    Extract person name from Vietnamese query using both regex and LLM
-    
-    Args:
-        request: QueryRequest with Vietnamese text
-        
-    Returns:
-        Dict with extracted person name and method used
-    """
     global agent
     if agent is None:
         raise HTTPException(status_code=503, detail="Agent not initialized")
@@ -270,40 +261,40 @@ async def extract_name(request: QueryRequest):
             "error": f"Error extracting name: {str(e)}"
         }
 
-@app.post("/extract-name-llm-only")
-async def extract_name_llm_only(request: QueryRequest):
-    """
-    Extract person name from Vietnamese query using LLM only (for testing)
+# @app.post("/extract-name-llm-only")
+# async def extract_name_llm_only(request: QueryRequest):
+#     """
+#     Extract person name from Vietnamese query using LLM only (for testing)
     
-    Args:
-        request: QueryRequest with Vietnamese text
+#     Args:
+#         request: QueryRequest with Vietnamese text
         
-    Returns:
-        Dict with LLM-extracted person name
-    """
-    global agent
-    if agent is None:
-        raise HTTPException(status_code=503, detail="Agent not initialized")
+#     Returns:
+#         Dict with LLM-extracted person name
+#     """
+#     global agent
+#     if agent is None:
+#         raise HTTPException(status_code=503, detail="Agent not initialized")
     
-    if not agent.llm_enabled:
-        return {
-            "success": False,
-            "error": "LLM not enabled or not available"
-        }
+#     if not agent.llm_enabled:
+#         return {
+#             "success": False,
+#             "error": "LLM not enabled or not available"
+#         }
     
-    try:
-        llm_name = agent.extract_person_name_with_llm(request.query)
-        return {
-            "success": True,
-            "person_name": llm_name,
-            "method_used": "llm",
-            "original_query": request.query
-        }
-    except Exception as e:
-        return {
-            "success": False,
-            "error": f"Error with LLM extraction: {str(e)}"
-        }
+#     try:
+#         llm_name = agent.extract_person_name_with_llm(request.query)
+#         return {
+#             "success": True,
+#             "person_name": llm_name,
+#             "method_used": "llm",
+#             "original_query": request.query
+#         }
+#     except Exception as e:
+#         return {
+#             "success": False,
+#             "error": f"Error with LLM extraction: {str(e)}"
+#         }
 
 @app.get("/media/{media_id}", response_model=MediaContentResponse)
 async def get_media_content(media_id: str = Path(..., description="The media ID to retrieve content for")):
@@ -391,8 +382,7 @@ async def get_api_docs():
     }
 
 if __name__ == "__main__":
-    # Run the server
-    print("🚀 Starting VP Bank Person Risk Analysis API...")
+    print(" Starting VP Bank Person Risk Analysis API...")
     uvicorn.run(
         "app:app",
         host="0.0.0.0",
