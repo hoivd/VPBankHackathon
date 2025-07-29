@@ -31,8 +31,8 @@ logger = _setup_logger(__name__, config.LOG_LEVEL)
 class BlacklistBuilderApp:
     def __init__(self):
          # ===== Dinh nghia credentials aws =====
-        self.AWS_ACCESS_KEY = Utils.load_api_key_from_env("NEW_AWS_ACCESS_KEY")
-        self.AWS_SECRET_KEY = Utils.load_api_key_from_env("NEW_AWS_SECRET_KEY")
+        self.AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
+        self.AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
 
         # ===== Dinh nghia region =====
         self.REGION_MODEL = config.AWS_VIRGINA_REGION
@@ -236,8 +236,8 @@ class BlacklistBuilderApp:
 def main():
     app = BlacklistBuilderApp()
 
-    S3_AWS_ACCESS_KEY = Utils.load_api_key_from_env("NEW_AWS_ACCESS_KEY")
-    S3_AWS_SECRET_KEY = Utils.load_api_key_from_env("NEW_AWS_SECRET_KEY")
+    S3_AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
+    S3_AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
     S3_REGION = config.AWS_REGION
 
     bucket_name = "team253vpbank"
@@ -267,8 +267,8 @@ def main():
     # corpus = contents_case1 
     app.run_from_list(corpus)
 
-    AWS_ACCESS_KEY = os.getenv("NEW_AWS_ACCESS_KEY")
-    AWS_SECRET_KEY = os.getenv("NEW_AWS_SECRET_KEY")
+    AWS_ACCESS_KEY = os.getenv("AWS_ACCESS_KEY")
+    AWS_SECRET_KEY = os.getenv("AWS_SECRET_KEY")
     REGION = config.AWS_REGION
     print(f"AWS_ACCESS_KEY: {AWS_ACCESS_KEY}")
     print(f"AWS_SECRET_KEY: {AWS_SECRET_KEY}")
