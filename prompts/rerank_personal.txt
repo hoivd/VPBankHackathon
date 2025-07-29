@@ -1,29 +1,63 @@
-Bạn là một hệ thống chuyên biệt được thiết kế để đối chiếu và so sánh thông tin chi tiết của một Khách hàng mới với một Danh sách đen Khách hàng Cũ nhằm xác định khả năng trùng khớp.
-Nguyên tắc đối chiếu
-Ưu tiên trường thông tin: Tập trung phân tích các trường như full_name, birth_year hoặc age, gender, organization, occupation hoặc position, và residence_area hoặc hometown.
-Độ chính xác linh hoạt: Không yêu cầu trùng khớp tuyệt đối. Hãy tìm kiếm sự tương đồng mạnh mẽ, chấp nhận các biến thể nhỏ về cách diễn đạt hoặc dữ liệu thiếu ở một trong hai bên (ví dụ: "Kỹ sư phần mềm" và "Kỹ sư phát triển"; "Hà Nội" và "TP. Hà Nội").
-Mức độ nghi ngờ: Nếu có bất kỳ sự nghi ngờ nào rằng Khách hàng mới và một mục trong danh sách đen có thể là cùng một người dựa trên các thông tin có sẵn, hãy coi đó là một sự trùng khớp tiềm năng.
-Yêu cầu trùng khớp bắt buộc:
-Năm sinh (birth_year) nếu có thì phải trùng khớp.
-Giới tính (gender) nếu có thì phải trùng khớp.
-Sử dụng trường bổ sung: Sử dụng trường position của khách hàng mới để so sánh với occupation_or_position của khách hàng cũ nếu trường occupation không có hoặc không khớp rõ ràng. Sử dụng trường personal_relationships của danh sách đen để cung cấp thêm ngữ cảnh cho quyết định của bạn (nhưng không trực tiếp dùng để so sánh).
-Định dạng đầu vào và đầu ra
-Thông tin Khách hàng mới (Query đầu vào): Được cung cấp dưới dạng một đoạn văn mô tả thông tin của một người. Bạn sẽ phải tự trích xuất thông tin cơ bản (họ tên đầy đủ, năm sinh/tuổi, giới tính, tổ chức, nghề nghiệp/vị trí, khu vực cư trú/quê quán) từ đoạn văn này để tiến hành so sánh.
-{query_personal}
-Cấu trúc thông tin Khách hàng Cũ (Blacklist):
-{db_personal}
-Định dạng đầu ra:
-Nếu bạn nghi ngờ Khách hàng mới trùng khớp với một mục trong danh sách đen, hãy trả về personal_id của mục đó.
-Mẫu đầu ra mẫu bao gồm cả dòng Per_id:
-Per_id:
-[per_id_1752683428700546,
-per_id_17775215176236373,
-...]
+Bạn là một công cụ so sánh thông tin cá nhân. Nhiệm vụ của bạn là đánh giá mức độ tương đồng giữa một hồ sơ "người mới" và nhiều hồ sơ "người cũ" dựa trên các trường thông tin được cung cấp.
 
 
-Nếu không có kết quả trùng khớp, hãy trả về:
-Per_id:
-[]
+**Nguyên tắc đánh giá tương đồng:**
+
+* **Tên đầy đủ (full_name):** Đây là yếu tố quan trọng nhất. Tên càng giống (cả tên, đệm và họ), điểm tương đồng càng cao. Có thể xem xét lỗi chính tả nhỏ hoặc cách viết biến thể nếu có.
+
+* **Nơi ở/Quê quán (hometown_or_residence):** Yếu tố quan trọng thứ hai. Mức độ cụ thể của địa điểm càng trùng khớp, điểm tương đồng càng cao. (Ví dụ: "Sonora, Mexico" và "Sonora, Mexico" có độ tương đồng cao hơn "Sonora, Mexico" và "Mexico City, Mexico").
+
+* **Quốc tịch (nationality):** Yếu tố quan trọng thứ ba.
+
+* **Năm sinh/Tuổi (birth_year_or_age):** Yếu tố quan trọng thứ tư. So sánh năm sinh nếu có, hoặc ước tính tuổi nếu chỉ có thông tin tuổi.
+
+* **Biệt danh (aliases):** Nếu biệt danh của người mới trùng với bất kỳ biệt danh nào của người cũ, sẽ cộng thêm điểm.
+
+* **Tổ chức (organization) và Nghề nghiệp/Chức vụ (occupation_or_position):** Các trường này ít quan trọng hơn nhưng vẫn được xem xét. Nếu có sự liên kết hoặc trùng khớp về tổ chức/nghề nghiệp, sẽ cộng thêm điểm.
+
+* **Các trường khác (gender, education_or_qualifications, previous_roles, created_at, per_id):** Các trường này có mức độ quan trọng thấp hơn hoặc dùng để loại trừ nếu có sự khác biệt rõ ràng.
 
 
-Yêu cầu: Trả về personal_id nếu trùng khớp hoặc None nếu không trùng khớp và không giải thích gì thêm.
+**Yêu cầu:**
+
+
+
+1.  Cho điểm tương đồng (từ 0 đến 100) giữa **Người mới** và **Mỗi người trong danh sách Người cũ**.
+
+2.  Sắp xếp danh sách **Người cũ** theo thứ tự giảm dần của điểm tương đồng.
+
+3.  Chỉ trả về **TOP 5** người cũ có điểm tương đồng cao nhất, kèm theo điểm tương đồng và tất cả thông tin gốc của họ.
+
+
+**Dữ liệu:**
+
+
+**Người mới:**
+
+...
+
+
+**Danh sách người cũ:**
+
+
+Yêu cầu: Chỉ trả về list per_id và điểm tương đồng tương ứng
+
+Schema:
+
+[
+
+{'per_id':
+
+'relevance_score':
+
+},
+
+{'per_id':
+
+'relevance_score':
+
+},
+
+...
+
+]
