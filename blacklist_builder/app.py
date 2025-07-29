@@ -40,7 +40,7 @@ class BlacklistBuilderApp:
 
         # ===== Dinh nghia id model =====
         self.EXTRACTOR_MODEL = config.DEEPSEEK_MODEL_VIRGINA_ID
-        self.COMPARE_MODEL = config.CLAUDE_35_HAIKU_CROSS_REGION_VIRGINA_MODEL_ID
+        self.COMPARE_MODEL = "arn:aws:bedrock:us-east-1:538830382271:inference-profile/us.anthropic.claude-3-7-sonnet-20250219-v1:0"
 
         # ===== Dinh nghia id model =====
         self.EXTRACTOR_PROMPT =  config.PROMPT_EXTRACTOR_FILE
@@ -263,6 +263,7 @@ def main():
     logger.info(f"Đã load {len(contents_case2)} bài báo từ file {key2}")
     
     corpus = contents_case1 + contents_case2
+    # corpus = contents_case2
     # corpus = contents_case1 
     app.run_from_list(corpus)
 

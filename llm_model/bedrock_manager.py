@@ -107,7 +107,9 @@ class BedrockModelManager(LlmModelManager):
         max_token: int = 50000,
         temperature: float = 0.5,
         enable_thinking: bool = False,
-        thinking_budget_tokens: int = 2000
+        thinking_budget_tokens: int = 2000,
+        max_retries: int = 3,
+        retry_delay: int = 2  # giây
     ) -> str:
         
         logger.info(f"🚀 Đang gọi mô hình Bedrock...{model_name}")
@@ -126,7 +128,6 @@ class BedrockModelManager(LlmModelManager):
             ]
         }
 
-        # ✅ Thêm reasoning nếu được bật
         if enable_thinking:
             body['temperature'] = 1
             body["thinking"] = {
@@ -134,24 +135,26 @@ class BedrockModelManager(LlmModelManager):
                 "budget_tokens": thinking_budget_tokens
             }
 
-        try:
-            logger.debug(f"Calling Bedrock model {model_id}")
-            response = self.client.invoke_model(
-                modelId=model_id,
-                body=json.dumps(body),
-                accept="application/json",
-                contentType="application/json"
-            )
+        for attempt in range(1, max_retries + 1):
+            try:
+                logger.debug(f"🔁 Gọi Bedrock (thử lần {attempt}) model {model_id}")
+                response = self.client.invoke_model(
+                    modelId=model_id,
+                    body=json.dumps(body),
+                    accept="application/json",
+                    contentType="application/json"
+                )
+                break  # Thành công, thoát vòng lặp
 
-        except (ClientError, Exception) as e:
-            raise RuntimeError(f"❌ Lỗi khi gọi mô hình {model_id}: {e}")
+            except (ClientError, Exception) as e:
+                logger.warning(f"❌ Lỗi khi gọi mô hình {model_id} (thử lần {attempt}): {e}")
+                if attempt == max_retries:
+                    raise RuntimeError(f"🚨 Đã thử {max_retries} lần nhưng không thành công: {e}")
+                time.sleep(retry_delay)
 
         result = json.loads(response["body"].read())
 
-        # ✅ Lấy content list từ Claude 3.7
         content_blocks = result.get("content", [])
-        logger.debug(f"Conten {content_blocks}")
-        # ✅ Reasoning (type == "thinking") → giá trị nằm trực tiếp trong "thinking"
         reasoning_text = None
         final_text = None
 
@@ -161,7 +164,6 @@ class BedrockModelManager(LlmModelManager):
             elif block.get("type") == "text":
                 final_text = block.get("text")
 
-        # ✅ Trả kết quả kèm reasoning nếu có
         if reasoning_text:
             logger.debug(f"[generate] ✅ Đã nhận phản hồi từ mô hình {model_id} với reasoning.")
             logger.debug(f"[generate] Reasoning: {reasoning_text}")
@@ -169,6 +171,58 @@ class BedrockModelManager(LlmModelManager):
         else:
             logger.debug(f"[generate] ✅ Đã nhận phản hồi từ mô hình {model_id} mà không có reasoning.")
             return final_text, ""
+
+    def generate_amazon(
+            self,
+            prompt: str,
+            model_id: str = "amazon.titan-nova-pro-v1",  # Cập nhật model_id chính xác
+            temperature: float = 0.5,
+            top_p: float = 0.9
+        ) -> tuple[str, str]:
+            """
+            Gửi prompt đến mô hình Amazon Titan Nova Pro và trả về kết quả (answer, reasoning="").
+            Lưu ý: Sử dụng định dạng messages cho Amazon Bedrock API.
+            """
+            logger.info(f"🚀 Đang gọi mô hình Amazon Titan Nova Pro... {model_id}")
+
+            # Định dạng body theo yêu cầu của Amazon Bedrock
+            body = {
+                "messages": [
+                    {
+                        "role": "user",
+                        "content": prompt
+                    }
+                ],
+                "temperature": max(0.0, min(temperature, 1.0)),  # Đảm bảo temperature trong khoảng hợp lệ
+                "topP": max(0.0, min(top_p, 1.0)),  # Thêm top_p vào body
+                "maxTokens": 2048  # Giới hạn số token tối đa, có thể tùy chỉnh
+            }
+
+            try:
+                # Gọi API Amazon Bedrock
+                response = self.client.invoke_model(
+                    modelId=model_id,
+                    body=json.dumps(body),
+                    contentType="application/json",
+                    accept="application/json"
+                )
+                
+                # Giải mã phản hồi
+                result = json.loads(response["body"].read().decode("utf-8"))
+                # Lấy nội dung từ phản hồi, giả sử định dạng phản hồi có trường 'choices'
+                output_text = result.get("choices", [{}])[0].get("message", {}).get("content", "").strip()
+
+                logger.debug(f"[Amazon Titan Nova Pro] ✅ Phản hồi: {output_text}")
+                return output_text, ""  # Không có reasoning
+
+            except ClientError as e:
+                error_code = e.response.get("Error", {}).get("Code")
+                error_message = e.response.get("Error", {}).get("Message")
+                logger.error(f"❌ Lỗi ClientError khi gọi mô hình Amazon Titan Nova Pro {model_id}: {error_code} - {error_message}")
+                raise RuntimeError(f"❌ Lỗi khi gọi mô hình Amazon Titan Nova Pro {model_id}: {error_message}")
+            except Exception as e:
+                logger.error(f"❌ Lỗi không xác định khi gọi mô hình Amazon Titan Nova Pro {model_id}: {str(e)}")
+                raise RuntimeError(f"❌ Lỗi khi gọi mô hình Amazon Titan Nova Pro {model_id}: {str(e)}")
 
     def generate(
         self,
@@ -184,8 +238,9 @@ class BedrockModelManager(LlmModelManager):
         """
         Gọi mô hình tương ứng theo model_type và trả về (answer, reasoning).
         """
+        start = time.time()
         if model_type.lower() == "deepseek":
-            return self.generate_deepseek(
+            result = self.generate_deepseek(
                 prompt=prompt,
                 max_tokens=max_tokens,
                 temperature=temperature,
@@ -193,7 +248,7 @@ class BedrockModelManager(LlmModelManager):
             )
 
         elif model_type.lower() == "claude":
-            return self.generate_claude(
+            result =  self.generate_claude(
                 prompt=prompt,
                 model_name=model_name,
                 max_token=max_tokens,
@@ -201,19 +256,29 @@ class BedrockModelManager(LlmModelManager):
                 enable_thinking=enable_thinking,
                 thinking_budget_tokens=thinking_budget_tokens
             )
-
+        elif model_type.lower() == "amazon":
+            result =  self.generate_amazon(
+                prompt=prompt,
+                model_id=model_name or "amazon.nova-pro-v1:0",
+                temperature=temperature,
+                top_p=top_p
+            ) 
         else:
             raise ValueError(f"Unsupported model_type: {model_type}")
+        
+        end = time.time()
+        logger.info(f"[generate] Thời gian gọi mô hình {model_type} ({model_name}): {end - start:.2f} giây")
+        return result
 
 
-if __name__ == "__main__":
+def main():
     import json
 
     # Cấu hình cố định
     AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
     AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
     REGION = config.AWS_VIRGINA_REGION
-    MODEL_ID = config.CLAUDE_30_HAIKU_ON_DEMAND_VIRGINA_MODEL_ID
+    MODEL_ID = "arn:aws:bedrock:us-east-1:538830382271:inference-profile/us.anthropic.claude-3-7-sonnet-20250219-v1:0" 
 
     prompt = "Viết một đoạn văn ngắn về lợi ích của AI trong y tế."
 
@@ -228,9 +293,12 @@ if __name__ == "__main__":
     # Gọi mô hình
     try:
         print("🚀 Đang gọi mô hình Bedrock Claude 3...")
-        result, thinking = manager.generate(prompt=prompt, enable_thinking=False)
+        result, thinking = manager.generate(prompt=prompt, enable_thinking=False, model_type='claude')
         print("\n✅ Kết quả phản hồi:")
         print(f"Thinking: {thinking}")
         print(f"Result: {result}")
     except Exception as e:
         print(f"❌ Lỗi khi gọi mô hình: {e}")    
+
+if __name__ == "__main__":
+    main()
