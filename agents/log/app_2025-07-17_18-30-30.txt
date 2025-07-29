@@ -1,5 +1,0 @@
-<DEBUG-utils> - [load_api_key_from_env] ✅ Đã load key 'AWS_ACCESS_KEY' từ môi trường
-<DEBUG-utils> - [load_api_key_from_env] ✅ Đã load key 'AWS_SECRET_KEY' từ môi trường
-<DEBUG-utils> - [load_api_key_from_env] ✅ Đã load key 'AWS_ACCESS_KEY' từ môi trường
-<DEBUG-utils> - [load_api_key_from_env] ✅ Đã load key 'AWS_SECRET_KEY' từ môi trường
-<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1

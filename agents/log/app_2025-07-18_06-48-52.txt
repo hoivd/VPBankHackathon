@@ -1,2 +1,0 @@
-<INFO-embedder.model_embedder> - KHOI TAO MO HINH EMBEDDER THANH CONG D:\VPBankHackathon\embedder\models\phobert_base_v2_local. SU DUNG DEVICE cuda
-<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1

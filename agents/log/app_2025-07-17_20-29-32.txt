@@ -1,3 +1,0 @@
-<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
-<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình Bedrock...None
-<DEBUG-llm_model.bedrock_manager> - Calling Bedrock model anthropic.claude-instant-v1

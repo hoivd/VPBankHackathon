@@ -64,7 +64,7 @@ async def startup_event():
     global agent, media_service, personal_embedder, faiss_searcher
     try:
         
-        # model_name = config.EMBEDDING_MODEL_NAME
+        model_name = config.EMBEDDING_MODEL_NAME
         faiss_index_path = 'D:/VPBankHackathon/faiss_indexes/new_table/personal_faiss_index'
 
         # ==== Bước 2: Khởi tạo các thành phần chính ====
