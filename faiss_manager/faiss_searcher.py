@@ -11,14 +11,11 @@ from embedder.cohere_embedder import CohereMultilingualEmbedder
 
 logger = _setup_logger(__name__, config.LOG_LEVEL)
 class FaissSearcher:
-    def __init__(self, index_dir: str):
+    def __init__(self, faiss_manager: FaissIndexManager):
         """
         Tải FAISS index từ thư mục và chuẩn bị cho search.
         """
-        if not os.path.exists(index_dir):
-            raise FileNotFoundError(f"Không tìm thấy thư mục: {index_dir}")
-        
-        self.manager = FaissIndexManager.load_index(index_dir)
+        self.manager = faiss_manager      
         print(f"Đã tải FAISS index với {self.manager.get_total()} vector.")
 
     def search_top_k(self, query_vector: np.ndarray, top_k: int = 5, return_embeddings: bool = False):

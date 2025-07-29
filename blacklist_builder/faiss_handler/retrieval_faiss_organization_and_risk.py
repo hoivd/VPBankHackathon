@@ -8,6 +8,7 @@ from dynamodb.table_org_info import TableOrganizationInfo
 from dynamodb.table_organization_risk_embedd2org import TableOrgainzationRiskEmbedd2Orgainzation
 from dynamodb.table_org2media import TableOrg2Media
 from dynamodb.organization_risk_embedd_service import OrganizationRiskEmbeddService
+from faiss_manager.faiss_index_manager import FaissIndexManager
 from logger import _setup_logger
 import config
 from logger import _setup_logger
@@ -16,7 +17,7 @@ import config
 logger = _setup_logger(__name__, config.LOG_LEVEL)
 
 class OrganizationInfoSimilarRetriever:
-    def __init__(self, index_dir: str, 
+    def __init__(self, faiss_manager: FaissIndexManager, 
                  bedrock_base_client,
                  base_dynamo: BaseDynamoDB):
 
@@ -24,7 +25,7 @@ class OrganizationInfoSimilarRetriever:
         index_dir: đường dẫn đến FAISS index đã lưu
         bedrock_base_client: client Bedrock đã được khởi tạo từ bên ngoài
         """
-        self.faiss_searcher = FaissSearcher(index_dir)
+        self.faiss_searcher = FaissSearcher(faiss_manager)
         self.embedder = CohereMultilingualEmbedder(bedrock_client=bedrock_base_client)
         self.query = DynamoQuery(base_dynamo.dynamodb)
 

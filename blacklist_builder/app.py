@@ -39,16 +39,16 @@ class BlacklistBuilderApp:
         self.REGION = config.AWS_REGION
 
         # ===== Dinh nghia id model =====
-        self.PERSONAL_MODEL = config.DEEPSEEK_MODEL_VIRGINA_ID
-        self.PERSONAL_COMPARE_PROMPT = config.PROMPT_PERSONAL_COMPARE_FILE
-        self.ORGANIZATION_COMPARE_PROMPT = config.PROMPT_ORGANIZATION_COMPARE_FILE
+        self.EXTRACTOR_MODEL = config.DEEPSEEK_MODEL_VIRGINA_ID
+        self.COMPARE_MODEL = config.CLAUDE_35_HAIKU_CROSS_REGION_VIRGINA_MODEL_ID
 
         # ===== Dinh nghia id model =====
         self.EXTRACTOR_PROMPT =  config.PROMPT_EXTRACTOR_FILE
-        self.COMPARE_INFO_PROMPT = config.PROMPT_COMPARE_INFO_FILE
+        self.PERSONAL_COMPARE_PROMPT = config.PROMPT_PERSONAL_COMPARE_FILE
+        self.ORGANIZATION_COMPARE_PROMPT = config.PROMPT_ORGANIZATION_COMPARE_FILE
 
         # ===== Dinh nghia table config =====
-        self.TABLE_CONFIG = config.TABLE_CONFIG
+        self.TABLE_CONFIG = config.TABLE_CONFIG_DEMO
 
         # ===== Khởi tạo DynamoDB =====
         self.base_dynamo = BaseDynamoDB(
@@ -57,15 +57,17 @@ class BlacklistBuilderApp:
             secret_key=self.AWS_SECRET_KEY
         )
 
-        self.base_bedrock = BedrockBaseClient(
-            aws_access_key_id=self.AWS_ACCESS_KEY,
-            aws_secret_access_key=self.AWS_SECRET_KEY,
+        self.bedrock_base = BedrockBaseClient(
+            access_key=self.AWS_ACCESS_KEY,
+            secret_key=self.AWS_SECRET_KEY,
             region_name=self.REGION_MODEL
         )
 
         model_name = config.EMBEDDING_MODEL_NAME
+        self.EMBEDDING_DIM = config.EMBEDDING_DIM
 
         self._init_info_article_extractor()
+        self._init_info_comparer()
 
         self.personal_faiss_path = 'D:/VPBankHackathon/data/faiss_indexs/personal_faiss_index'
         self.org_faiss_path = 'D:/VPBankHackathon/data/faiss_indexs/org_faiss_index'
@@ -86,44 +88,41 @@ class BlacklistBuilderApp:
         )
 
     def _init_info_article_extractor(self):
-        person_model_id = self.PERSONAL_MODEL
-        person_model_manager = BedrockModelManager(
+        extractor_model_id = self.EXTRACTOR_PROMPT
+        extractor_model_manager = BedrockModelManager(
             aws_access_key_id=self.AWS_ACCESS_KEY,
             aws_secret_access_key=self.AWS_SECRET_KEY,
             region_name=self.REGION_MODEL,
-            default_model_id=person_model_id
+            default_model_id=extractor_model_id
         )
 
         prompt_path = self.EXTRACTOR_PROMPT
         extractor_prompt = Utils.load_text(prompt_path)
         logger.info(f"✅ Đã load prompt trích xuất từ {prompt_path}")
+        # logger.debug(f"Prompt nội dung: {extractor_prompt}")
 
-        self.personal_extractor = ArticlePersonExtractor(
-            model_manager=person_model_manager,
+        self.info_article_extractor = ArticlePersonExtractor(
+            model_manager=extractor_model_manager,
             prompt_template=extractor_prompt
         )
     
     def _init_faiss_handler(self):
+        embedding_dim = self.EMBEDDING_DIM
         embedder = CohereMultilingualEmbedder(bedrock_client=self.bedrock_base.get_client())
-        personal_faiss_manager = FaissIndexManager(1024)
-        organization_faiss_manager = FaissIndexManager(1024)
+        self.personal_faiss_manager = FaissIndexManager(embedding_dim)
+        self.organization_faiss_manager = FaissIndexManager(embedding_dim)
         
-        self.personal_risk_handler = PersonalAndRiskHandler(embedder=embedder, faiss_manager=personal_faiss_manager)
-        self.organization_risk_handler = OrganizationAndRiskHandler(embedder=embedder, faiss_manager=organization_faiss_manager)
+        self.personal_risk_handler = PersonalAndRiskHandler(embedder=embedder, faiss_manager=self.personal_faiss_manager)
+        self.organization_risk_handler = OrganizationAndRiskHandler(embedder=embedder, faiss_manager=self.organization_faiss_manager)
 
     def _init_faiss_retriever(self):
-        personal_faiss_index_path = self.personal_faiss_path
-
-        self.personal_retriever = PersonalInfoSimilarRetriever(index_dir=personal_faiss_index_path,
+        self.personal_retriever = PersonalInfoSimilarRetriever(faiss_manager=self.personal_faiss_manager,
                                         bedrock_base_client=self.bedrock_base.get_client(), 
                                         base_dynamo=self.base_dynamo)
 
-        organization_faiss_index_path = self.org_faiss_path
-
-        self.organization_retriever = OrganizationInfoSimilarRetriever(index_dir=organization_faiss_index_path,
+        self.organization_retriever = OrganizationInfoSimilarRetriever(faiss_manager=self.organization_faiss_manager,
                                         bedrock_base_client=self.bedrock_base.get_client(), 
                                         base_dynamo=self.base_dynamo)
-
 
     def _init_first_article_processor(self):
         self.new_processor = ArticleRiskProcessor(
@@ -132,8 +131,6 @@ class BlacklistBuilderApp:
             personal_and_risk_handler=self.personal_risk_handler,
             organization_and_risk_handler=self.organization_risk_handler
         )
-
-    
 
     def _init_info_comparer(self):
         compare_model_id = self.COMPARE_MODEL
@@ -171,25 +168,20 @@ class BlacklistBuilderApp:
         )
 
 
-    def save_article_faiss_index(self, article_index_path: str):
-        logger.info(f"💾 Đang lưu FAISS index bài viết tại {article_index_path}...")
-        self.article_faiss_manager.save_index(article_index_path)
-        logger.info("✅ Đã lưu FAISS index bài viết thành công.")
-
-    def save_personal_faiss_index(self, personal_index_path: str):
+    def save_personal_risk_faiss_index(self, personal_index_path: str):
         logger.info(f"💾 Đang lưu FAISS index cá nhân tại {personal_index_path}...")
         self.personal_faiss_manager.save_index(personal_index_path)
         logger.info("✅ Đã lưu FAISS index cá nhân thành công.")
 
-    def save_org_faiss_index(self, org_index_path: str):
+    def save_org_risk_faiss_index(self, org_index_path: str):
         logger.info(f"💾 Đang lưu FAISS index tổ chức tại {org_index_path}...")
-        self.org_faiss_manager.save_index(org_index_path)
+        self.organization_faiss_manager.save_index(org_index_path)
         logger.info("✅ Đã lưu FAISS index tổ chức thành công.")
 
     def save_all_faiss_indexes(
         self,
         base_dir: str = "faiss_indexes",
-        s3_uploader=None,
+        s3_uploader: S3Uploader =None,
         s3_bucket: str = None,
         s3_prefix: str = None
     ):
@@ -207,7 +199,6 @@ class BlacklistBuilderApp:
         local_dir = os.path.join(base_dir, timestamp)
         os.makedirs(local_dir, exist_ok=True)
 
-        article_index_path = os.path.join(local_dir, "article_faiss_index")
         personal_index_path = os.path.join(local_dir, "personal_faiss_index")
         org_index_path = os.path.join(local_dir, "org_faiss_index")
 
@@ -216,17 +207,16 @@ class BlacklistBuilderApp:
 
         logger.info(f"💾 Đang lưu tất cả FAISS indexes vào thư mục: {local_dir}")
 
-        self.save_article_faiss_index(article_index_path)
 
-        self.save_personal_faiss_index(personal_index_path)
+        self.save_personal_risk_faiss_index(personal_index_path)
 
-        self.save_org_faiss_index(org_index_path)
+        self.save_org_risk_faiss_index(org_index_path)
 
         logger.info("✅ Đã lưu tất cả FAISS indexes thành công.")
         logger.info(f"📂 Đường dẫn local: {local_dir}")
         if s3_bucket:
             logger.info(f"Đang upload thu muc {local_dir} lên S3...")
-            uploader.upload_folder(folder_path=local_dir, bucket_name=bucket_name, object_key_prefix=base_dir)
+            s3_uploader.upload_folder(folder_path=local_dir, bucket_name=s3_bucket, object_key_prefix=s3_prefix)
             logger.info(f"☁️ Đã đẩy lên S3: s3://{s3_bucket}/{s3_prefix}")
 
     def run_from_s3(self, bucket_name: str, key: str):
@@ -273,6 +263,7 @@ def main():
     logger.info(f"Đã load {len(contents_case2)} bài báo từ file {key2}")
     
     corpus = contents_case1 + contents_case2
+    # corpus = contents_case1 
     app.run_from_list(corpus)
 
     AWS_ACCESS_KEY = os.getenv("NEW_AWS_ACCESS_KEY")
@@ -291,8 +282,8 @@ def main():
     uploader = S3Uploader(connector.get_client())
 
     app.save_all_faiss_indexes(
-        base_dir="faiss_indexes",
-        s3_uploader=None,  # Hoặc truyền vào instance S3Uploader nếu cần upload lên S3
+        base_dir="./data/faiss_indexes",
+        s3_uploader=uploader,  # Hoặc truyền vào instance S3Uploader nếu cần upload lên S3
         s3_bucket=bucket_name,  # Hoặc tên bucket S3 nếu cần
         s3_prefix="faiss_indexes"
     )

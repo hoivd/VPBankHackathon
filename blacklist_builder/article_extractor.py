@@ -16,7 +16,10 @@ class ArticlePersonExtractor:
         self.extractor_prompt_template = prompt_template
 
     def _create_prompt(self, article_text: str) -> str:
+        logger.debug("[_create_prompt] Đang tạo prompt từ template...")
         prompt = self.extractor_prompt_template.format(article_text=article_text)
+        
+
         logger.debug(f"[create_prompt] Đã tạo prompt: {prompt}...")
         return prompt
 

@@ -53,8 +53,8 @@ class PersonalRiskEmbeddService:
 
         return personal_infos
 
-
-if __name__ == "__main__":
+    
+def main():
     from utils import Utils
     AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
     AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
@@ -85,3 +85,7 @@ if __name__ == "__main__":
     personal_info = personal_risk_embedd_service.get_per_media_info_by_personal_risk_embedd_ids(embedding_id)
 
     print(Utils.json_to_str(personal_info))
+
+
+if __name__ == "__main__":
+    main()

@@ -61,6 +61,9 @@ class ArticleRiskProcessor:
 
     def create_items_from_response(self, raw_text:str, article_text: str, partition_key: dict):
         personal_info_json, org_info_json, risk_info_json = self.extract_json_blocks(raw_text)
+        if len(personal_info_json) == 0 and len(org_info_json) == 0:
+            logger.info("Không tìm thấy thông tin cá nhân hoặc tổ chức trong bài báo. Bỏ qua.")
+            return {}
         adverse_media_item, media_id = self.new_item_builder.create_adverse_media_item(risk_info_json, partition_key['media_config'], article_text)
         personal_info_items, per_id_gen_to_per_id = self.new_item_builder.create_personal_items(personal_info_json, partition_key['person_config'])
         organization_info_items, org_id_gen_to_per_id = self.new_item_builder.create_organization_items(org_info_json, partition_key['organization_config'])
@@ -108,81 +111,14 @@ class ArticleRiskProcessor:
         self.dynamo_pusher.insert(items['personal2media_items'], table_config=table_config['p2m_config'])
         self.dynamo_pusher.insert(items['personal_risk_embedd2per_items'], table_config=table_config['personal_risk_embedd2per_config'])
         self.dynamo_pusher.insert(items['organization_risk_embedd2org_items'], table_config=table_config['organization_risk_embedd2org_config'])
-        # self.dynamo_pusher.insert(items['article_embedd2media_item'], table_config=table_config['article_embedd2media_config'])
-        # self.dynamo_pusher.insert(items['personal_embedd2per_items'], table_config=table_config['personal_embedd2per_config'])
-        # self.dynamo_pusher.insert(items['org_embedd2org_items'], table_config=table_config['org_embedd2org_config'])
         logger.info("✅ Xử lý bài báo hoàn tất.")
 
-    # def embed_article_and_add_to_faiss(self, article_text: str, table_config: dict): 
-    #     article_embedding = self.article_embedder.embed_article(article_text) 
-    #     logger.debug(f"[embed_article_and_add_to_faiss] Article embedding: {article_embedding[0, :10]}")
-
-    #     article_embedding_id = self.article_faiss_manager.add(article_embedding)
-    #     logger.info(f"✅ Đã thêm embedding của bài báo vào FAISS với ID: {article_embedding_id}")
-    #     return str(article_embedding_id[0])
-
-    # def create_article_embedd2media_item(self, media_id: str, article_embedding_id: int, table_config: dict):
-    #     _, partition_key = list(table_config['article_embedd2media_config'].items())[0]
-    #     logger.debug(f"[create_article_embedding2media_item] Tạo item cho media_id: {media_id}, article_embedding_id: {article_embedding_id}")
-    #     item = {
-    #         "media_id": media_id,
-    #         partition_key: article_embedding_id
-    #     }
-    #     return item
-    
-    # def embed_peronsal_org_embedd2media_and_add_to_faiss(self, personal_info_items: list[dict], organization_info_items: list[dict], table_config: dict):
-    #     personal_info_items_str = [Utils.json_to_str(item) for item in personal_info_items]
-    #     org_info_items_str = [Utils.json_to_str(item) for item in organization_info_items]
-
-    #     logger.info("🧠 Đang encode cá nhân và tổ chức...")
-    #     personal_embeddings = self.personal_embedder.embed_personal(personal_info_items_str)
-    #     org_embeddings = self.org_embedder.embed_organization(org_info_items_str)
-    #     logger.debug(f"[embed_personal_org_embedd2media] Personal embeddings: {personal_embeddings[0, :10]} {len(personal_embeddings)} items")
-    #     logger.debug(f"[embed_personal_org_embedd2media] Organization embeddings: {org_embeddings[0, :10]} {len(org_embeddings)} items")
-    #     logger.info("✅ Đã encode cá nhân và tổ chức xong.")
-
-    #     personal_embedding_ids = self.personal_faiss_manager.add(personal_embeddings)
-    #     org_embedding_ids = self.org_faiss_manager.add(org_embeddings)
-
-    #     personal_embedding_ids = [str(id) for id in personal_embedding_ids]
-    #     org_embedding_ids = [str(id) for id in org_embedding_ids]
-    #     logger.info(f"✅ Đã thêm embedding cá nhân vào FAISS với IDs: {personal_embedding_ids}")
-    #     logger.info(f"✅ Đã thêm embedding tổ chức vào FAISS với IDs: {org_embedding_ids}")
-
-    #     return personal_embedding_ids, org_embedding_ids
-
-    # def create_personal_embedd2media_items(self, personal_info_items: list[dict], personal_embedding_ids: list[int], table_config: dict):
-    #     _, personal_embedd_partition_key = list(table_config['personal_embedd2per_config'].items())[0]
-    #     _, personal_partition_key = list(table_config['person_config'].items())[0]
-    #     logger.debug(f"[create_personal_embedd2media_items] Tạo item cho {len(personal_info_items)} cá nhân")
-    #     def create_item(item: dict, embedding_id: int):
-    #         item = {
-    #             personal_embedd_partition_key: embedding_id,
-    #             personal_partition_key: item[personal_partition_key]
-    #         }
-    #         return item
-
-    #     personal_embedd2media_items = [create_item(item, embedding_id) for item, embedding_id in zip(personal_info_items, personal_embedding_ids)]
-    #     logger.debug(f"[create_personal_embedd2media_items] Đã tạo {len(personal_embedd2media_items)} items cá nhân")
-    #     return personal_embedd2media_items
-
-    # def create_org_embedd2media_items(self, organization_info_items: list[dict], org_embedding_ids: list[int], table_config: dict):
-    #     _, org_embedd_partition_key = list(table_config['org_embedd2org_config'].items())[0]
-    #     _, org_partition_key = list(table_config['organization_config'].items())[0]
-    #     logger.debug(f"[create_org_embedd2media_items] Tạo item cho {len(organization_info_items)} tổ chức")    
-
-    #     def create_item(item: dict, embedding_id: int):
-    #         item = {
-    #             org_embedd_partition_key: embedding_id,
-    #             org_partition_key: item[org_partition_key]
-    #         }
-    #         return item    
-
-    #     org_embedd2media_items = [create_item(item, embedding_id) for item, embedding_id in zip(organization_info_items, org_embedding_ids)]
-    #     logger.debug(f"[create_org_embedd2media_items] Đã tạo {len(org_embedd2media_items)} items tổ chức")
-    #     return org_embedd2media_items            
 
     def handle_faiss_personal_risk_items(self, personal_info_items: list[dict], personal2media_items: list[dict], table_config: dict):
+        if len(personal_info_items) == 0:
+            logger.info("Không có thông tin cá nhân mới trong bài báo, bỏ qua việc xử lý FAISS.")
+            return []
+
         personal_risk_embedding_ids, per_ids = self.personal_and_risk_handler.embed_and_index(
             personal_info_items=personal_info_items,
             personal2media_items=personal2media_items
@@ -200,6 +136,9 @@ class ArticleRiskProcessor:
         return personal_risk_embedd2per_items
 
     def handle_faiss_organization_risk_items(self, organization_info_items: list[dict], organization2media_items: list[dict], table_config: dict):
+        if len(organization_info_items) == 0:
+            logger.info("Không có thông tin tổ chức mới trong bài báo, bỏ qua việc xử lý FAISS.")
+            return []
         organization_risk_embedding_ids, org_ids = self.organization_and_risk_handler.embed_and_index(
             organization_info_items=organization_info_items,
             organization2media_items=organization2media_items
@@ -244,6 +183,9 @@ class ArticleRiskProcessor:
                     table_config: dict):
         # Extract info from article
         items = self.extract_info_from_article(article_text, table_config)
+        if items is None or len(items) == 0:
+            logger.info("Không tìm thấy thông tin cá nhân hoặc tổ chức trong bài báo. Bỏ qua.")
+            return
         
         items = self.prepare_items_from_info_extracted(items, table_config)
 

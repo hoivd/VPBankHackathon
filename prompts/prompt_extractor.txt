@@ -203,7 +203,7 @@ LƯU Ý: Chỉ trả về **hai danh sách JSON (một cho cá nhân, một cho 
 
 \"\"\"
 
-   {}
+   {article_text}
 
 \"\"\"
 

@@ -6,6 +6,7 @@ from dynamodb.table_personal_info import TablePersonalInfo
 from dynamodb.table_personal_risk_embedd2per import TablePersonalRiskEmbedd2Personal
 from dynamodb.personal_risk_embedd_service import PersonalRiskEmbeddService
 from dynamodb.table_personal2media import TablePersonal2Media
+from faiss_manager.faiss_index_manager import FaissIndexManager
 from dynamodb.dynamo_query import DynamoQuery
 from dynamodb.base_dynamo import BaseDynamoDB
 from logger import _setup_logger
@@ -14,7 +15,7 @@ import config
 logger = _setup_logger(__name__, config.LOG_LEVEL)
 
 class PersonalInfoSimilarRetriever:
-    def __init__(self, index_dir: str, 
+    def __init__(self, faiss_manager: FaissIndexManager, 
                  bedrock_base_client,
                  base_dynamo: BaseDynamoDB):
 
@@ -22,7 +23,7 @@ class PersonalInfoSimilarRetriever:
         index_dir: đường dẫn đến FAISS index đã lưu
         bedrock_base_client: client Bedrock đã được khởi tạo từ bên ngoài
         """
-        self.faiss_searcher = FaissSearcher(index_dir)
+        self.faiss_searcher = FaissSearcher(faiss_manager=faiss_manager)
         self.embedder = CohereMultilingualEmbedder(bedrock_client=bedrock_base_client)
         self.query = DynamoQuery(base_dynamo.dynamodb)
 

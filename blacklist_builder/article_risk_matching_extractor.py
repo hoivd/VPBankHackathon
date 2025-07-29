@@ -127,6 +127,8 @@ class ArticleRiskMatchingExtractor:
         logger.info("Day du lieu moi len Database thanh cong")
 
     def handler_new_personal_info_json(self, new_personal_info_jsons: list[dict], new_risk_info_json, table_config: dict):
+        if len(new_personal_info_jsons) == 0:
+            return [], []
         def prepare_new_personal_risk_info(new_personal_info_jsons, new_risk_info_json):
             personal_risk_infos = new_risk_info_json["list_personal_risks"]
 
@@ -182,6 +184,9 @@ class ArticleRiskMatchingExtractor:
         return duplicated_personal_infos, new_personal_infos
 
     def handler_new_organization_info_json(self, new_organization_info_jsons: list[dict], new_risk_info_json, table_config: dict):
+        if len(new_organization_info_jsons) == 0:
+            return [], []
+
         def prepare_new_organization_risk_info(new_organization_info_jsons, new_risk_info_json):
             organization_risk_infos = new_risk_info_json["list_organizer_risks"]
 
@@ -237,6 +242,9 @@ class ArticleRiskMatchingExtractor:
         return duplicated_organization_infos, new_organization_infos
 
     def handle_faiss_personal_risk_items(self, personal_info_items: list[dict], personal2media_items: list[dict], table_config: dict):
+        if len(personal_info_items) == 0:
+            logger.info("Không có thông tin cá nhân mới trong bài báo, bỏ qua việc xử lý FAISS.")
+            return []
         personal_risk_embedding_ids, per_ids = self.personal_and_risk_handler.embed_and_index(
             personal_info_items=personal_info_items,
             personal2media_items=personal2media_items
@@ -254,6 +262,9 @@ class ArticleRiskMatchingExtractor:
         return personal_risk_embedd2per_items
 
     def handle_faiss_organization_risk_items(self, organization_info_items: list[dict], organization2media_items: list[dict], table_config: dict):
+        if len(organization_info_items) == 0:
+            logger.info("Không có thông tin tổ chức mới trong bài báo, bỏ qua việc xử lý FAISS.")
+            return []
         organization_risk_embedding_ids, org_ids = self.organization_and_risk_handler.embed_and_index(
             organization_info_items=organization_info_items,
             organization2media_items=organization2media_items
@@ -438,6 +449,10 @@ class ArticleRiskMatchingExtractor:
         logger.info(f"Noi dung bao moi {article_text[:100]}")
 
         new_personal_info_json, new_org_info_json, new_risk_info_json = self.extract_info_from_article(article_text)
+
+        if len(new_personal_info_json) == 0 and len(new_org_info_json) == 0:
+            logger.info("Khong co thong tin ca nhan va to chuc moi trong bai bao, ket thuc qua trinh xu ly")
+            return
 
         items, organization_items, personal_items = self.prepare_items_from_info_extracted(
             new_personal_info_json=new_personal_info_json,
