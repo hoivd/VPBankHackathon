@@ -82,6 +82,8 @@ class BlacklistBuilderApp:
         self._init_info_article_extractor()
         self._init_info_comparer()
 
+        self.personal_faiss_path = 'data/faiss_indexs/personal_faiss_index'
+        self.org_faiss_path = 'data/faiss_indexs/org_faiss_index'
         self._init_faiss_handler()
         self._init_faiss_retriever()
 

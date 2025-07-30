@@ -16,7 +16,7 @@ from typing import Dict, List, Any, Optional
 import dotenv
 dotenv.load_dotenv()
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-from config import TABLE_CONFIG
+from config import TABLE_CONFIG_DEMO
 from matching.llm_rerank_personal import LlmRerankerPersonal
 from matching.personal_matching import PersonMatcherFAISS
 from utils import Utils
@@ -75,11 +75,11 @@ class PersonLookupDynamoDB:
         except Exception as e:
             print(f"Failed to connect to DynamoDB: {e}")
             raise
-        personal_table_name, _ = list(TABLE_CONFIG['person_config'].items())[0]
-        p2m_table_name, _ = list(TABLE_CONFIG['p2m_config'].items())[0]
-        o2m_table_name, _ = list(TABLE_CONFIG['o2m_config'].items())[0]
-        org_table_name, _ = list(TABLE_CONFIG['organization_config'].items())[0]
-        media_table_name, _ = list(TABLE_CONFIG['media_config'].items())[0]
+        personal_table_name, _ = list(TABLE_CONFIG_DEMO['person_config'].items())[0]
+        p2m_table_name, _ = list(TABLE_CONFIG_DEMO['p2m_config'].items())[0]
+        o2m_table_name, _ = list(TABLE_CONFIG_DEMO['o2m_config'].items())[0]
+        org_table_name, _ = list(TABLE_CONFIG_DEMO['organization_config'].items())[0]
+        media_table_name, _ = list(TABLE_CONFIG_DEMO['media_config'].items())[0]
         self.personal_info_table = self.dynamodb.Table(personal_table_name)
         self.personal2media_table = self.dynamodb.Table(p2m_table_name)
         self.org2media_table = self.dynamodb.Table(o2m_table_name)
@@ -141,10 +141,9 @@ class PersonLookupDynamoDB:
         # faiss_searcher = FaissSearcher(index_dir=faiss_index_path)
 
         # ==== DynamoDB ====
-        AWS_ACCESS_KEY='AKIAQWLOPNIDXAC4BJWD'
-        AWS_SECRET_KEY='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'
-        NEW_AWS_ACCESS_KEY = Utils.load_api_key_from_env("NEW_AWS_ACCESS_KEY")
-        NEW_AWS_SECRET_KEY = Utils.load_api_key_from_env("NEW_AWS_SECRET_KEY")
+
+        AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
+        AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
 
         REGION = config.AWS_REGION
         REGION_MODEL = config.AWS_VIRGINA_REGION
@@ -152,22 +151,22 @@ class PersonLookupDynamoDB:
 
         print("DEFAULT_MODEL_ID:", DEFAULT_MODEL_ID)
 
-        base_dynamo = BaseDynamoDB(region_name=REGION, access_key=NEW_AWS_ACCESS_KEY, secret_key=NEW_AWS_SECRET_KEY)
+        base_dynamo = BaseDynamoDB(region_name=REGION, access_key=AWS_ACCESS_KEY, secret_key=AWS_SECRET_KEY)
         dynamo_query = DynamoQuery(base_dynamo.dynamodb)
 
-        personal_embedd_table = TablePersonalEmbedd2Personal(query=dynamo_query, table_config=config.TABLE_CONFIG)
-        personal_info_table = TablePersonalInfo(query=dynamo_query, table_config=config.TABLE_CONFIG)
+        personal_embedd_table = TablePersonalEmbedd2Personal(query=dynamo_query, table_config=config.TABLE_CONFIG_DEMO)
+        personal_info_table = TablePersonalInfo(query=dynamo_query, table_config=config.TABLE_CONFIG_DEMO)
 
         llm_manager = BedrockModelManager(
-            aws_access_key_id=NEW_AWS_ACCESS_KEY,
-            aws_secret_access_key=NEW_AWS_SECRET_KEY,
+            aws_access_key_id=AWS_ACCESS_KEY,
+            aws_secret_access_key=AWS_ACCESS_KEY,
             region_name=REGION_MODEL,
             default_model_id=DEFAULT_MODEL_ID
         )
 
-        prompt_path = 'D:/VPBankHackathon/prompts/rerank_personal.txt'
+        prompt_path = 'prompts/rerank_personal.txt'
         prompt_template = Utils.load_text(prompt_path)
-        print(prompt_template)
+        # print(prompt_template)
 
         reranker = LlmRerankerPersonal(llm_manager=llm_manager, model_type="deepseek", prompt_template=prompt_template)
 
@@ -314,7 +313,64 @@ class PersonLookupDynamoDB:
         except Exception as e:
             print(f"❌ Error getting org2media info: {e}")
             return []
+        
+    def get_org2media_info_for_person_v2(self, per_id: str) -> list:
+        person_info = self.find_person_by_id(per_id)
+        if not person_info:
+            return []
 
+        p2m_entries = self.get_personal2media_info(per_id)
+        media_ids = [entry.get('media_id') for entry in p2m_entries if 'media_id' in entry]
+
+        org_infos_map = {}
+        org2media_results = []
+        for media_id in media_ids:
+            response = self.org2media_table.scan(
+                FilterExpression=Attr('media_id').eq(media_id)
+            )
+            items = response.get('Items', [])
+
+            while 'LastEvaluatedKey' in response:
+                response = self.org2media_table.scan(
+                    ExclusiveStartKey=response['LastEvaluatedKey'],
+                    FilterExpression=Attr('media_id').eq(media_id)
+                )
+                items.extend(response.get('Items', []))
+
+            org2media_results.extend(items)
+
+        # Step 2: Collect unique org_ids and fetch their info
+        org_ids = {item['org_id'] for item in org2media_results if 'org_id' in item}
+
+        for org_id in org_ids:
+            org_info = self.organization_info_table.get_item(Key={'org_id': org_id}).get('Item')
+            if org_info:
+                org_infos_map[org_id] = {
+                    'org_name': org_info.get('full_name'),
+                    'org_type': org_info.get('occupation_or_position')
+                }
+
+        # Step 3: Enrich org2media items with org info
+        enriched_results = []
+        for item in org2media_results:
+            org_id = item.get('org_id')
+            org_info = org_infos_map.get(org_id, {})
+            enriched_item = {
+                "legal_status": item.get("legal_status"),
+                "media_id": item.get("media_id"),
+                "o2m_id": item.get("o2m_id"),
+                "org_id": item.get("org_id"),
+                "role_in_event": item.get("role_in_event"),
+                "source_level": item.get("source_level"),
+                "violation_type": item.get("violation_type"),
+                "entity_name": item.get("entity_name"),
+                "customer_role": item.get("customer_role"),
+                "organization_name": org_info.get("org_name"),
+                "organization_type": org_info.get("org_type")
+            }
+            enriched_results.append(enriched_item)
+
+        return enriched_results
     def get_media_details(self, media_id: str) -> Optional[Dict]:
         """
         Get media details for a given media_id
@@ -396,7 +452,8 @@ class PersonLookupDynamoDB:
         print(f"📋 Found {len(personal2media_info)} personal2media entries")
         
         # 3. Get org2media information
-        org2media_info = self.get_org2media_info_for_person(full_name)
+        # org2media_info = self.get_org2media_info_for_person(full_name)
+        org2media_info = self.get_org2media_info_for_person_v2(per_id)
         print(f"🏢 Found {len(org2media_info)} org2media entries")
         
         # 4. Get media details for all media_ids
@@ -442,7 +499,7 @@ class PersonLookupDynamoDB:
         
         return result
     
-    def lookup_person_comprehensive_v2(self, full_name: str, query: str, personal_embedder, faiss_searcher) -> Dict[str, Any]:
+    def lookup_person_comprehensive_v2(self, full_name: str, person_id: str, query: str = None) -> Dict[str, Any]:
         """
         Comprehensive lookup for a person with formatted output according to expected format
         
@@ -539,20 +596,10 @@ class PersonLookupDynamoDB:
         
         print(f"🔍 Looking up formatted information for: {full_name}")
 
-        if config.USE_MATCHING_METHOD:
-            per_ids = self.find_person_id_by_query(query, personal_embedder, faiss_searcher)
-
-            if len(per_ids) < 1:
-                return {
-                    "error": f"Person '{full_name}' not found in personal_info table",
-                    "suggestions": self.get_similar_names(full_name)
-                }
+        # if config.USE_MATCHING_METHOD:
+        #     per_ids = self.find_person_id_by_query(query, personal_embedder, faiss_searcher)
+        per_id = person_id
             
-            per_id = per_ids[0]
-            
-        else:
-            per_id = None
-
         # Get comprehensive data first
         comprehensive_data = self.lookup_person_comprehensive(per_id, full_name)
         
@@ -603,11 +650,11 @@ class PersonLookupDynamoDB:
             "organizer_risk_analysis": org2media_info       # Return all detailed entries
         }
         
-        print(f"✅ Formatted result created for: {full_name}")
-        print(f"📊 Individual crimes: {len(individual_crime_summary)}")
-        print(f"🏢 Organizational crimes: {len(organizational_crime_summary)}")
-        print(f"👤 Personal risks: {len(personal2media_info)}")
-        print(f"🏛️ Organizer risks: {len(org2media_info)}")
+        # print(f"✅ Formatted result created for: {full_name}")
+        # print(f"📊 Individual crimes: {len(individual_crime_summary)}")
+        # print(f"🏢 Organizational crimes: {len(organizational_crime_summary)}")
+        # print(f"👤 Personal risks: {len(personal2media_info)}")
+        # print(f"🏛️ Organizer risks: {len(org2media_info)}")
         
         return formatted_result
 

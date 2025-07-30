@@ -4,11 +4,11 @@ from llm_model.model_manager import LlmModelManager
 from utils import Utils
 import config
 from botocore.exceptions import ClientError
-from logger import _setup_logger
+# from logger import _setup_logger
 import re
 import time 
-
-logger = _setup_logger(__name__, config.LOG_LEVEL)
+import logging
+# logger = _setup_logger(__name__, config.LOG_LEVEL)
 
 class BedrockModelManager(LlmModelManager):
     def __init__(
@@ -57,7 +57,7 @@ class BedrockModelManager(LlmModelManager):
         Gửi prompt đến mô hình DeepSeek-R1 và trả về kết quả text (hoặc raise lỗi nếu thất bại sau 3 lần).
         """
 
-        logger.info(f"🚀 Đang gọi mô hình DeepSeek...{model_id}")
+        logging.info(f"🚀 Đang gọi mô hình DeepSeek...{model_id}")
         formatted_prompt = f"<｜begin▁of▁sentence｜><｜User｜>{prompt}<｜Assistant｜><think>\n"
 
         body = json.dumps({
@@ -85,16 +85,16 @@ class BedrockModelManager(LlmModelManager):
                 resp = choices[0]["text"]
                 answer, thinking = self.extract_thinking_and_answer(resp)
 
-                logger.debug(f"[DeepSeek] Đã nhận phản hồi: {answer}")
+                logging.debug(f"[DeepSeek] Đã nhận phản hồi: {answer}")
                 if thinking:
-                    logger.debug(f"[DeepSeek] Reasoning: {thinking}")
+                    logging.debug(f"[DeepSeek] Reasoning: {thinking}")
                 else:
-                    logger.debug("[DeepSeek] Không có reasoning.")
+                    logging.debug("[DeepSeek] Không có reasoning.")
 
                 return answer, thinking
 
             except (ClientError, Exception) as e:
-                logger.warning(f"[DeepSeek] Thử lần {attempt + 1} thất bại: {e}")
+                logging.warning(f"[DeepSeek] Thử lần {attempt + 1} thất bại: {e}")
                 if attempt < max_retries:
                     time.sleep(10 ** attempt)  # exponential backoff: 1s, 2s
                 else:
@@ -112,7 +112,7 @@ class BedrockModelManager(LlmModelManager):
         retry_delay: int = 2  # giây
     ) -> str:
         
-        logger.info(f"🚀 Đang gọi mô hình Bedrock...{model_name}")
+        logging.info(f"🚀 Đang gọi mô hình Bedrock...{model_name}")
         model_id = self.get_model(model_name)
 
         # Claude 3 request format
@@ -137,7 +137,7 @@ class BedrockModelManager(LlmModelManager):
 
         for attempt in range(1, max_retries + 1):
             try:
-                logger.debug(f"🔁 Gọi Bedrock (thử lần {attempt}) model {model_id}")
+                logging.debug(f"🔁 Gọi Bedrock (thử lần {attempt}) model {model_id}")
                 response = self.client.invoke_model(
                     modelId=model_id,
                     body=json.dumps(body),
@@ -147,7 +147,7 @@ class BedrockModelManager(LlmModelManager):
                 break  # Thành công, thoát vòng lặp
 
             except (ClientError, Exception) as e:
-                logger.warning(f"❌ Lỗi khi gọi mô hình {model_id} (thử lần {attempt}): {e}")
+                logging.warning(f"❌ Lỗi khi gọi mô hình {model_id} (thử lần {attempt}): {e}")
                 if attempt == max_retries:
                     raise RuntimeError(f"🚨 Đã thử {max_retries} lần nhưng không thành công: {e}")
                 time.sleep(retry_delay)
@@ -165,11 +165,11 @@ class BedrockModelManager(LlmModelManager):
                 final_text = block.get("text")
 
         if reasoning_text:
-            logger.debug(f"[generate] ✅ Đã nhận phản hồi từ mô hình {model_id} với reasoning.")
-            logger.debug(f"[generate] Reasoning: {reasoning_text}")
+            logging.debug(f"[generate] ✅ Đã nhận phản hồi từ mô hình {model_id} với reasoning.")
+            logging.debug(f"[generate] Reasoning: {reasoning_text}")
             return final_text, reasoning_text
         else:
-            logger.debug(f"[generate] ✅ Đã nhận phản hồi từ mô hình {model_id} mà không có reasoning.")
+            logging.debug(f"[generate] ✅ Đã nhận phản hồi từ mô hình {model_id} mà không có reasoning.")
             return final_text, ""
 
     def generate_amazon(
@@ -183,7 +183,7 @@ class BedrockModelManager(LlmModelManager):
             Gửi prompt đến mô hình Amazon Titan Nova Pro và trả về kết quả (answer, reasoning="").
             Lưu ý: Sử dụng định dạng messages cho Amazon Bedrock API.
             """
-            logger.info(f"🚀 Đang gọi mô hình Amazon Titan Nova Pro... {model_id}")
+            logging.info(f"🚀 Đang gọi mô hình Amazon Titan Nova Pro... {model_id}")
 
             # Định dạng body theo yêu cầu của Amazon Bedrock
             body = {
@@ -212,16 +212,16 @@ class BedrockModelManager(LlmModelManager):
                 # Lấy nội dung từ phản hồi, giả sử định dạng phản hồi có trường 'choices'
                 output_text = result.get("choices", [{}])[0].get("message", {}).get("content", "").strip()
 
-                logger.debug(f"[Amazon Titan Nova Pro] ✅ Phản hồi: {output_text}")
+                logging.debug(f"[Amazon Titan Nova Pro] ✅ Phản hồi: {output_text}")
                 return output_text, ""  # Không có reasoning
 
             except ClientError as e:
                 error_code = e.response.get("Error", {}).get("Code")
                 error_message = e.response.get("Error", {}).get("Message")
-                logger.error(f"❌ Lỗi ClientError khi gọi mô hình Amazon Titan Nova Pro {model_id}: {error_code} - {error_message}")
+                logging.error(f"❌ Lỗi ClientError khi gọi mô hình Amazon Titan Nova Pro {model_id}: {error_code} - {error_message}")
                 raise RuntimeError(f"❌ Lỗi khi gọi mô hình Amazon Titan Nova Pro {model_id}: {error_message}")
             except Exception as e:
-                logger.error(f"❌ Lỗi không xác định khi gọi mô hình Amazon Titan Nova Pro {model_id}: {str(e)}")
+                logging.error(f"❌ Lỗi không xác định khi gọi mô hình Amazon Titan Nova Pro {model_id}: {str(e)}")
                 raise RuntimeError(f"❌ Lỗi khi gọi mô hình Amazon Titan Nova Pro {model_id}: {str(e)}")
 
     def generate(
@@ -267,7 +267,7 @@ class BedrockModelManager(LlmModelManager):
             raise ValueError(f"Unsupported model_type: {model_type}")
         
         end = time.time()
-        logger.info(f"[generate] Thời gian gọi mô hình {model_type} ({model_name}): {end - start:.2f} giây")
+        logging.info(f"[generate] Thời gian gọi mô hình {model_type} ({model_name}): {end - start:.2f} giây")
         return result
 
 

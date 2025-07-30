@@ -3,10 +3,10 @@ from utils import Utils
 import config
 from dynamodb.base_dynamo import BaseDynamoDB
 from boto3.dynamodb.conditions import Attr
-from logger import _setup_logger
+# from logging import _setup_logging
 import config
-
-logger = _setup_logger(__name__, config.LOG_LEVEL)
+import logging
+# logging = _setup_logging(__name__, config.LOG_LEVEL)
 
 class TablePersonalRiskEmbedd2Personal:
     def __init__(self, query: DynamoQuery, table_config):
@@ -24,7 +24,7 @@ class TablePersonalRiskEmbedd2Personal:
             table_name=self.table_name,
             filter_expression=Attr("per_id").eq(per_id)
         )
-        logger.info(f"Found {len(results)} embeddings for per_id '{per_id}'")
+        logging.info(f"Found {len(results)} embeddings for per_id '{per_id}'")
         return [item["personal_risk_embedd_id"] for item in results]
 
     def get_embedd_by_per_id_list(self, per_ids: list[str]) -> list:
@@ -51,7 +51,7 @@ class TablePersonalRiskEmbedd2Personal:
             if item and "per_id" in item:
                 mapping[embedd_id] = item["per_id"]
             else:
-                logger.warning(f"Không tìm thấy per_id cho personal_embedd_id: {embedd_id}")
+                logging.warning(f"Không tìm thấy per_id cho personal_embedd_id: {embedd_id}")
         return mapping
     
 def main():

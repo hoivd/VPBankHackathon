@@ -188,7 +188,7 @@ def main():
     logger.info(f"Đã tải prompt từ {personal_compare_prompt_file}")
     logger.debug(f"Prompt nội dung: {personal_compare_prompt}")
 
-    organization_compare_prompt_file = 'D:/VPBankHackathon/prompts/prompt_compare_new_old_organization.txt' 
+            organization_compare_prompt_file = 'prompts/prompt_compare_new_old_organization.txt' 
     organization_compare_prompt = Utils.load_text(organization_compare_prompt_file)
     logger.info(f"Đã tải prompt từ {organization_compare_prompt_file}")
     logger.debug(f"Prompt nội dung: {organization_compare_prompt}")

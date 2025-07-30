@@ -104,7 +104,7 @@ def main():
     )
 
     # Tạo retriever với client đã có
-    faiss_index_path = 'D:/VPBankHackathon/data/faiss_indexs/org_faiss_index'
+    faiss_index_path = 'data/faiss_indexs/org_faiss_index'
 
     base_dynamo = BaseDynamoDB(
         region_name=REGION,

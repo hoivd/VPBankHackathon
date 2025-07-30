@@ -1,14 +1,14 @@
 import json
-from logger import _setup_logger
+# from logging import _setup_logging
 import config
 import os
 from llm_model.bedrock_manager import BedrockModelManager
 from utils import Utils
 import config
 import re
+import logging
 
-
-logger = _setup_logger(__name__, config.LOG_LEVEL)
+# logging = _setup_logging(__name__, config.LOG_LEVEL)
 
 
 
@@ -41,7 +41,7 @@ class LlmRerankerPersonal:
         """
         Áp dụng template đã nạp sẵn để tạo prompt hoàn chỉnh.
         """
-        print(self.prompt_template)
+        # print(self.prompt_template)
         return self.prompt_template.format(
             query_personal=query.strip(),
             top_k_personal=json.dumps(per_item, ensure_ascii=False, indent=2, default=str),
@@ -73,7 +73,7 @@ class LlmRerankerPersonal:
         try:
             prompt = self.build_prompt(query, per_items, top_k_result=top_k_result)
 
-            logger.info("🤖 Đang gọi LLM để đánh giá danh sách...")
+            logging.info("🤖 Đang gọi LLM để đánh giá danh sách...")
             # print(prompt)
 
             answer = self.llm_manager.generate(
@@ -81,24 +81,24 @@ class LlmRerankerPersonal:
                 model_type=self.model_type
             )[0]
 
-            logger.info(f"✅ LLM trả về: {answer}")
+            logging.info(f"✅ LLM trả về: {answer}")
 
             result = self.extract_per_ids(answer)
             return result
 
         except Exception as e:
-            logger.warning(f"⚠️ Lỗi khi gọi LLM: {e}")
+            logging.warning(f"⚠️ Lỗi khi gọi LLM: {e}")
             return []
 
 if __name__ == "__main__":
     # ===== Load prompt template từ file =====
     prompt_path = './prompts/rerank_personal.txt'
     prompt_template = Utils.load_text(prompt_path)
-    print(prompt_template)
+    # print(prompt_template)
 
     # ===== AWS Bedrock Model =====
-    AWS_ACCESS_KEY = Utils.load_api_key_from_env("NEW_AWS_ACCESS_KEY")
-    AWS_SECRET_KEY = Utils.load_api_key_from_env("NEW_AWS_SECRET_KEY")
+    AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
+    AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
     REGION = config.AWS_VIRGINA_REGION
     print(REGION)
     MODEL_ID = 'arn:aws:bedrock:us-east-1:538830382271:inference-profile/us.deepseek.r1-v1:0'  

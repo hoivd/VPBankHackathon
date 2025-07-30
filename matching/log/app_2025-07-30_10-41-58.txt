@@ -1,0 +1,31 @@
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<DEBUG-utils> - [load_text] ✅ Đã load file văn bản: D:/3rd/VP_Bank_Hack/VPBankHackathon/prompts/rerank_personal.txt
+<INFO-matching.llm_rerank_personal> - 🤖 Đang gọi LLM để đánh giá danh sách...
+<INFO-llm_model.bedrock_manager> - 🚀 Đang gọi mô hình Bedrock...None
+<DEBUG-llm_model.bedrock_manager> - 🔁 Gọi Bedrock (thử lần 1) model arn:aws:bedrock:us-east-1:538830382271:inference-profile/us.anthropic.claude-3-7-sonnet-20250219-v1:0
+<DEBUG-llm_model.bedrock_manager> - [generate] ✅ Đã nhận phản hồi từ mô hình arn:aws:bedrock:us-east-1:538830382271:inference-profile/us.anthropic.claude-3-7-sonnet-20250219-v1:0 mà không có reasoning.
+<INFO-llm_model.bedrock_manager> - [generate] Thời gian gọi mô hình claude (None): 5.46 giây
+<INFO-matching.llm_rerank_personal> - ✅ LLM trả về: ```json
+[
+  {
+    "per_id": "per_id_1753806629409294",
+    "relevance_score": 95
+  },
+  {
+    "per_id": "per_id_1753806629410329",
+    "relevance_score": 30
+  },
+  {
+    "per_id": "per_id_1753807759617452",
+    "relevance_score": 15
+  },
+  {
+    "per_id": "per_id_1753808319294343",
+    "relevance_score": 15
+  },
+  {
+    "per_id": "per_id_1753808549547880",
+    "relevance_score": 15
+  }
+]
+```

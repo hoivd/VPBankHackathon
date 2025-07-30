@@ -70,8 +70,8 @@ class DynamoTableManager:
             self.create_table(table_name, schema)
 
 def main():
-    AWS_ACCESS_KEY = Utils.load_api_key_from_env("NEW_AWS_ACCESS_KEY")
-    AWS_SECRET_KEY = Utils.load_api_key_from_env("NEW_AWS_SECRET_KEY")
+    AWS_ACCESS_KEY = Utils.load_api_key_from_env("AWS_ACCESS_KEY")
+    AWS_SECRET_KEY = Utils.load_api_key_from_env("AWS_SECRET_KEY")
     REGION = config.AWS_REGION
     print(f"AWS_ACCESS_KEY: {AWS_ACCESS_KEY}")
     print(f"AWS_SECRET_KEY: {AWS_SECRET_KEY}")

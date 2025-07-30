@@ -1,8 +1,8 @@
 import boto3
-from logger import _setup_logger
+# from logger import _setup_logger
 import config
-
-logger = _setup_logger(__name__, config.LOG_LEVEL)
+import logging
+# logger = _setup_logger(__name__, config.LOG_LEVEL)
 
 class BaseDynamoDB:
     def __init__(self, region_name, access_key, secret_key):
@@ -13,4 +13,4 @@ class BaseDynamoDB:
             aws_secret_access_key=secret_key,
         )
         
-        logger.info(f"Connected to DynamoDB in region {region_name}")
+        logging.info(f"Connected to DynamoDB in region {region_name}")

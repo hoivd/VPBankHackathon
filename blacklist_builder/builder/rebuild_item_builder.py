@@ -94,7 +94,7 @@ def main():
     # print(json.dumps(org_rebuilt_items, indent=2, ensure_ascii=False))
     # print(Utils.json_to_str(org_id_gen_to_org_id))
 
-    personal_duplicated = Utils.load_json('D:/VPBankHackathon/data/items/personal_duplicated.json')
+            personal_duplicated = Utils.load_json('data/items/personal_duplicated.json')
     print(Utils.json_to_str(personal_duplicated))
     # Khởi tạo builder
 

@@ -75,7 +75,7 @@ def main():
     # Khởi tạo Cohere embedder
     embedder = CohereMultilingualEmbedder(bedrock_client=bedrock_base.get_client())
 
-    faiss_index_path = 'D:/VPBankHackathon/data/faiss_indexs/personal_faiss_index'
+    faiss_index_path = 'data/faiss_indexs/personal_faiss_index'
     faiss_searcher = FaissSearcher(faiss_index_path)
 
     top_k = 3

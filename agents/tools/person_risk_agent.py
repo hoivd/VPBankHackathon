@@ -40,13 +40,13 @@ class PersonRiskAgent:
             print(f"⚠️ Không thể tải AML Model: {e}")
             print("📝 Sẽ chỉ sử dụng phân tích dựa trên quy tắc")
             self.aml_model = None
-            self.model_enabled = False
+            self.model_enabled = True
         
         # Initialize LLM for advanced query processing
         try:
             self.bedrock_manager = BedrockModelManager(
-                aws_access_key_id=aws_access_key_id or Utils.load_api_key_from_env("NEW_AWS_ACCESS_KEY"),
-                aws_secret_access_key=aws_secret_access_key or Utils.load_api_key_from_env("NEW_AWS_SECRET_KEY"),
+                aws_access_key_id=aws_access_key_id or Utils.load_api_key_from_env("AWS_ACCESS_KEY"),
+                aws_secret_access_key=aws_secret_access_key or Utils.load_api_key_from_env("AWS_SECRET_KEY"),
                 region_name=region_name or "ap-southeast-1",
                 default_model_id="anthropic.claude-instant-v1"
             )
@@ -55,13 +55,15 @@ class PersonRiskAgent:
             print(f"⚠️ Không thể khởi tạo LLM: {e}")
             print("📝 Sẽ sử dụng regex để trích xuất tên người")
             self.bedrock_manager = None
-            self.llm_enabled = False
+            self.llm_enabled = True
         
         print("✅ Agent đã sẵn sàng!")
 
     def extract_person_name_from_query(self, query: str) -> Optional[str]:
         print(f"Trích xuất tên từ query: {query}")
-        if self.llm_enabled:
+        if not self.llm_enabled:
+            return  self._extract_name_with_regex(query=query)
+        else:
             print("Regex không thành công, đang thử LLM...")
             extracted_name = self.extract_person_name_with_llm(query)
             if extracted_name:
@@ -757,7 +759,7 @@ class PersonRiskAgent:
                 "Vui lòng thử lại sau hoặc liên hệ quản trị viên."
             )
 
-    def process_query_v2(self, person_name: str,query:str, personal_embedder, faiss_searcher) -> str:
+    def process_query_v2(self, person_id:str ,person_name:str , query:str =None) -> str:
         """
         Process a query with the new format
         
@@ -771,7 +773,7 @@ class PersonRiskAgent:
         
         # person_name = self.extract_person_name_from_query(query)
         # person_name = "Trương Mỹ Lan"
-        if not person_name:
+        if not person_name or not person_id:
             return (
                 "❌ Xin lỗi, tôi không thể xác định tên người cần tìm kiếm từ truy vấn của bạn.\n\n"
                 "💡 Vui lòng thử lại với định dạng:\n"
@@ -785,8 +787,7 @@ class PersonRiskAgent:
         
         try:
             # Perform person lookup with v2 format
-            lookup_result = self.person_lookup.lookup_person_comprehensive_v2(full_name=person_name,query=query, 
-                                                                        personal_embedder=personal_embedder, faiss_searcher=faiss_searcher)
+            lookup_result = self.person_lookup.lookup_person_comprehensive_v2(full_name=person_name,person_id=person_id,query=query)
             if not lookup_result or "error" in lookup_result:
                 response = f"❌ Không tìm thấy thông tin về '{person_name}' trong hệ thống thoa man yeu cau cua ban.\n\n"
                 response += "Vui lòng kiểm tra lại tên người hoặc thử với các biến thể khác của tên."
@@ -801,8 +802,8 @@ class PersonRiskAgent:
             
             # Save model input to JSON file
             # self.save_model_input_to_json(model_input, person_name)
-            model_input_path = self.save_model_input_to_json(model_input, person_name)
-            print(f"💾 Đã lưu model input vào: {model_input_path}")
+            # model_input_path = self.save_model_input_to_json(model_input, person_name)
+            # print(f"💾 Đã lưu model input vào: {model_input_path}")
             
             ml_prediction = None
             if self.model_enabled and self.aml_model:

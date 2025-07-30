@@ -503,13 +503,13 @@ def main():
     )
 
     # Tạo retriever với client đã có
-    personal_faiss_index_path = 'D:/VPBankHackathon/data/faiss_indexs/personal_faiss_index'
+    personal_faiss_index_path = 'data/faiss_indexs/personal_faiss_index'
 
     personal_retriever = PersonalInfoSimilarRetriever(index_dir=personal_faiss_index_path,
                                      bedrock_base_client=bedrock_base.get_client(), 
                                      base_dynamo=base_dynamo)
 
-    organization_faiss_index_path = 'D:/VPBankHackathon/data/faiss_indexs/org_faiss_index'
+    organization_faiss_index_path = 'data/faiss_indexs/org_faiss_index'
 
     organization_retriever = OrganizationInfoSimilarRetriever(index_dir=organization_faiss_index_path,
                                      bedrock_base_client=bedrock_base.get_client(), 
@@ -529,7 +529,7 @@ def main():
     logger.info(f"Đã tải prompt từ {personal_compare_prompt_file}")
     logger.debug(f"Prompt nội dung: {personal_compare_prompt}")
 
-    organization_compare_prompt_file = 'D:/VPBankHackathon/prompts/prompt_compare_new_old_organization.txt' 
+    organization_compare_prompt_file = 'prompts/prompt_compare_new_old_organization.txt' 
     organization_compare_prompt = Utils.load_text(organization_compare_prompt_file)
     logger.info(f"Đã tải prompt từ {organization_compare_prompt_file}")
     logger.debug(f"Prompt nội dung: {organization_compare_prompt}")

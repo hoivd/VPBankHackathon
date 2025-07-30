@@ -1,0 +1,2 @@
+<INFO-dynamodb.base_dynamo> - Connected to DynamoDB in region ap-southeast-1
+<DEBUG-utils> - [load_text] ❌ Lỗi khi đọc file văn bản: [Errno 2] No such file or directory: './prompts/rerank_personal.txt'

@@ -1,5 +1,9 @@
 import numpy as np
-from logger import _setup_logger
+# from logging import _setup_logging
+
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 import config
 
 from faiss_manager.faiss_searcher import FaissSearcher
@@ -17,8 +21,10 @@ from dynamodb.table_personal_risk_embedd2per import TablePersonalRiskEmbedd2Pers
 import time
 from S3.s3_fetcher import S3DataFetcher
 from S3.s3_connector import S3Connector
+import logging
+from path_utils import get_prompts_path
 
-logger = _setup_logger(__name__, config.LOG_LEVEL)
+logging = logging.getLogger(__name__)
 
 
 class PersonMatcherFAISS:
@@ -33,32 +39,32 @@ class PersonMatcherFAISS:
         self.personal_info_table = personal_info_table
         self.llm_reranker = llm_reranker
 
-    def match(self, query: str, top_k: int = 1) -> list[str]:
-        logger.info(f"⚙️ Đang tạo embedding cho {query}...")
+    def match(self, query: list[str], top_k: int = 1) -> list[str]:
+        logging.info(f"⚙️ Đang tạo embedding cho {query}...")
         query_embeddings = self.embedder.embed(query)
         query_embedding = query_embeddings[0]
         query_embedding = np.array(query_embedding).astype('float32') 
-        logger.info("🔍 Đang tìm kiếm trong FAISS index...")
+        logging.info("🔍 Đang tìm kiếm trong FAISS index...")
         results = self.faiss_searcher.search_top_k(query_embedding, top_k=top_k)
 
         faiss_ids = [item["id"] for item in results]
-        logger.info(f"📌 Tìm thấy các FAISS ID: {faiss_ids}")
+        logging.info(f"📌 Tìm thấy các FAISS ID: {faiss_ids}")
 
         personal_embedd_ids = [str(faiss_id) for faiss_id in faiss_ids]
-        logger.info("🔗 Đang ánh xạ personal_embedd_id → per_id...")
+        logging.info("🔗 Đang ánh xạ personal_embedd_id → per_id...")
         embedd_to_per = self.personal_risk_embedd_table.map_embedd_ids_to_per_ids(personal_embedd_ids)
 
         matched_per_ids = [embedd_to_per[eid] for eid in personal_embedd_ids if eid in embedd_to_per]
         return matched_per_ids
 
-    def match_full_info(self, query: str, top_k: int = 1) -> list[dict]:
+    def match_full_info(self, query: list[str], top_k: int = 1) -> list[dict]:
         """
         Trả về danh sách thông tin đầy đủ (dict) của các per_id khớp nhất với query.
         """
         per_ids = self.match(query, top_k)
         return self.personal_info_table.get_items_by_per_ids(per_ids)
 
-    def rerank_by_llm(self, query: str, candidates: list[dict], top_k_result=5) -> dict:
+    def rerank_by_llm(self, query: list[str], candidates: list[dict], top_k_result=5) -> dict:
         """
         Gọi mô hình LLM thông qua LlmRerankerPersonal để so sánh query với từng candidate.
         Trả về dict có dạng:
@@ -114,10 +120,10 @@ def main():
         region_name=REGION_MODEL,
         default_model_id=DEFAULT_MODEL_ID
     )
-
-    prompt_path = './prompts/rerank_personal.txt'
+    
+    prompt_path = get_prompts_path('rerank_personal.txt')
     prompt_template = Utils.load_text(prompt_path)
-    print(prompt_template)
+    # print(prompt_template)
 
     reranker = LlmRerankerPersonal(llm_manager=llm_manager, model_type="claude", prompt_template=prompt_template)
 
@@ -137,7 +143,7 @@ def main():
     )
     start = time.time()
     # ==== Tìm kiếm ====
-    query = ["""Trương Mỹ Lan, chủ tịch Vạn thịnh phát"""]
+    query = ["Trương Mỹ Lan, chủ tịch Vạn thịnh phát"]
     results = matcher.match_full_info(query, top_k=20)
 
     print(Utils.json_to_str(results))

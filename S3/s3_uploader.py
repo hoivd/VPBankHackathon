@@ -55,8 +55,8 @@ class S3Uploader:
 
 # ====== Ví dụ sử dụng ======
 if __name__ == "__main__":
-    AWS_ACCESS_KEY = os.getenv("NEW_AWS_ACCESS_KEY")
-    AWS_SECRET_KEY = os.getenv("NEW_AWS_SECRET_KEY")
+    AWS_ACCESS_KEY = os.getenv("AWS_ACCESS_KEY")
+    AWS_SECRET_KEY = os.getenv("AWS_SECRET_KEY")
     REGION = config.AWS_REGION
     print(f"AWS_ACCESS_KEY: {AWS_ACCESS_KEY}")
     print(f"AWS_SECRET_KEY: {AWS_SECRET_KEY}")

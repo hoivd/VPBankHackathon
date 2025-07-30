@@ -1,6 +1,6 @@
 import json
 from typing import List, Dict, Union
-from logger import _setup_logger
+# from logger import _setup_logger
 import pandas as pd
 import config
 from dotenv import load_dotenv
@@ -8,8 +8,8 @@ import os
 import time
 from decimal import Decimal
 from datetime import datetime, date
-
-logger = _setup_logger(__name__, config.LOG_LEVEL)
+import logging
+# logger = _setup_logger(__name__, config.LOG_LEVEL)
 
 class Utils:
     @staticmethod
@@ -18,10 +18,10 @@ class Utils:
         try:
             with open(file_path, 'r', encoding='utf-8') as f:
                 data = json.load(f)
-                logger.debug(f"Load FILE JSON {file_path} thành công")
+                logging.debug(f"Load FILE JSON {file_path} thành công")
                 return data
         except Exception as e:
-            logger.debug(f"Load FILE JSON {file_path} thất bại")
+            logging.debug(f"Load FILE JSON {file_path} thất bại")
             raise Exception(e)
 
     @staticmethod
@@ -44,11 +44,11 @@ class Utils:
                         try:
                             data.append(json.loads(line))
                         except json.JSONDecodeError as e:
-                            logger.debug(f"Lỗi JSON ở dòng {line_num}: {e}")
+                            logging.debug(f"Lỗi JSON ở dòng {line_num}: {e}")
         except FileNotFoundError:
-            logger.debug(f"Không tìm thấy file: {file_path}")
+            logging.debug(f"Không tìm thấy file: {file_path}")
         except Exception as e:
-            logger.debug(f"Lỗi khi đọc file '{file_path}': {e}")
+            logging.debug(f"Lỗi khi đọc file '{file_path}': {e}")
         return data
 
     @staticmethod
@@ -69,10 +69,10 @@ class Utils:
                 df = pd.DataFrame(data)
     
             df.to_csv(file_path, index=index, encoding=encoding)
-            logger.debug(f"[write_csv] ✅ Đã ghi {len(df)} dòng vào '{file_path}'")
+            logging.debug(f"[write_csv] ✅ Đã ghi {len(df)} dòng vào '{file_path}'")
     
         except Exception as e:
-            logger.debug(f"[write_csv] ❌ Lỗi khi ghi CSV: {e}")
+            logging.debug(f"[write_csv] ❌ Lỗi khi ghi CSV: {e}")
 
     @staticmethod
     def load_api_key_from_env(key_name: str, env_path: str = ".env") -> str:
@@ -95,7 +95,7 @@ class Utils:
         if not api_key:
             raise EnvironmentError(f"⚠️ Không tìm thấy biến môi trường: {key_name}")
         
-        # logger.debug(f"[load_api_key_from_env] ✅ Đã load key '{key_name}' từ môi trường")
+        # logging.debug(f"[load_api_key_from_env] ✅ Đã load key '{key_name}' từ môi trường")
         return api_key
     
     @staticmethod
@@ -115,9 +115,9 @@ class Utils:
         try:
             with open(file_path, 'w', encoding='utf-8') as f:
                 json.dump(data, f, ensure_ascii=ensure_ascii, indent=indent, default=str)
-            logger.debug(f"[save_json] ✅ Đã ghi JSON vào '{file_path}'")
+            logging.debug(f"[save_json] ✅ Đã ghi JSON vào '{file_path}'")
         except Exception as e:
-            logger.debug(f"[save_json] ❌ Lỗi khi ghi JSON: {e}")
+            logging.debug(f"[save_json] ❌ Lỗi khi ghi JSON: {e}")
             raise Exception(e)
 
     @staticmethod
@@ -138,10 +138,10 @@ class Utils:
         try:
             with open(file_path, 'r', encoding=encoding) as f:
                 content = f.read()
-                logger.debug(f"[load_text] ✅ Đã load file văn bản: {file_path}")
+                logging.debug(f"[load_text] ✅ Đã load file văn bản: {file_path}")
                 return content
         except Exception as e:
-            logger.debug(f"[load_text] ❌ Lỗi khi đọc file văn bản: {e}")
+            logging.debug(f"[load_text] ❌ Lỗi khi đọc file văn bản: {e}")
             raise Exception(e)
 
     @staticmethod

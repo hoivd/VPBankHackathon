@@ -1,7 +1,6 @@
 import boto3
 from boto3.dynamodb.conditions import Key, Attr
 from botocore.exceptions import ClientError
-from logger import _setup_logger
 import config
 
 class DynamoQuery:

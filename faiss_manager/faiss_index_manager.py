@@ -2,11 +2,11 @@ import faiss
 import numpy as np
 import json
 import os
-from logger import _setup_logger
+# from logging import _setup_logging
 import config
-
-logger = _setup_logger(__name__, config.LOG_LEVEL)
-
+import logging
+# logging = _setup_logging(__name__, config.LOG_LEVEL)
+import logging
 class FaissIndexManager:
     def __init__(self, dim: int, metric_type: str = 'ip'):
         """
@@ -74,7 +74,7 @@ class FaissIndexManager:
         for id_ in ids_to_remove:
             self.embedding_map.pop(id_, None)
 
-        logger.info(f"Đã xóa {len(ids_to_remove)} vector khỏi FAISS index và embedding map.")
+        logging.info(f"Đã xóa {len(ids_to_remove)} vector khỏi FAISS index và embedding map.")
 
     def reset(self):
         self.index = self._create_index()
