@@ -1,4 +1,4 @@
-from embedder.model_embedder import ModelEmbedder
+# from embedder.model_embedder import ModelEmbedder
 import numpy as np
 from logger import _setup_logger
 import config

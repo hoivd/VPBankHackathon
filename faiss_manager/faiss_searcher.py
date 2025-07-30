@@ -4,8 +4,8 @@ from faiss_manager.faiss_index_manager import FaissIndexManager  # hoặc import
 from utils import Utils
 from logger import _setup_logger
 import config
-from embedder.model_embedder import ModelEmbedder
-from embedder.article_embedder import ArticleEmbedder
+# from embedder.model_embedder import ModelEmbedder
+# from embedder.article_embedder import ArticleEmbedder
 from embedder.bedrock_base import BedrockBaseClient
 from embedder.cohere_embedder import CohereMultilingualEmbedder
 

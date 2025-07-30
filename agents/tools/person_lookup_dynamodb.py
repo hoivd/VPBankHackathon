@@ -23,7 +23,7 @@ from utils import Utils
 import config
 import os
 import numpy as np
-from embedder.model_embedder import ModelEmbedder
+# from embedder.model_embedder import ModelEmbedder
 from logger import _setup_logger
 import config
 
