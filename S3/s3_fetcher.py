@@ -130,26 +130,26 @@ def main():
     ).get_client()
     fetcher = S3DataFetcher(s3_client)
 
-    # # 📌 Tải 1 file cụ thể
-    # try:
-    #     key = "faiss_indexes/personal_faiss_index/metadata.json"
-    #     local_path = "./downloads/metadata.json"
-    #     fetcher.download_file(bucket_name=bucket, object_key=key, local_path=local_path)
-    #     print("✅ Đã tải file thành công.")
-    # except Exception as e:
-    #     print(f"❌ Lỗi khi tải file: {e}")
+    # 📌 Tải 1 file cụ thể
+    try:
+        key = "faiss_indexes/personal_faiss_index/metadata.json"
+        local_path = "./downloads/metadata.json"
+        fetcher.download_file(bucket_name=bucket, object_key=key, local_path=local_path)
+        print("✅ Đã tải file thành công.")
+    except Exception as e:
+        print(f"❌ Lỗi khi tải file: {e}")
 
-    # # 📌 Tải toàn bộ thư mục
-    # try:
-    #     folder_prefix = "faiss_indexes/"
-    #     local_dir = "./downloads/faiss_indexes"
-    #     fetcher.download_folder(bucket_name=bucket, s3_folder_prefix=folder_prefix, local_dir=local_dir)
-    #     print("📁 Đã tải toàn bộ thư mục.")
-    # except Exception as e:
-    #     print(f"❌ Lỗi khi tải thư mục: {e}")
+    # 📌 Tải toàn bộ thư mục
+    try:
+        folder_prefix = "faiss_indexe/"
+        local_dir = "./downloads/faiss_indexe"
+        fetcher.download_folder(bucket_name=bucket, s3_folder_prefix=folder_prefix, local_dir=local_dir)
+        print("📁 Đã tải toàn bộ thư mục.")
+    except Exception as e:
+        print(f"❌ Lỗi khi tải thư mục: {e}")
 
-    bucket_name = "team253vpbank"
-    key = "adverse_media_data/case1.json"
+    # bucket_name = "team253vpbank"
+    # key = "adverse_media_data/case1.json"
 
 if __name__ == "__main__":
     main()

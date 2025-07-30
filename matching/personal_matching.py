@@ -155,7 +155,7 @@ def main():
             print(f"{k}: {v}")
 
     print("✅ Đang đánh giá lại bằng LLM...")
-    result = matcher.rerank_by_llm(query, results, top_k_result=10)
+    result = matcher.rerank_by_llm(query, results, top_k_result=5)
 
     print("🎯 Kết quả LLM đánh giá:")
     end = time.time()

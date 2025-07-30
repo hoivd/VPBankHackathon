@@ -15,6 +15,7 @@ from blacklist_builder.faiss_handler.faiss_personal_and_risk_handler import Pers
 from blacklist_builder.faiss_handler.faiss_organization_and_risk_handler import OrganizationAndRiskHandler
 from blacklist_builder.faiss_handler.retrieval_faiss_personal_and_risk import PersonalInfoSimilarRetriever
 from blacklist_builder.faiss_handler.retrieval_faiss_organization_and_risk import OrganizationInfoSimilarRetriever
+from dynamodb.dynamo_table_checker import DynamoDBTableChecker
 from faiss_manager.faiss_index_manager import FaissIndexManager
 from datetime import datetime
 from blacklist_builder.info_comparer import InfoComparer
@@ -63,9 +64,9 @@ class BlacklistBuilderApp:
             secret_key=self.AWS_SECRET_KEY,
             region_name=self.REGION_MODEL
         )
+        self.dynamo_checker = DynamoDBTableChecker(dynamodb=self.base_dynamo.dynamodb)
 
         self.bucket_name = "team253vpbank"
-        local_faiss_index_path = './s3_downloads/faiss_indexes/personal_faiss_index'
         faiss_key = f"faiss_indexes/personal_faiss_index"
         s3_client = S3Connector(
             aws_access_key_id=self.AWS_ACCESS_KEY,
@@ -74,7 +75,10 @@ class BlacklistBuilderApp:
         ).get_client()
         fetcher = S3DataFetcher(s3_client)
 
-        fetcher.download_folder(bucket_name=self.bucket_name, s3_folder_prefix=faiss_key, local_dir=local_faiss_index_path)
+        self.personal_faiss_index_path_local = './s3_downloads/faiss_indexes/personal_faiss_index'
+        self.organization_faiss_index_path_local = './s3_downloads/faiss_indexes/organization_faiss_index'
+        fetcher.download_folder(bucket_name=self.bucket_name, s3_folder_prefix=faiss_key, local_dir=self.personal_faiss_index_path_local)
+        fetcher.download_folder(bucket_name=self.bucket_name, s3_folder_prefix=faiss_key, local_dir=self.organization_faiss_index_path_local)
         print("📁 Đã tải toàn bộ thư mục.")
 
         self.EMBEDDING_DIM = config.EMBEDDING_DIM
@@ -100,6 +104,16 @@ class BlacklistBuilderApp:
             base_dynamo=self.base_dynamo
         )
 
+    def is_per_empty(self, table_config) -> bool:
+        personal_table_name, _ = list(table_config['person_config'].items())[0]
+
+        person_empty = self.dynamo_checker.is_table_empty(personal_table_name)
+        if person_empty == True:
+            logger.info(f"✅ Bảng '{personal_table_name}' trống.")
+        else:
+            logger.info(f"❌ Bảng '{personal_table_name}' có dữ liệu.")
+            return False
+
     def _init_info_article_extractor(self):
         extractor_model_id = self.EXTRACTOR_PROMPT
         extractor_model_manager = BedrockModelManager(
@@ -122,11 +136,20 @@ class BlacklistBuilderApp:
     def _init_faiss_handler(self):
         embedding_dim = self.EMBEDDING_DIM
         embedder = CohereMultilingualEmbedder(bedrock_client=self.bedrock_base.get_client())
-        self.personal_faiss_manager = FaissIndexManager(embedding_dim)
-        self.organization_faiss_manager = FaissIndexManager(embedding_dim)
+        if self.is_per_empty(self.TABLE_CONFIG):
+            logger.info("Bảng cá nhân trống, khởi tạo FAISS mới index.")
+            self.personal_faiss_manager = FaissIndexManager(embedding_dim)
+            self.organization_faiss_manager = FaissIndexManager(embedding_dim)
+        else:
+            self.personal_faiss_manager = FaissIndexManager.load_index(self.personal_faiss_index_path_local)
+            self.organization_faiss_manager = FaissIndexManager.load_index(self.organization_faiss_index_path_local)
+        logger.info(f"Số lượng cá nhân trong faiss: {self.personal_faiss_manager.get_total()} cá nhân")
+        logger.info(f"Số lượng tổ chức trong faiss: {self.organization_faiss_manager.get_total()} tổ chức")
+        logger.info("✅ Đã khởi tạo FAISS index manager.")
+            
         
         self.personal_risk_handler = PersonalAndRiskHandler(embedder=embedder, faiss_manager=self.personal_faiss_manager)
-        self.organization_risk_handler = OrganizationAndRiskHandler(embedder=embedder, faiss_manager=self.organization_faiss_manager)
+        self.organization_risk_handler = OrganizationAndRiskHandler
 
     def _init_faiss_retriever(self):
         self.personal_retriever = PersonalInfoSimilarRetriever(faiss_manager=self.personal_faiss_manager,
@@ -256,11 +279,14 @@ def main():
     bucket_name = "team253vpbank"
     key = "adverse_media_data/case1.json"
 
+
+
     contents_case1 = Utils.fetch_json_from_s3(bucket_name, 
                                             key,
                                             region_name=S3_REGION,
                                             aws_access_key=S3_AWS_ACCESS_KEY,
                                             aws_secret_key=S3_AWS_SECRET_KEY)
+
     logger.info(f"Đã load {len(contents_case1)} bài báo từ file {key}")
 
     context_file = 'data/contents_old.json'
