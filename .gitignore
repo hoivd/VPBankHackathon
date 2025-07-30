@@ -17,3 +17,4 @@ faiss_manager/eval_case2_embeddings.npy
 faiss_manager/corpus_faiss_index/
 faiss_manager/corpus_faiss_index_cosine/
 /data/
+/s3_downloads/

@@ -43,7 +43,7 @@ CLAUDE_30_HAIKU_ON_DEMAND_VIRGINA_MODEL_ID = ''
 CLAUDE_35_HAIKU_CROSS_REGION_VIRGINA_MODEL_ID = 'arn:aws:bedrock:us-east-1:538830382271:inference-profile/us.anthropic.claude-3-5-haiku-20241022-v1:0'
 CLAUDE_35_HAIKU_ON_DEMAND_VIRGINA_MODEL_ID = ''
 
-CLAUDE_37_HAIKU_CROSS_REGION_MODEL_ID = ''
+CLAUDE_37_SONNET_CROSS_REGION_MODEL_ID = 'arn:aws:bedrock:us-east-1:538830382271:inference-profile/us.anthropic.claude-3-7-sonnet-20250219-v1:0'
 
 
 USE_MATCHING_METHOD = True

@@ -1,10 +1,12 @@
 import pandas as pd
-import json
 from S3.s3_connector import S3Connector
-import io
 import config
+import json
+import io
 import os
+from dotenv import load_dotenv
 
+load_dotenv()
 class S3DataFetcher:
     def __init__(self, s3_client):
         """
@@ -36,34 +38,96 @@ class S3DataFetcher:
             return [obj["Key"] for obj in response["Contents"]]
         except Exception as e:
             raise RuntimeError(f"Lỗi khi liệt kê file: {e}")
+        
+    def download_file(self, bucket_name: str, object_key: str, local_path: str):
+        """
+        Tải một file duy nhất từ S3 về máy cục bộ.
 
+        :param bucket_name: Tên bucket S3
+        :param object_key: Key (đường dẫn) file trên S3
+        :param local_path: Đường dẫn đầy đủ để lưu file về máy cục bộ
+        """
+        try:
+            # Tạo thư mục đích nếu chưa tồn tại
+            os.makedirs(os.path.dirname(local_path), exist_ok=True)
+
+            # Tải file từ S3
+            self.s3.download_file(Bucket=bucket_name, Key=object_key, Filename=local_path)
+            print(f"✅ Đã tải file: {object_key} → {local_path}")
+        except Exception as e:
+            raise RuntimeError(f"Không thể tải file từ S3 về: {e}")
+        
+    def download_folder(self, bucket_name: str, s3_folder_prefix: str, local_dir: str):
+        """
+        Tải toàn bộ thư mục từ S3 về máy cục bộ.
+
+        :param bucket_name: Tên bucket S3
+        :param s3_folder_prefix: Prefix của "thư mục" trên S3 (ví dụ: 'data/2023/')
+        :param local_dir: Thư mục đích trên máy cục bộ để lưu file
+        """
+        try:
+            # Đảm bảo local_dir tồn tại
+            os.makedirs(local_dir, exist_ok=True)
+
+            # Danh sách object keys
+            object_keys = self.list_files(bucket_name, prefix=s3_folder_prefix)
+
+            if not object_keys:
+                print(f"📂 Không tìm thấy file nào trong thư mục S3: {s3_folder_prefix}")
+                return
+
+            for key in object_keys:
+                # Loại bỏ các object là 'folder' rỗng (kết thúc bằng '/')
+                if key.endswith("/"):
+                    continue
+
+                # Tạo đường dẫn local tương ứng
+                relative_path = os.path.relpath(key, s3_folder_prefix)
+                local_path = os.path.join(local_dir, relative_path)
+
+                # Tạo thư mục cha nếu chưa có
+                os.makedirs(os.path.dirname(local_path), exist_ok=True)
+
+                # Tải file
+                self.s3.download_file(Bucket=bucket_name, Key=key, Filename=local_path)
+                print(f"✅ Đã tải: {key} → {local_path}")
+
+        except Exception as e:
+            raise RuntimeError(f"Lỗi khi tải thư mục từ S3: {e}")
+
+
+def main():
+    bucket = "team253vpbank"
+    
+    AWS_ACCESS_KEY = os.getenv("AWS_ACCESS_KEY")
+    AWS_SECRET_KEY = os.getenv("AWS_SECRET_KEY")
+
+    REGION = config.AWS_REGION
+
+    s3_client = S3Connector(
+        aws_access_key_id=AWS_ACCESS_KEY,
+        aws_secret_access_key=AWS_SECRET_KEY,
+        region_name=REGION
+    ).get_client()
+    fetcher = S3DataFetcher(s3_client)
+
+    # 📌 Tải 1 file cụ thể
+    try:
+        key = "faiss_indexes/personal_faiss_index/metadata.json"
+        local_path = "./downloads/metadata.json"
+        fetcher.download_file(bucket_name=bucket, object_key=key, local_path=local_path)
+        print("✅ Đã tải file thành công.")
+    except Exception as e:
+        print(f"❌ Lỗi khi tải file: {e}")
+
+    # 📌 Tải toàn bộ thư mục
+    try:
+        folder_prefix = "faiss_indexes/"
+        local_dir = "./downloads/faiss_indexes"
+        fetcher.download_folder(bucket_name=bucket, s3_folder_prefix=folder_prefix, local_dir=local_dir)
+        print("📁 Đã tải toàn bộ thư mục.")
+    except Exception as e:
+        print(f"❌ Lỗi khi tải thư mục: {e}")
 
 if __name__ == "__main__":
-    # Thông tin cấu hình
-    bucket = "team253vpbank"
-    key = "models/catboost_aml_model.pkl"  # ví dụ: "data/test.csv"
-    file_type = "json"  # hoặc "json", "text"
-
-    # Khởi tạo fetcher (dùng credentials đã cấu hình sẵn)
-    fetcher = S3DataFetcher()
-
-    # Đọc file
-    try:
-        result = fetcher.read_file(bucket_name=bucket, object_key=key, file_type=file_type)
-        print("✅ File đọc thành công.")
-        if file_type == "csv":
-            print(result.head())
-        elif file_type == "json":
-            print(json.dumps(result, indent=2, ensure_ascii=False))
-        else:
-            print(result)
-    except Exception as e:
-        print(f"❌ Lỗi khi đọc file: {e}")
-
-    try:
-        files = fetcher.list_files(bucket_name=bucket, prefix="data/")
-        print(f"📁 Có {len(files)} file:")
-        for f in files:
-            print("-", f)
-    except Exception as e:
-        print(f"❌ Lỗi khi liệt kê file: {e}")
+    main()

@@ -34,14 +34,18 @@ class LlmRerankerPersonal:
             '{{"score": <điểm từ 1 đến 10>, "reason": "<giải thích ngắn gọn>"}}'
         )
 
-    def build_prompt(self, query: str, per_item: dict) -> str:
+    def build_prompt(self,
+                      query: str,
+                    per_item: dict,
+                    top_k_result: int = 5) -> str:
         """
         Áp dụng template đã nạp sẵn để tạo prompt hoàn chỉnh.
         """
         print(self.prompt_template)
         return self.prompt_template.format(
             query_personal=query.strip(),
-            db_personal=json.dumps(per_item, ensure_ascii=False, indent=2, default=str)
+            top_k_personal=json.dumps(per_item, ensure_ascii=False, indent=2, default=str),
+            top_k_result=top_k_result
         )
 
     def extract_per_ids(self, answer: str) -> list[str]:
@@ -51,21 +55,23 @@ class LlmRerankerPersonal:
         [per_id_..., per_id_..., ...]
         """
         # Tìm đoạn Per_id: [ ... ] kể cả xuống dòng
-        match = re.search(r"Per_id:\s*\[(.*?)\]", answer, re.DOTALL)
+        pattern = r'\[\s*(\{[^}]+\}\s*,?\s*)+\]'
+
+        match = re.search(pattern, answer, re.DOTALL)
         if not match:
             return []
 
-        per_id_str = match.group(1)
-        per_ids = [pid.strip() for pid in per_id_str.split(",") if pid.strip()]
-        return per_ids
+        result = match.group(0)
+        result = Utils.json_str_to_dict(result)
+        return result
     
-    def rerank(self, query: str, per_items: list[dict]) -> list[str]:
+    def rerank(self, query: str, per_items: list[dict], top_k_result:  int = 5) -> list[str]:
         """
         Gọi LLM một lần với danh sách per_items và trả về danh sách per_id được trích ra.
         :return: List các per_id (nếu có)
         """
         try:
-            prompt = self.build_prompt(query, per_items)
+            prompt = self.build_prompt(query, per_items, top_k_result=top_k_result)
 
             logger.info("🤖 Đang gọi LLM để đánh giá danh sách...")
             # print(prompt)
@@ -75,9 +81,10 @@ class LlmRerankerPersonal:
                 model_type=self.model_type
             )[0]
 
-            print(answer)
-            per_ids = self.extract_per_ids(answer)
-            return per_ids
+            logger.info(f"✅ LLM trả về: {answer}")
+
+            result = self.extract_per_ids(answer)
+            return result
 
         except Exception as e:
             logger.warning(f"⚠️ Lỗi khi gọi LLM: {e}")

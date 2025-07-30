@@ -5,12 +5,9 @@ import pandas as pd
 import config
 from dotenv import load_dotenv
 import os
-from S3.s3_fetcher import S3DataFetcher
 import time
 from decimal import Decimal
 from datetime import datetime, date
-from S3.s3_connector import S3Connector
-
 
 logger = _setup_logger(__name__, config.LOG_LEVEL)
 

@@ -40,7 +40,7 @@ class BlacklistBuilderApp:
 
         # ===== Dinh nghia id model =====
         self.EXTRACTOR_MODEL = config.DEEPSEEK_MODEL_VIRGINA_ID
-        self.COMPARE_MODEL = "arn:aws:bedrock:us-east-1:538830382271:inference-profile/us.anthropic.claude-3-7-sonnet-20250219-v1:0"
+        self.COMPARE_MODEL = config.CLAUDE_35_HAIKU_CROSS_REGION_VIRGINA_MODEL_ID
 
         # ===== Dinh nghia id model =====
         self.EXTRACTOR_PROMPT =  config.PROMPT_EXTRACTOR_FILE
