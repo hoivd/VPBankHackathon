@@ -1,0 +1,104 @@
+# Git
+.git
+.gitignore
+
+# Python
+__pycache__
+*.pyc
+*.pyo
+*.pyd
+.Python
+env
+pip-log.txt
+pip-delete-this-directory.txt
+.tox
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.log
+.git
+.mypy_cache
+.pytest_cache
+.hypothesis
+
+# Virtual environments
+venv/
+env/
+ENV/
+env.bak/
+venv.bak/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# Jupyter Notebook
+.ipynb_checkpoints
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+log/
+logs/
+*.log
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Documentation
+README.md
+*.md
+docs/
+
+# Test files
+tests/
+test/
+*_test.py
+test_*.py
+
+# Notebooks
+*.ipynb
+
+# Large data files
+data/
+*.csv
+*.json
+*.parquet
+*.h5
+*.hdf5
+
+# FAISS indexes (will be downloaded at runtime)
+faiss_indexes/
+
+# S3 downloads (will be downloaded at runtime)
+s3_downloads/
+
+# Docker
+Dockerfile
+.dockerignore
+docker-compose*.yml
+
+# Deployment files
+deploy.sh
+vpbank253.service
+nginx.conf 

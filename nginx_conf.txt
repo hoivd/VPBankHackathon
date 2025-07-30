@@ -1,0 +1,29 @@
+[Unit]
+Description=VPBank253 FastAPI App
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/VPBankHackathon
+ExecStart=/home/ubuntu/VPBankHackathon/venv/bin/uvicorn app:app --host 0.0.0.0 --port 8000 --log-level info
+Restart=always
+Environment=PYTHONUNBUFFERED=1
+
+[Install]
+WantedBy=multi-user.target
+
+
+
+
+server {
+    listen 80;
+    server_name 13.251.81.237;
+
+    location / {
+        proxy_pass http://127.0.0.1:8000;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+}

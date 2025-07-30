@@ -1,0 +1,17 @@
+[Unit]
+Description=VPBank253 FastAPI App
+After=network.target
+
+[Service]
+User=ubuntu
+WorkingDirectory=/home/ubuntu/VPBankHackathon
+ExecStart=/home/ubuntu/VPBankHackathon/venv/bin/uvicorn app:app --host 0.0.0.0 --port 8000 --log-level info
+Restart=always
+RestartSec=10
+Environment=PYTHONUNBUFFERED=1
+Environment=AWS_ACCESS_KEY_ID=your_aws_access_key
+Environment=AWS_SECRET_ACCESS_KEY=your_aws_secret_key
+Environment=AWS_REGION=ap-southeast-1
+
+[Install]
+WantedBy=multi-user.target 

@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  vpbank253-api:
+    build: .
+    container_name: vpbank253-api
+    ports:
+      - "8000:8000"
+    environment:
+      - AWS_ACCESS_KEY_ID=${AWS_ACCESS_KEY_ID}
+      - AWS_SECRET_ACCESS_KEY=${AWS_SECRET_ACCESS_KEY}
+      - AWS_REGION=${AWS_REGION:-ap-southeast-1}
+      - PYTHONPATH=/app
+    volumes:
+      - ./s3_downloads:/app/s3_downloads
+      - ./log:/app/log
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - vpbank253-network
+
+  nginx:
+    image: nginx:alpine
+    container_name: vpbank253-nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/conf.d/default.conf
+      - ./ssl:/etc/nginx/ssl
+    depends_on:
+      - vpbank253-api
+    restart: unless-stopped
+    networks:
+      - vpbank253-network
+
+networks:
+  vpbank253-network:
+    driver: bridge 
