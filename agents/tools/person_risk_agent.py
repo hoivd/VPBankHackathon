@@ -793,7 +793,7 @@ class PersonRiskAgent:
                 response += "Vui lòng kiểm tra lại tên người hoặc thử với các biến thể khác của tên."
                 return {"message":response}
 
-            print(f"Kết quả lookup v2 nhận được", lookup_result)
+            # print(f"Kết quả lookup v2 nhận được", lookup_result)
             
             risk_analysis = self.calculate_risk_score_v2(lookup_result)
             # print("ket qua analys nhan duoc", risk_analysis)
