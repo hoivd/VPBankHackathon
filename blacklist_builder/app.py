@@ -22,6 +22,7 @@ import os
 from dotenv import load_dotenv
 from S3.s3_connector import S3Connector
 from S3.s3_uploader import S3Uploader
+from S3.s3_fetcher import S3DataFetcher
 
 # Load từ file .env (mặc định ở thư mục hiện tại)
 load_dotenv()
@@ -63,14 +64,24 @@ class BlacklistBuilderApp:
             region_name=self.REGION_MODEL
         )
 
-        model_name = config.EMBEDDING_MODEL_NAME
+        self.bucket_name = "team253vpbank"
+        local_faiss_index_path = './s3_downloads/faiss_indexes/personal_faiss_index'
+        faiss_key = f"faiss_indexes/personal_faiss_index"
+        s3_client = S3Connector(
+            aws_access_key_id=self.AWS_ACCESS_KEY,
+            aws_secret_access_key=self.AWS_SECRET_KEY,
+            region_name=self.REGION
+        ).get_client()
+        fetcher = S3DataFetcher(s3_client)
+
+        fetcher.download_folder(bucket_name=self.bucket_name, s3_folder_prefix=faiss_key, local_dir=local_faiss_index_path)
+        print("📁 Đã tải toàn bộ thư mục.")
+
         self.EMBEDDING_DIM = config.EMBEDDING_DIM
 
         self._init_info_article_extractor()
         self._init_info_comparer()
 
-        self.personal_faiss_path = 'D:/VPBankHackathon/data/faiss_indexs/personal_faiss_index'
-        self.org_faiss_path = 'D:/VPBankHackathon/data/faiss_indexs/org_faiss_index'
         self._init_faiss_handler()
         self._init_faiss_retriever()
 
@@ -249,7 +260,6 @@ def main():
                                             aws_access_key=S3_AWS_ACCESS_KEY,
                                             aws_secret_key=S3_AWS_SECRET_KEY)
     logger.info(f"Đã load {len(contents_case1)} bài báo từ file {key}")
-
 
     context_file = 'data/contents_old.json'
     bucket_name = "team253vpbank"

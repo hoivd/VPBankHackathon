@@ -121,48 +121,6 @@ class Utils:
             raise Exception(e)
 
     @staticmethod
-    def get_s3_client(aws_access_key: str, aws_secret_key: str, region_name: str):
-        """
-        Tạo đối tượng boto3 S3 client từ thông tin cấu hình bắt buộc.
-        """
-        if not all([aws_access_key, aws_secret_key, region_name]):
-            raise ValueError("⚠️ Cần truyền đủ aws_access_key, aws_secret_key và region_name.")
-
-        return S3Connector(
-            aws_access_key_id=aws_access_key,
-            aws_secret_access_key=aws_secret_key,
-            region_name=region_name
-        ).get_client()
-
-    @staticmethod
-    def fetch_json_from_s3(bucket: str, key: str, aws_access_key: str, aws_secret_key: str, region_name: str) -> Union[Dict, List]:
-        """
-        Tải và parse file JSON từ S3.
-        """
-        s3_client = Utils.get_s3_client(aws_access_key, aws_secret_key, region_name)
-        fetcher = S3DataFetcher(s3_client)
-        return fetcher.read_file(bucket_name=bucket, object_key=key, file_type="json")
-
-    @staticmethod
-    def fetch_csv_from_s3(bucket: str, key: str, aws_access_key: str, aws_secret_key: str, region_name: str) -> pd.DataFrame:
-        """
-        Tải file CSV từ S3 và trả về dưới dạng DataFrame.
-        """
-        s3_client = Utils.get_s3_client(aws_access_key, aws_secret_key, region_name)
-        fetcher = S3DataFetcher(s3_client)
-        return fetcher.read_file(bucket_name=bucket, object_key=key, file_type="csv")
-
-    @staticmethod
-    def fetch_text_from_s3(bucket: str, key: str, aws_access_key: str, aws_secret_key: str, region_name: str) -> str:
-        """
-        Tải file text từ S3 và trả về dưới dạng chuỗi.
-        """
-        s3_client = Utils.get_s3_client(aws_access_key, aws_secret_key, region_name)
-        fetcher = S3DataFetcher(s3_client)
-        return fetcher.read_file(bucket_name=bucket, object_key=key, file_type="text")
-
-
-    @staticmethod
     def load_text(file_path: str, encoding: str = "utf-8") -> str:
         """
         Đọc file văn bản thuần (.txt) từ local và trả về nội dung dạng chuỗi.

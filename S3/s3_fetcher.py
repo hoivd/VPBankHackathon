@@ -39,6 +39,25 @@ class S3DataFetcher:
         except Exception as e:
             raise RuntimeError(f"Lỗi khi liệt kê file: {e}")
         
+    def fetch_json_from_s3(self, bucket: str, key: str):
+        """
+        Tải và parse file JSON từ S3.
+        """
+        
+        return self.s3.read_file(self, bucket_name=bucket, object_key=key, file_type="json")
+
+    def fetch_csv_from_s3(self, bucket: str, key: str):
+        """
+        Tải file CSV từ S3 và trả về dưới dạng DataFrame.
+        """
+        return self.s3.read_file(bucket_name=bucket, object_key=key, file_type="csv")
+
+    def fetch_text_from_s3(self, bucket: str, key: str):
+        """
+        Tải file text từ S3 và trả về dưới dạng chuỗi.
+        """
+        return self.s3.read_file(bucket_name=bucket, object_key=key, file_type="text")
+        
     def download_file(self, bucket_name: str, object_key: str, local_path: str):
         """
         Tải một file duy nhất từ S3 về máy cục bộ.
@@ -111,23 +130,26 @@ def main():
     ).get_client()
     fetcher = S3DataFetcher(s3_client)
 
-    # 📌 Tải 1 file cụ thể
-    try:
-        key = "faiss_indexes/personal_faiss_index/metadata.json"
-        local_path = "./downloads/metadata.json"
-        fetcher.download_file(bucket_name=bucket, object_key=key, local_path=local_path)
-        print("✅ Đã tải file thành công.")
-    except Exception as e:
-        print(f"❌ Lỗi khi tải file: {e}")
+    # # 📌 Tải 1 file cụ thể
+    # try:
+    #     key = "faiss_indexes/personal_faiss_index/metadata.json"
+    #     local_path = "./downloads/metadata.json"
+    #     fetcher.download_file(bucket_name=bucket, object_key=key, local_path=local_path)
+    #     print("✅ Đã tải file thành công.")
+    # except Exception as e:
+    #     print(f"❌ Lỗi khi tải file: {e}")
 
-    # 📌 Tải toàn bộ thư mục
-    try:
-        folder_prefix = "faiss_indexes/"
-        local_dir = "./downloads/faiss_indexes"
-        fetcher.download_folder(bucket_name=bucket, s3_folder_prefix=folder_prefix, local_dir=local_dir)
-        print("📁 Đã tải toàn bộ thư mục.")
-    except Exception as e:
-        print(f"❌ Lỗi khi tải thư mục: {e}")
+    # # 📌 Tải toàn bộ thư mục
+    # try:
+    #     folder_prefix = "faiss_indexes/"
+    #     local_dir = "./downloads/faiss_indexes"
+    #     fetcher.download_folder(bucket_name=bucket, s3_folder_prefix=folder_prefix, local_dir=local_dir)
+    #     print("📁 Đã tải toàn bộ thư mục.")
+    # except Exception as e:
+    #     print(f"❌ Lỗi khi tải thư mục: {e}")
+
+    bucket_name = "team253vpbank"
+    key = "adverse_media_data/case1.json"
 
 if __name__ == "__main__":
     main()

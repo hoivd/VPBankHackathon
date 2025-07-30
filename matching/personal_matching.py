@@ -58,14 +58,14 @@ class PersonMatcherFAISS:
         per_ids = self.match(query, top_k)
         return self.personal_info_table.get_items_by_per_ids(per_ids)
 
-    def rerank_by_llm(self, query: str, candidates: list[dict]) -> dict:
+    def rerank_by_llm(self, query: str, candidates: list[dict], top_k_result=5) -> dict:
         """
         Gọi mô hình LLM thông qua LlmRerankerPersonal để so sánh query với từng candidate.
         Trả về dict có dạng:
         {'per': ..., 'per_id': ..., 'raw': ..., 'index': ...} hoặc {'per_id': 'none'}
         """
         query = query[0]
-        return self.llm_reranker.rerank(query=query, per_items=candidates)
+        return self.llm_reranker.rerank(query=query, per_items=candidates, top_k_result=top_k_result)
 
 def main():
     # ==== Bước 1: Cấu hình ====
@@ -149,7 +149,7 @@ def main():
             print(f"{k}: {v}")
 
     print("✅ Đang đánh giá lại bằng LLM...")
-    result = matcher.rerank_by_llm(query, results)
+    result = matcher.rerank_by_llm(query, results, top_k_result=10)
 
     print("🎯 Kết quả LLM đánh giá:")
     end = time.time()

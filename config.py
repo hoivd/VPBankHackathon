@@ -32,7 +32,6 @@ TABLE_CONFIG_DEMO = {
     }
 
 
-EMBEDDING_MODEL_NAME = 'D:\VPBankHackathon\embedder\models\phobert_base_v2_local'
 EMBEDDING_DIM = 1024
 AWS_VIRGINA_REGION = 'us-east-1'
 DEEPSEEK_MODEL_VIRGINA_ID = "arn:aws:bedrock:us-east-1:538830382271:inference-profile/us.deepseek.r1-v1:0"
