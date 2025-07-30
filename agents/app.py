@@ -15,7 +15,7 @@ load_dotenv()
 sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
 from embedder.cohere_embedder import CohereMultilingualEmbedder
-from embedder.personal_embedder import PersonalEmbedder
+# from embedder.personal_embedder import PersonalEmbedder
 from embedder.bedrock_base import BedrockBaseClient
 from faiss_manager.faiss_searcher import FaissSearcher
 from agents.tools.person_risk_agent import PersonRiskAgent
