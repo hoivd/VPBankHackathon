@@ -138,7 +138,7 @@ def main():
     start = time.time()
     # ==== Tìm kiếm ====
     query = ["""Trương Mỹ Lan, chủ tịch Vạn thịnh phát"""]
-    results = matcher.match_full_info(query, top_k=20)
+    results = matcher.match_full_info(query, top_k=10)
 
     print(Utils.json_to_str(results))
 
@@ -149,7 +149,7 @@ def main():
             print(f"{k}: {v}")
 
     print("✅ Đang đánh giá lại bằng LLM...")
-    result = matcher.rerank_by_llm(query, results, top_k_result=10)
+    result = matcher.rerank_by_llm(query, results, top_k_result=5)
 
     print("🎯 Kết quả LLM đánh giá:")
     end = time.time()
