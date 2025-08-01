@@ -6,7 +6,6 @@ blacklist_builder/__pycache__/
 /log/
 /conda_venv/ 
 /embedder/models/
-/prepare_data/
 /faiss_manager/eval_embeddings.npy
 faiss_manager/corpus_embeddings.npy
 faiss_manager/faiss_index/

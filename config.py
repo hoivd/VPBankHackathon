@@ -14,8 +14,10 @@ TABLE_CONFIG = {
         'p2m_config': {"personal2media": "p2m_id"},
         'o2m_config': {"org2media": "o2m_id"},
         'article_embedd2media_config': {"article_embedd2media": "article_embedd_id"},
-        'personal_embedd2per_config': {"personal_embedd2per": "personal_embedd_id"},
-        'org_embedd2org_config': {"org_embedd2org": "org_embedd_id"}
+        'personal_embedd2per_config': {"personal_embedd2media": "personal_embedd_id"},
+        'org_embedd2org_config': {"org_embedd2media": "org_embedd_id"},
+        'personal_risk_embedd2per_config': {"personal_risk_embedd2per": "personal_risk_embedd_id"}, 
+        'organization_risk_embedd2org_config': {"organization_risk_embedd2org": "organization_risk_embedd_id"}
     }
 
 TABLE_CONFIG_DEMO = {

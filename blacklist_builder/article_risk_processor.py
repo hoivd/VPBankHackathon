@@ -12,6 +12,10 @@ from embedder.bedrock_base import BedrockBaseClient
 from embedder.cohere_embedder import CohereMultilingualEmbedder
 from blacklist_builder.faiss_handler.faiss_personal_and_risk_handler import PersonalAndRiskHandler
 from blacklist_builder.faiss_handler.faiss_organization_and_risk_handler import OrganizationAndRiskHandler
+from S3.s3_fetcher import S3DataFetcher
+from S3.s3_connector import S3Connector
+import os
+import json
 import numpy as np
 import os
 import json
@@ -246,16 +250,19 @@ def main():
     bucket_name = "team253vpbank"
     key = "adverse_media_data/case1.json"
 
-    contents = Utils.fetch_json_from_s3(bucket=bucket_name, 
-                                        key=key,
-                                        aws_access_key=AWS_ACCESS_KEY,
-                                        aws_secret_key=AWS_SECRET_KEY,
-                                        region_name=REGION)
+    s3_client = S3Connector(
+        aws_access_key_id=AWS_ACCESS_KEY,
+        aws_secret_access_key=AWS_SECRET_KEY,
+        region_name=REGION
+    ).get_client()
+    fetcher = S3DataFetcher(s3_client)
+
+    contents = fetcher.fetch_json_from_s3(bucket=bucket_name, key=key)
     logger.info(f"Đã load {len(contents)} bài báo từ file {context_file}")
 
     content = contents[1]
 
-    table_config = config.TABLE_CONFIG_DEMO
+    table_config = config.TABLE_CONFIG
 
     processor.process_article(
         article_text=content,
